@@ -1,0 +1,42 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Welkom{% endblock %}
+
+{% block content %}
+<h1 class="ui dividing header">Welkom</h1>
+<p>
+    Welkom bij Rond de Tafel. Deze site maakt gebruik van Facebook om je aan te melden.
+    Wanneer je voor het eerst aanmeldt zal er een account worden aangemaakt.
+    Deze account wordt gekoppeld aan je profiel op Facebook. Je hoeft dus geen aparte gebruikersnaam of wachtwoord te kiezen.
+</p>
+<p>
+    Gelieve deze site toestemming te geven om je locatie te bepalen.
+    Deze locatie wordt gebruikt om spellen en activiteiten in jouw buurt te zoeken.
+    Zonder de nodige toestemming zullen deze functies gedesactiveerd worden.
+</p>
+<form class="ui form" method="get" action="/authentication/signin">
+    <button class="ui facebook button" type="submit"><i class="facebook icon"></i> Aanmelden met Facebook</button>
+    <input id="latitude" name="latitude" type="hidden">
+    <input id="longitude" name="longitude" type="hidden">
+</form>
+<div class="ui icon message">
+    <i class="info icon"></i>
+    <div class="content">
+        <div class="header">Privacyverklaring</div>
+        Enkel je gebruikersnaam en profielfoto worden opgevraagd bij Facebook.
+        Er worden geen berichten op je tijdlijn geplaatst.
+        Je gegevens worden niet gebruikt voor commerciële doeleinden en worden niet gedeeld met derden.
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        $("#latitude").val(position.coords.latitude);
+        $("#longitude").val(position.coords.longitude);
+    });
+}
+</script>
+{% endblock %}

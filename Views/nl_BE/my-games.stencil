@@ -1,0 +1,105 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Mijn spellen{% endblock %}
+
+{% block content %}
+<h1 class="ui dividing header">Spellen die ik organiseer</h1>
+{% if hostedGames %}
+    <div class="ui four doubling link cards">
+        {% for game in hostedGames %}
+            <a {% if game.availableSeats < 1 %} class="red card" {% elif game.availableSeats == 1 %} class="yellow card" {% else %} class="green card" {% endif %} href="/web/game/{{ game.id }}">
+                <div class="image">
+                    <img src="{{ game.data.picture }}">
+                </div>
+                <div class="content">
+                    <div class="header">{{ game.data.name }}</div>
+                    <div class="meta">
+                        <i class="calendar icon"></i> {{ game.date }}
+                    </div>
+                    <div class="description">
+                        {% if game.players %}
+                            <p>
+                                {% for player in game.players %}
+                                    <img class="ui avatar image" src="{{ player.picture }}">
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+                        {% if game.availableSeats < 1 %}
+                            <p>Volzet!</p>
+                        {% elif game.availableSeats == 1 %}
+                            <p>1 plaats beschikbaar.</p>
+                        {% else %}
+                            <p>{{ game.availableSeats }} plaatsen beschikbaar.</p>
+                        {% endif %}
+                        {% if game.requests == 1 %}
+                            <p>1 aanvraag.</p>
+                        {% elif game.requests > 1 %}
+                            <p>{{ game.requests }} aanvragen.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="extra content">
+                    <i class="user icon"></i> {{ game.data.playerCount }}
+                    {% if game.data.playingTime %}
+                        <i class="wait icon"></i> {{ game.data.playingTime }}
+                    {% else %}
+                        <i class="wait icon"></i> {{ game.data.minPlayingTime }} - {{ game.data.maxPlayingTime }}
+                    {% endif %}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>Je organiseert nog geen spellen.</p>
+{% endif %}
+
+<h1 class="ui dividing header">Spellen waaraan ik deelneem</h1>
+{% if playingGames %}
+    <div class="ui four doubling link cards">
+        {% for game in playingGames %}
+            <a {% if game.availableSeats < 1 %} class="red card" {% elif game.availableSeats == 1 %} class="yellow card" {% else %} class="green card" {% endif %} href="/web/game/{{ game.id }}">
+                <div class="image">
+                    <img src="{{ game.data.picture }}">
+                </div>
+                <div class="content">
+                    <div class="header">{{ game.data.name }}</div>
+                    <div class="meta">
+                        <i class="calendar icon"></i> {{ game.date }}
+                    </div>
+                    <div class="description">
+                        <p>Bij {{ game.host.name }}.</p>
+                        <p>
+                            <img class="ui avatar image" src="{{ game.host.picture }}">
+                            {% for player in game.players %}
+                                <img class="ui avatar image" src="{{ player.picture }}">
+                            {% endfor %}
+                        </p>
+                        {% if game.availableSeats < 1 %}
+                            <p>Volzet!</p>
+                        {% elif game.availableSeats == 1 %}
+                            <p>1 plaats beschikbaar.</p>
+                        {% else %}
+                            <p>{{ game.availableSeats }} plaatsen beschikbaar.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="extra content">
+                    {% if coordinates.geolocated %}
+                        <span class="right floated">
+                            <i class="marker icon"></i> {{ game.distance }}km
+                        </span>
+                    {% endif %}
+                    <i class="user icon"></i> {{ game.data.playerCount }}
+                    {% if game.data.playingTime %}
+                        <i class="wait icon"></i> {{ game.data.playingTime }}
+                    {% else %}
+                        <i class="wait icon"></i> {{ game.data.minPlayingTime }} - {{ game.data.maxPlayingTime }}
+                    {% endif %}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>Je hebt nog geen spellen in je agenda.</p>
+{% endif %}
+{% endblock %}

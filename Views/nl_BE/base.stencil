@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <title>{% block title %}Rond de Tafel{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Steven Van Impe">
+    <meta name="description" content="Rond de Tafel brengt mensen en spellen samen. Vind spellen, zoek medespelers en maak nieuwe vrienden.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    {% block header %}{% endblock %}
+</head>
+<body>
+    <div class="ui big blue inverted menu" style="border-radius: 0">
+        <a class="header link item" href="/web/home">
+            <i class="home icon"></i>
+        </a>
+        {% if user %}
+            <a class="link item" href="/web/games">
+                Spellen
+            </a>
+            <a class="link item">
+                Activiteiten
+            </a>
+            <a class="link item" href="/web/host">
+                Organiseer
+            </a>
+            <div class="right menu">
+                <a class="link item" href="/web/messages">
+                    <i class="mail icon"></i>
+                    {% if unreadMessageCount > 0 %}
+                        <div class="ui red label">{{ unreadMessageCount }}</div>
+                    {% endif %}
+                </a>
+                <div class="ui dropdown item">
+                    <img class="ui avatar image" src="{{ user.picture }}">
+                    {{ user.name }}
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a class="link item" href="/web/my-games">Mijn spellen</a>
+                        <a class="link item">Mijn activiteiten</a>
+                        <a class="link item" href="/authentication/signout">Afmelden</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="ui container">
+        {% block content %}{% endblock %}
+    </div>
+    <footer class="ui center aligned very padded basic segment">
+        © 2017 - Steven Van Impe<br>
+        Broncode beschikbaar op <a href="https://github.com/svanimpe/around-the-table.git">GitHub</a>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+    <script>
+        $(".ui.dropdown").dropdown();
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

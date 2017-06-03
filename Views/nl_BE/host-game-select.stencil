@@ -1,0 +1,33 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
+
+{% block content %}
+<h1 class="ui dividing header">Kies een spel</h1>
+<p>Kies het spel dat je wenst te spelen uit de onderstaande lijst.</p>
+<div class="ui very relaxed link items">
+    {% for game in results %}
+        <a class="item" href="/web/host-game?id={{ game.id }}">
+            <div class="image">
+                <img src="{{ game.picture }}">
+            </div>
+            <div class="content">
+                <div class="header">{{ game.name }}</div>
+                <div class="meta">{{ game.year }}</div>
+                <div class="description">
+                    {% if game.playerCount %}
+                        <p><i class="user icon"></i> {{ game.playerCount }}</p>
+                    {% else %}
+                        <p><i class="user icon"></i> {{ game.minPlayerCount }} - {{ game.maxPlayerCount }}</p>
+                    {% endif %}
+                    {% if game.playingTime %}
+                        <p><i class="wait icon"></i> {{ game.playingTime }}</p>
+                    {% else %}
+                        <p><i class="wait icon"></i> {{ game.minPlayingTime }} - {{ game.maxPlayingTime }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </a>
+    {% endfor %}
+</div>
+{% endblock %}

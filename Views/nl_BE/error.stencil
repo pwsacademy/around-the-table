@@ -1,0 +1,13 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Foutmelding{% endblock %}
+
+{% block content %}
+<div class="ui error icon message">
+    <i class="bug icon"></i>
+    <div class="content">
+        <div class="header">Oops...</div>
+        <p>{{ message }}</p>
+    </div>
+</div>
+{% endblock %}

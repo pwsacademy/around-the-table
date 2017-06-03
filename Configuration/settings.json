@@ -1,0 +1,19 @@
+{
+    "settings": {
+        "countries": ["be", "nl"],
+        "database": {
+            "bluemixService": "MongoDB",
+            "localURI": "mongodb://localhost:27017",
+            "name": "aroundthetable"
+        },
+        "defaultCoordinates": {
+            "latitude": 51.047546,
+            "longitude": 3.753204
+        },
+        "defaultGamePicture": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
+        "defaultGameThumbnail": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
+        "defaultProfilePicture": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
+        "locale": "nl_BE",
+        "timeZone": "Europe/Brussels"
+    }
+}

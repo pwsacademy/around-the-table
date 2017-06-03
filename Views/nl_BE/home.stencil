@@ -1,0 +1,33 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }}{% endblock %}
+
+{% block content %}
+<h1 class="ui dividing header">Welkom</h1>
+<p>
+    Welkom bij Rond de Tafel. Deze site heeft als doel mensen samen te brengen rond de speltafel.
+    Zoek je medespelers voor een spel dat maar niet op tafel geraakt? Wens je een bepaald spel uit te proberen?
+    Of wil je gewoon wat nieuwe spellen en mensen leren kennen? Hier vind je zeker wat je zoekt!
+</p>
+
+<h2>Spellen</h2>
+<p>
+    Op deze pagina vind je de spellen die aangeboden worden. Deze spellen worden doorgaans gespeeld in huiselijke kring.
+    De organisator voorziet speluitleg. Je hoeft het spel dus niet te kennen om deel te nemen.
+</p>
+
+<h2>Activiteiten</h2>
+<p>
+    Deze pagina toont alle andere spel-gerelateerde activiteiten.
+    Van maandelijkse spelavonden van spellenclubs tot barbecues en spellenbeurzen, alles is welkom!
+</p>
+<p class="ui warning message">
+    Deze functie is nog niet beschikbaar.
+</p>
+
+<h2>Organiseer</h2>
+<p>
+    Niet gevonden wat je zoekt? Organiseer dan gewoon zelf een spel of activiteit!
+    Het duurt maar een minuutje om een spel of activiteit aan te maken.
+</p>
+{% endblock %}

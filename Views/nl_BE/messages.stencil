@@ -1,0 +1,36 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Berichten{% endblock %}
+
+{% block content %}
+<h1 class="ui dividing header">Berichten</h1>
+{% if messages %}
+    {% for message in messages %}
+        {% if message.category == "requestReceived" %}
+            <a class="ui icon message" href="{{ message.link }}">
+                <i class="help icon"></i>
+                <div class="content">
+                    <img class="ui right floated mini circular image" src="{{ message.sender.picture }}">
+                    <div class="header">{{ message.creationDate }}</div>
+                    <p>
+                        {{ message.sender.name }} wenst deel te nemen aan {{ message.game.name }} op {{ message.game.date }}.
+                    </p>
+                </div>
+            </a>
+        {% elif message.category == "requestApproved" %}
+            <a class="ui icon positive message" href="{{ message.link }}">
+                <i class="checkmark icon"></i>
+                <div class="content">
+                    <img class="ui right floated mini circular image" src="{{ message.sender.picture }}">
+                    <div class="header">{{ message.creationDate }}</div>
+                    <p>
+                        {{ message.sender.name }} heeft je aanvraag om deel te te nemen aan {{ message.game.name }} op {{ message.game.date }} goedgekeurd.
+                    </p>
+                </div>
+            </a>
+        {% endif %}
+    {% endfor %}
+{% else %}
+    <p>Geen nieuwe berichten.</p>
+{% endif %}
+{% endblock %}

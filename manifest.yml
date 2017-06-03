@@ -1,0 +1,4 @@
+applications:
+- name: AroundTheTable 
+  command: Server
+  buildpack: swift_buildpack

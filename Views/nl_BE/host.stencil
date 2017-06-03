@@ -1,0 +1,50 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Organiseer een spel of activiteit{% endblock %}
+
+{% block content %}
+<h1 class="ui dividing header">Organiseer een spel</h1>
+<form class="ui form {% if error %}error{% endif %}" method="get" action="/web/host-game-select">
+    <p>
+        Geef de naam van een spel in.
+        Op basis van deze naam zal de bijhorende spelinformatie opgezocht worden bij <a href="https://boardgamegeek.com" target="_blank">BoardGameGeek</a>.
+    </p>
+    <div class="field">
+        <div class="ui left icon input">
+            <input type="text" name="query" placeholder="Spel" {% if query %}value="{{ query }}"{% endif %} required>
+            <i class="search icon"></i>
+        </div>
+    </div>
+    <div class="field">
+        <div class="ui checkbox">
+            <input type="checkbox" name="exact" checked>
+            <label>Enkel exacte resultaten</label>
+        </div>
+    </div>
+    <div id="warning" class="ui warning message">
+        Het uitschakelen van "Enkel exacte resultaten" kan ervoor zorgen dat je zoekopdracht erg lang duurt.
+    </div>
+    <button class="ui button" type="submit">Zoeken</button>
+    <div class="ui error message">
+        Je zoekopdracht gaf geen resultaten terug.
+        Voor meer resultaten kan je proberen de optie "Enkel exacte resultaten" uit te schakelen.
+    </div>
+</form>
+
+<h1 class="ui dividing header">Organiseer een activiteit</h1>
+<div class="ui warning message">
+    Deze functie is nog niet beschikbaar.
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$("input[type='checkbox']").on("change", function() {
+    if (!this.checked) {
+        $("#warning").show();
+    } else {
+        $("#warning").hide();
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,200 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
+{% block header %}
+<style>
+#map {
+    height: 400px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="ui dividing header">Organiseer een spel</h1>
+<p>Vul het onderstaande formulier in om je spel aan te maken.</p>
+<form class="ui form {% if error %}error{% endif %}" method="post" action="/web/host-game">
+    <div class="ui error message">
+        <div class="header">Spel aanmaken mislukt</div>
+        <p>Geef een geldige datum in en probeer opnieuw. Je zal ook je adres opnieuw moeten ingeven.<p>
+    </div>
+
+    <h2>Spel</h2>
+    <input name="id" type="hidden" value="{{ game.id }}">
+    <div class="field">
+        <label>Naam</label>
+        {% if game.nameOptions %}
+            <select class="ui selection dropdown" name="name">
+                {% for name in game.nameOptions %}
+                    <option value="{{ name }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        {% else %}
+            <input name="name" type="text" value="{{ game.name }}" readonly>
+        {% endif %}
+    </div>
+    <div class="field">
+        <label>Aantal spelers</label>
+        {% if game.playerCountOptions %}
+            <select class="ui selection dropdown" name="playerCount">
+                {% for playerCount in game.playerCountOptions %}
+                    {% if playerCount == game.playerCountOptions|max %}
+                        <option value="{{ playerCount }}" selected>{{ playerCount }}</option>
+                    {% else %}
+                        <option value="{{ playerCount }}">{{ playerCount }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        {% else %}
+            <input name="playerCount" type="text" value="{{ game.playerCount }}" readonly>
+        {% endif %}
+        <p>Dit is het totaal aantal spelers, organisatoren meegerekend.</p>
+    </div>
+    <div class="field">
+        <label>Aantal plaatsen te reserveren voor organisatoren</label>
+        {% if prereservedSeatsOptions %}
+            <div class="ui selection dropdown" id="prereservedSeats">
+                <input type="hidden" name="prereservedSeats">
+                <i class="dropdown icon"></i>
+                <div class="text"></div>
+                <div class="menu">
+                    {% for seatCount in prereservedSeatsOptions %}
+                        {% if seatCount == 0 %}
+                            <div class="item" data-value="{{ seatCount }}">Geen (ik neem niet deel)</div>
+                        {% else %}
+                            <div class="item" data-value="{{ seatCount }}">{{ seatCount }}</div>
+                        {% endif %}
+                    {% endfor %}
+                    <!-- The default value of 1 will be selected in code later on. -->
+                </div>
+            </div>
+        {% else %}
+            <input name="prereservedSeats" type="text" value="{{ prereservedSeats }}" readonly>
+        {% endif %}
+    </div>
+
+    <h2>Datum</h2>
+    <div class="three fields">
+        <div class="field">
+            <label>Dag</label>
+            <input name="day" type="number" value="{{ date.day }}" min="1" max="31" required>
+        </div>
+        <div class="field">
+            <label>Maand</label>
+            <select class="ui selection dropdown" name="month">
+                <option value="1">Januari</option>
+                <option value="2">Februari</option>
+                <option value="3">Maart</option>
+                <option value="4">April</option>
+                <option value="5">Mei</option>
+                <option value="6">Juni</option>
+                <option value="7">Juli</option>
+                <option value="8">Augustus</option>
+                <option value="9">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+                <!-- The right option will be selected in code later on. -->
+            </select>
+        </div>
+        <div class="field">
+            <label>Jaar</label>
+            <input name="year" type="number" value="{{ date.year }}" required>
+        </div>
+    </div>
+
+    <h2>Tijdstip</h2>
+    <div class="two fields">
+        <div class="field">
+            <label>Uur</label>
+            <input name="hour" type="number" value="{{ date.hour }}" min="0" max="23" required>
+        </div>
+        <div class="field">
+            <label>Minuut</label>
+            <input name="minute" type="number" value="{{ date.minute }}" min="0" max="59" required>
+        </div>
+    </div>
+
+    <h2>Adres</h2>
+    <p>Deze adresgegevens worden enkel getoond aan de spelers wiens aanvraag jij hebt goedkeurd.</p>
+    <p>
+        Maak gebruik van de automatische aanvulling en kies een adres uit de voorgestelde opties.
+        Er zal een aanduiding verschijnen op de kaart wanneer je adres correct is ingegeven.
+    </p>
+    <div class="field">
+        <input id="address" name="address" type="text" placeholder="Adres" required>
+        <input id="latitude" name="latitude" type="hidden">
+        <input id="longitude" name="longitude" type="hidden">
+    </div>
+    <div id="map">
+    </div>
+
+    <h2>Extra informatie</h2>
+    <div class="field">
+        <textarea name="info" rows="8">{{ info }}</textarea>
+    </div>
+    <button class="ui button" type="submit" disabled>Spel aanmaken</button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$("#prereservedSeats").dropdown('set selected', 1);
+$("select[name='month']").dropdown('set selected', {{ date.month }});
+
+// Adjust the prereservedSeats options according to the selected playerCount.
+$("select[name='playerCount']").on("change", function() {
+    var playerCount = $(this).val();
+    $("#prereservedSeats div.item").each(function() {
+        var seatCount = $(this).attr("data-value");
+        if (seatCount < playerCount) {
+            $(this).removeClass("disabled");
+        } else {
+            $(this).addClass("disabled");
+            $(this).removeClass("active selected");
+        }
+    });
+    // If we disabled the selected option, select the highest non-disabled option.
+    if (!$("#prereservedSeats div.active.selected").length) {
+        var option = $("#prereservedSeats div.item").not(".disabled").last();
+        $("#prereservedSeats").dropdown('set selected', option.attr("data-value"));
+    }
+});
+
+var map;
+function loadMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: {
+            lat: {{ coordinates.latitude }},
+            lng: {{ coordinates.longitude }}
+        },
+        zoom: 15
+    });
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ googleAPIKey }}&libraries=places&callback=loadMap"></script>
+<script>
+var autocomplete = new google.maps.places.Autocomplete(document.getElementById("address"), {
+    componentRestrictions: {
+        country: {{ countries }}
+    }
+});
+
+var marker;
+autocomplete.addListener("place_changed", function() {
+    var place = autocomplete.getPlace();
+    var coordinates = place.geometry.location
+    $("#latitude").val(coordinates.lat);
+    $("#longitude").val(coordinates.lng);
+    if (!marker) {
+        marker = new google.maps.Marker({
+            position: coordinates,
+            map: map
+        });
+    } else {
+        marker.setPosition(coordinates);
+    }
+    map.setCenter(coordinates);
+    $("button[type=submit]").removeAttr("disabled");
+});
+</script>
+{% endblock %}

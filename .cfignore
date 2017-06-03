@@ -1,0 +1,3 @@
+.build/*
+AroundTheTable.xcodeproj/
+generate-xcodeproj.sh

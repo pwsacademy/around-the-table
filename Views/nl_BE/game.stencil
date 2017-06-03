@@ -1,0 +1,176 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - {{ data.name }}{% endblock %}
+{% block header %}
+<style>
+#map {
+    height: 400px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ui segment">
+    <div class="ui items">
+        <div class="item">
+            <a class="ui medium rounded image" href="https://boardgamegeek.com/boardgame/{{ data.id }}" target="_blank">
+                <img src="{{ data.picture }}">
+            </a>
+            <div class="content">
+                <div class="ui huge dividing header">{{ data.name }}</div>
+                <div class="description">
+                    <p><i class="user icon"></i> {{ data.playerCount }}</p>
+                    {% if data.playingTime %}
+                        <p><i class="wait icon"></i> {{ data.playingTime }}</p>
+                    {% else %}
+                        <p><i class="wait icon"></i> {{ data.minPlayingTime }} - {{ data.maxPlayingTime }}</p>
+                    {% endif %}
+                    <p><i class="calendar icon"></i> {{ date }}</p>
+                    <p><i class="wait icon"></i> {{ time }}</p>
+                    {% if not userIsHost and coordinates.geolocated %}
+                        <p><i class="marker icon"></i> {{ location.distance }}km</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p>
+    <img class="ui tiny avatar image" src="{{ host.picture }}">
+    Georganiseerd door <a href="https://facebook.com/{{ host.id }}" target="_blank">{{ host.name }}</a> ({{ host.age }} jaar)
+    {% if prereservedSeats == 0 %}
+        (neemt zelf niet deel)
+    {% elif prereservedSeats == 2 %}
+        en 1 extra persoon
+    {% elif prereservedSeats > 2 %}
+        en {{ prereservedSeats|previous }} extra personen
+    {% endif %}
+</p>
+
+<h2>Adres</h2>
+<p>
+    {% if userIsPlayer or userIsHost %}
+        <p>{{ location.address }}</p>
+        <div id="map"></div>
+    {% else %}
+        Adresgegevens zullen zichtbaar zijn van zodra je aanvraag om mee te spelen is goedgekeurd.
+    {% endif %}
+</p>
+
+<h2>Spelers</h2>
+{% if approvedRequests %}
+    <div class="ui middle aligned very relaxed list">
+        {% for request in approvedRequests %}
+            <div class="item">
+                <img class="ui tiny avatar image" src="{{ request.player.picture }}">
+                <div class="content">
+                    <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a> ({{ request.player.age }} jaar)
+                    {% if request.seats == 2 %}
+                        en 1 extra speler
+                    {% elif request.seats > 2 %}
+                        en {{ request.seats|previous }} extra spelers
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% if userIsPlayer or userIsHost %}
+    {% if availableSeats < 1 %}
+        <p>Dit spel is volzet.</p>
+    {% elif availableSeats == 1 %}
+        <p>Er is nog 1 plaats beschikbaar.</p>
+    {% else %}
+        <p>Er zijn nog {{ availableSeats }} plaatsen beschikbaar.</p>
+    {% endif %}
+{% elif userHasRequested %}
+    <p><i class="large hourglass empty icon"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
+{% else %}
+    {% if availableSeats < 1 %}
+        <p>Dit spel is volzet.</p>
+    {% else %}
+        <p>Wens je mee te spelen?</p>
+        <form class="ui form" method="post" action="/web/requests">
+            <input type="hidden" name="game" value="{{ id }}">
+            <div class="ui left action input">
+                <select class="ui compact selection dropdown" name="seats">
+                    {% for seat in seatOptions %}
+                        <option value="{{ seat }}">{{ seat }}</option>
+                    {% endfor %}
+                </select>
+                <input id="seatsText" type="text" value="plaats" readonly>
+            </div>
+            <button class="ui right attached button" type="submit">aanvragen</button>
+        </form>
+    {% endif %}
+{% endif %}
+
+{% if userIsHost %}
+    <h2>Aanvragen</h2>
+    {% if requests %}
+        <div class="ui middle aligned very relaxed list">
+            {% for request in requests %}
+                <div class="item">
+                    <div class="right floated content">
+                        <form class="ui form" method="post" action="/web/request/{{ request.id }}">
+                            <input type="hidden" name="approved" value="on">
+                            {% if request.willCauseOverbooking %}
+                                <button class="ui yellow icon button" type="submit"><i class="question icon"></i> Goedkeuren</button>
+                            {% else %}
+                                <button class="ui positive icon button" type="submit"><i class="checkmark icon"></i> Goedkeuren</button>
+                            {% endif %}
+                        </form>
+                    </div>
+                    <img class="ui tiny avatar image" src="{{ request.player.picture }}">
+                    <div class="content">
+                        <p>
+                            <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a> ({{ request.player.age }} jaar) wenst mee te spelen
+                            {% if request.seats == 2 %}
+                                en brengt 1 extra speler mee
+                            {% elif request.seats > 2 %}
+                                en brengt {{ request.seats|previous }} extra spelers mee
+                            {% endif %}
+                        </p>
+                        {% if request.willCauseOverbooking %}
+                            <p>Opgelet: deze aanvraag goedkeuren leidt tot overboeking!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Er zijn nog geen aanvragen ontvangen.</p>
+    {% endif %}
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(".ui.dropdown").on("change", function() {
+    var seats = $(this).val();
+    if (seats == 1) {
+        $("#seatsText").val("plaats");
+    } else {
+        $("#seatsText").val("plaatsen");
+    }
+});
+var coordinates = {
+    lat: {{ location.latitude }},
+    lng: {{ location.longitude }}
+};
+function loadMap() {
+    if (document.getElementById("map")) {
+        var map = new google.maps.Map(document.getElementById("map"), {
+            center: coordinates,
+            zoom: 15
+        });
+        new google.maps.Marker({
+            position: coordinates,
+            map: map
+        });
+    }
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ googleAPIKey }}&callback=loadMap"></script>
+{% endblock %}
