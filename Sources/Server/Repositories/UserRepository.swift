@@ -17,7 +17,9 @@ struct UserRepository {
         guard let id = game.id else {
             try logAndThrow(ServerError.unpersistedEntity)
         }
-        let playerIDs = try collection(.requests).find(["game": id, "approved": true], projecting: ["_id": false, "player": true]).flatMap { String($0["player"]) }
-        return try collection(.users).find(["_id": ["$in": playerIDs]]).map { try User(bson: $0) }
+        let playerIDs = try collection(.requests)
+            .find(["game": id, "approved": true], projecting: ["_id": false, "player": true])
+            .flatMap { String($0["player"]) }
+        return try collection(.users).find(["_id": ["$in": Array(playerIDs)]]).map { try User(bson: $0) }
     }
 }

@@ -57,11 +57,14 @@ struct GameRepository {
     }
     
     func games(joinedBy player: User, withDistanceMeasuredFrom location: Location) throws -> [Game] {
-        let gameIDs = try collection(.requests).find(["player": player.id, "approved": true], projecting: ["_id": false, "game": true]).flatMap { ObjectId($0["game"]) }
+        let gameIDs = try collection(.requests)
+            .find(["player": player.id, "approved": true], projecting: ["_id": false, "game": true])
+            .flatMap { String($0["game"]) }
+            .map { try ObjectId($0) }
         return try games(matching: ["_id": ["$in": gameIDs], "date": ["$gt": Date()]],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["date": .ascending],
-                         startingFrom: 0, limitedTo: gameIDs.count())
+                         startingFrom: 0, limitedTo: gameIDs.count)
     }
     
     func availableGamesCount() throws -> Int {
