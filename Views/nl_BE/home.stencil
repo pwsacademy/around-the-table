@@ -3,6 +3,18 @@
 {% block title %}{{ block.super }}{% endblock %}
 
 {% block content %}
+<div class="ui warning message">
+    <div class="header">Beta versie 1</div>
+    <p>
+        Deze eerste beta versie dient puur om de functionaliteit van de site te testen.
+        Iedereen mag naar hartelust alle functionaliteit testen zonder gevolgen.
+        Alle data zal opnieuw gewist worden alvorens de site in gebruik gaat.
+        Tijdens de beta periode is het mogelijk dat de site af en toe onbereikbaar is voor updates. Dit is te verwachten.
+        Gekende problemen en geplande verbeteringen worden verzameld op <a href="https://github.com/svanimpe/around-the-table/issues">deze pagina</a>.
+        Heb je een nieuw probleem ontdekt, stuur me dan even een berichtje, graag met een screenshot en met vermelding van de browser die je gebruikt.
+    </p>
+</div>
+
 <h1 class="ui dividing header">Welkom</h1>
 <p>
     Welkom bij Rond de Tafel. Deze site heeft als doel mensen samen te brengen rond de speltafel.
