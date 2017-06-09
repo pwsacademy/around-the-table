@@ -1,5 +1,4 @@
 .build/*
-Package.pins
 AroundTheTable.xcodeproj/
 
 Configuration/secrets.json
