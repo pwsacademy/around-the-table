@@ -1,4 +1,3 @@
-import Configuration
 import Credentials
 import Foundation
 import Kitura

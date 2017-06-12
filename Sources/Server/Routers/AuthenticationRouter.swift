@@ -14,10 +14,16 @@ import SwiftyJSON
  */
 func configureAuthenticationRouter(using router: Router) -> Credentials {
     
-    let credentials = Credentials()    
+    let credentials = Credentials()
+    let callbackURL: String
+    if let customDomainName = Settings.customDomainName, !configuration.isLocal {
+        callbackURL = "https://\(customDomainName)/authentication/signin/callback"
+    } else {
+        callbackURL = "\(configuration.url)/authentication/signin/callback"
+    }
     let facebook = CredentialsFacebook(clientId: Secrets.facebookAppID,
                                        clientSecret: Secrets.facebookAppSecret,
-                                       callbackUrl: "\(configuration.url)/authentication/signin/callback",
+                                       callbackUrl: callbackURL,
                                        options: ["fields": "name,picture.type(large)"])
     credentials.register(plugin: facebook)
     credentials.options["failureRedirect"] = "/authentication/welcome"
@@ -32,10 +38,15 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
         guard let session = request.session else {
             try logAndThrow(ServerError.missingMiddleware(type: Session.self))
         }
-        if let returnAddress = Credentials.getRedirectingReturnTo(for: request) {
+        if var returnAddress = Credentials.getRedirectingReturnTo(for: request) {
+            if let proto = request.headers["X-Forwarded-Proto"], proto == "https", !returnAddress.hasPrefix("https://") {
+                // Bluemix terminates SSL at the proxy level.
+                // This means we have to change the URL to https if the original request used https.
+                returnAddress = returnAddress.replacingOccurrences(of: "http://", with: "https://")
+            }
             session["originalReturnTo"] = JSON(returnAddress)
         }
-        Credentials.setRedirectingReturnTo("\(configuration.url)/authentication/signup", for: request)
+        Credentials.setRedirectingReturnTo("/authentication/signup", for: request)
         try response.render("\(Settings.locale)/welcome", context: [:])
         next()
     }

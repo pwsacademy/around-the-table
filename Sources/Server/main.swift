@@ -21,6 +21,8 @@ stencil.registerFilter("previous", filter: StencilFilters.previous)
 stencil.registerFilter("next", filter: StencilFilters.next)
 router.setDefault(templateEngine: StencilTemplateEngine(extension: stencil))
 
+router.all(middleware: ForwardingMiddleware())
+
 private let session = Session(secret: Secrets.sessionSecret)
 
 router.all("/authentication", middleware: [session])

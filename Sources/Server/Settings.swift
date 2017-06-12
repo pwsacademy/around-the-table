@@ -8,6 +8,14 @@ enum Settings {
     
     private static let configuration = ConfigurationManager().load(file: "Configuration/settings.json", relativeFrom: .project)
     
+    /*
+     Configures a custom domain name. 
+     If a custom domain name is present, the app will forward all requests to this custom domain.
+     This forwarding is necessary as the app uses session cookies, which are attached to a particular domain.
+     This setting does not affect how the app behaves when running on localhost.
+     */
+    static let customDomainName = configuration["settings:customDomainName"] as? String
+    
     // Default pictures.
     static let defaultGamePicture = configuration["settings:defaultGamePicture"] as! String
     static let defaultGameThumbnail = configuration["settings:defaultGameThumbnail"] as! String

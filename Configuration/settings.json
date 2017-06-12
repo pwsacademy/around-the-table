@@ -1,6 +1,7 @@
 {
     "settings": {
         "countries": ["be", "nl"],
+        "customDomainName": "www.rond-de-tafel.be",
         "database": {
             "bluemixService": "MongoDB",
             "localURI": "mongodb://localhost:27017",
