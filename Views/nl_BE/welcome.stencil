@@ -9,13 +9,23 @@
     Wanneer je voor het eerst aanmeldt zal er een account worden aangemaakt.
     Deze account wordt gekoppeld aan je profiel op Facebook. Je hoeft dus geen aparte gebruikersnaam of wachtwoord te kiezen.
 </p>
-<p>
-    Gelieve deze site toestemming te geven om je locatie te bepalen.
-    Deze locatie wordt gebruikt om spellen en activiteiten in jouw buurt te zoeken.
-    Zonder de nodige toestemming zullen deze functies gedesactiveerd worden.
-</p>
+<div class="ui info icon message">
+    <i class="spinner loading icon"></i>
+    <div class="content">
+        <div class="header">Bezig met het bepalen van je locatie</div>
+        Gelieve deze site toestemming te geven om je locatie te bepalen.
+        Deze locatie wordt gebruikt om spellen en activiteiten in jouw buurt te zoeken.
+    </div>
+</div>
+<div class="ui warning icon message">
+    <i class="warning icon"></i>
+    <div class="content">
+        <div class="header">Locatiebepaling mislukt</div>
+        Zonder locatiebepaling is het niet mogelijk om spellen en activiteiten in jouw buurt te zoeken.
+    </div>
+</div>
 <form class="ui form" method="get" action="/authentication/signin">
-    <button class="ui facebook button" type="submit"><i class="facebook icon"></i> Aanmelden met Facebook</button>
+    <button class="ui facebook button" type="submit" disabled><i class="facebook icon"></i> Aanmelden met Facebook</button>
     <input id="latitude" name="latitude" type="hidden">
     <input id="longitude" name="longitude" type="hidden">
 </form>
@@ -32,11 +42,37 @@
 
 {% block scripts %}
 <script>
+$(".warning.message").hide();
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
         $("#latitude").val(position.coords.latitude);
         $("#longitude").val(position.coords.longitude);
+        $(".info.message").hide();
+        $("button.facebook").removeAttr("disabled");
+    }, function(error) {
+        $(".info.message").hide();
+        $(".warning.message").show();
+        $("button.facebook").removeAttr("disabled");
+        switch (error.code) {
+        case error.PERMISSION_DENIED:
+            console.log("The user denied the request for geolocation.");
+            break;
+        case error.POSITION_UNAVAILABLE:
+            console.log("Location information is unavailable.");
+            break;
+        case error.TIMEOUT:
+            console.log("The geolocation request has timed out.");
+            break;
+        case error.UNKNOWN_ERROR:
+            console.log("An unknown error occurred during geolocation.");
+            break;
+        }
     });
+} else {
+    console.log("Geolocation is not available.");
+    $(".info.message").hide();
+    $(".warning.message").show();
+    $("button.facebook").removeAttr("disabled");
 }
 </script>
 {% endblock %}
