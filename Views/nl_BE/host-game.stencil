@@ -2,6 +2,7 @@
 
 {% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
 {% block header %}
+<link rel="stylesheet" href="/static/css/pikaday.min.css">
 <style>
 #map {
     height: 400px;
@@ -72,43 +73,23 @@
         {% endif %}
     </div>
 
-    <h2>Datum</h2>
+    <h2>Datum en tijdstip</h2>
     <div class="three fields">
-        <div class="field">
-            <label>Dag</label>
-            <input name="day" type="number" value="{{ date.day }}" min="1" max="31" required>
+        <div class="eight wide field">
+            <label>Datum</label>
+            <div class="ui icon input">
+                <input id="datepicker" type="text" readonly required>
+                <i class="calendar icon"></i>
+            </div>
+            <input id="day" name="day" type="hidden" value="{{ date.day }}">
+            <input id="month" name="month" type="hidden" value="{{ date.month }}">
+            <input id="year" name="year" type="hidden" value="{{ date.year }}">
         </div>
-        <div class="field">
-            <label>Maand</label>
-            <select class="ui selection dropdown" name="month">
-                <option value="1">Januari</option>
-                <option value="2">Februari</option>
-                <option value="3">Maart</option>
-                <option value="4">April</option>
-                <option value="5">Mei</option>
-                <option value="6">Juni</option>
-                <option value="7">Juli</option>
-                <option value="8">Augustus</option>
-                <option value="9">September</option>
-                <option value="10">Oktober</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-                <!-- The right option will be selected in code later on. -->
-            </select>
-        </div>
-        <div class="field">
-            <label>Jaar</label>
-            <input name="year" type="number" value="{{ date.year }}" required>
-        </div>
-    </div>
-
-    <h2>Tijdstip</h2>
-    <div class="two fields">
-        <div class="field">
+        <div class="four wide field">
             <label>Uur</label>
             <input name="hour" type="number" value="{{ date.hour }}" min="0" max="23" required>
         </div>
-        <div class="field">
+        <div class="four wide field">
             <label>Minuut</label>
             <input name="minute" type="number" value="{{ date.minute }}" min="0" max="59" required>
         </div>
@@ -137,10 +118,32 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="/static/js/pikaday.min.js"></script>
 <script>
-$("#prereservedSeats").dropdown('set selected', 1);
-$("select[name='month']").dropdown('set selected', {{ date.month }});
+var picker = new Pikaday({
+    field: document.getElementById("datepicker"),
+    firstDay: 1,
+    minDate: new Date(),
+    defaultDate: new Date({{ date.year }}, {{ date.month }} - 1, {{ date.day }}),
+    setDefaultDate: true,
+    toString(date, format) {
+        return date.toLocaleDateString("nl", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+    },
+    onSelect: function(date) {
+        $("#day").val(date.getDate());
+        $("#month").val(date.getMonth() + 1);
+        $("#year").val(date.getFullYear());
+    },
+    i18n: {
+        previousMonth : 'Vorige maand',
+        nextMonth     : 'Volgende maand',
+        months        : ['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'],
+        weekdays      : ['Zondag','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag'],
+        weekdaysShort : ['Zon','Ma','Di','Woe','Do','Vrij','Zat']
+    }
+});
 
+$("#prereservedSeats").dropdown('set selected', 1);
 // Adjust the prereservedSeats options according to the selected playerCount.
 $("select[name='playerCount']").on("change", function() {
     var playerCount = $(this).val();
