@@ -23,6 +23,8 @@ router.setDefault(templateEngine: StencilTemplateEngine(extension: stencil))
 
 router.all(middleware: ForwardingMiddleware())
 
+router.all("/static", middleware: StaticFileServer())
+
 private let session = Session(secret: Secrets.sessionSecret)
 
 router.all("/authentication", middleware: [session])
