@@ -56,7 +56,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
     router.get("/signin/callback", handler: credentials.authenticate(credentialsType: facebook.name))
     
     /*
-     Presents the user with a sign-up form.
+     Presents the user with a sign-up page.
      */
     router.all("/signup", middleware: credentials)
     router.get("/signup") {
@@ -82,58 +82,26 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
     }
     
     /*
-     Validates the sign-up form and adds the user to the database.
+     Adds the user to the database.
      */
     router.post("/signup", middleware: BodyParser())
     router.post("/signup") {
         request, response, next in
+        guard let body = request.body?.asURLEncoded,
+              body["agree"] == "on" else {
+            try logAndThrow(ServerError.invalidRequest)
+        }
         guard let session = request.session else {
             try logAndThrow(ServerError.missingMiddleware(type: Session.self))
         }
         guard let profile = request.userProfile else {
             try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let body = request.body?.asURLEncoded,
-              let dayString = body["day"],
-              let day = Int(dayString),
-              let monthString = body["month"],
-              let month = Int(monthString),
-              let yearString = body["year"],
-              let year = Int(yearString) else {
-            try logAndThrow(ServerError.invalidRequest)
-        }
-        // Make sure the date is valid.
-        var dateComponents = DateComponents()
-        dateComponents.calendar = Calendar(identifier: .gregorian)
-        dateComponents.day = day
-        dateComponents.month = month
-        dateComponents.year = year
-        dateComponents.timeZone = Settings.timeZone
-        guard dateComponents.isValidDate,
-              let dateOfBirth = dateComponents.date else {
-            try response.render("\(Settings.locale)/signup", context: [
-                "error": true
-            ])
-            next()
-            return
-        }
-        // Make sure the user is at least 13 years old (Facebook's minimum age).
-        let difference = Calendar(identifier: .gregorian).dateComponents([.year], from: dateOfBirth, to: Date())
-        guard let age = difference.year,
-              age >= 13 else {
-            try response.render("\(Settings.locale)/signup", context: [
-                "error": true
-            ])
-            next()
-            return
-        }
         let picture = profile.photos?.first?.value
         let user = User(id: profile.id,
                         name: profile.displayName,
-                        dateOfBirth: dateOfBirth,
                         picture: picture != nil ? URL(string: picture!) : nil)
         try UserRepository().add(user)
-        
         // Redirect the user back to where he/she was (or to the home page).
         if let returnAddress = session["originalReturnTo"].string, !returnAddress.contains("authentication") {
             session.remove(key: "originalReturnTo")

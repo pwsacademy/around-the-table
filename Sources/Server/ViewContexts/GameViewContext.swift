@@ -21,7 +21,6 @@ struct GameViewContext: ViewContext {
             "host": [
                 "id": game.host.id,
                 "name": game.host.name,
-                "age": game.host.age,
                 "picture": game.host.picture?.absoluteString ?? Settings.defaultProfilePicture
             ],
             "location": [
@@ -74,7 +73,6 @@ struct GameViewContext: ViewContext {
             "player": [
                 "id": request.player.id,
                 "name": request.player.name,
-                "age": request.player.age,
                 "picture": request.player.picture?.absoluteString ?? Settings.defaultProfilePicture
             ],
             "seats": request.seats

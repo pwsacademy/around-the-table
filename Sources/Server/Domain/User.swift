@@ -7,18 +7,11 @@ final class User {
     
     let id: String // Facebook ID.
     let name: String
-    let dateOfBirth: Date
     let picture: URL?
     
-    var age: Int {
-        let difference = Calendar(identifier: .gregorian).dateComponents([.year], from: dateOfBirth, to: Date())
-        return difference.year!
-    }
-    
-    init(id: String, name: String, dateOfBirth: Date, picture: URL? = nil) {
+    init(id: String, name: String, picture: URL? = nil) {
         self.id = id
         self.name = name
-        self.dateOfBirth = dateOfBirth
         self.picture = picture
     }
 }
@@ -43,13 +36,9 @@ extension User {
         guard let name = String(bson["name"]) else {
             try logAndThrow(BSONError.missingField(name: "name"))
         }
-        guard let dateOfBirth = Date(bson["dateOfBirth"]) else {
-            try logAndThrow(BSONError.missingField(name: "dateOfBirth"))
-        }
         let picture = String(bson["picture"])
         self.init(id: id,
                   name: name,
-                  dateOfBirth: dateOfBirth,
                   picture: picture != nil ? URL(string: picture!) : nil)
     }
     
@@ -57,7 +46,6 @@ extension User {
         var bson: Document = [
             "_id": id,
             "name": name,
-            "dateOfBirth": dateOfBirth
         ]
         if let picture = picture {
             bson["picture"] = picture.absoluteString

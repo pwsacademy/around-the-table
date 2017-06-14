@@ -38,7 +38,7 @@
 
 <p>
     <img class="ui tiny avatar image" src="{{ host.picture }}">
-    Georganiseerd door <a href="https://facebook.com/{{ host.id }}" target="_blank">{{ host.name }}</a> ({{ host.age }} jaar)
+    Georganiseerd door <a href="https://facebook.com/{{ host.id }}" target="_blank">{{ host.name }}</a>
     {% if prereservedSeats == 0 %}
         (neemt zelf niet deel)
     {% elif prereservedSeats == 2 %}
@@ -65,7 +65,7 @@
             <div class="item">
                 <img class="ui tiny avatar image" src="{{ request.player.picture }}">
                 <div class="content">
-                    <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a> ({{ request.player.age }} jaar)
+                    <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a>
                     {% if request.seats == 2 %}
                         en 1 extra speler
                     {% elif request.seats > 2 %}
@@ -125,7 +125,7 @@
                     <img class="ui tiny avatar image" src="{{ request.player.picture }}">
                     <div class="content">
                         <p>
-                            <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a> ({{ request.player.age }} jaar) wenst mee te spelen
+                            <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a> wenst mee te spelen
                             {% if request.seats == 2 %}
                                 en brengt 1 extra speler mee
                             {% elif request.seats > 2 %}

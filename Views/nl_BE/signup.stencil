@@ -4,43 +4,32 @@
 
 {% block content %}
 <h1 class="ui dividing header">Welkom</h1>
+<h2>Gedragsregels</h2>
 <p>
-    Geef je geboortedatum in om je account aan te maken.
-    Deze informatie wordt gevraagd om het mogelijk te maken medespelers in je eigen leeftijdscategorie te zoeken.
+    TODO
 </p>
-<div class="ui warning message">
-    Accounts met een valse geboortedatum worden verwijderd!
-</div>
-<form class="ui form {% if error %}error{% endif %}" method="post" action="/authentication/signup">
+<p>
+    Het niet naleven van deze regels leidt tot een verwijdering en blokkering van je account.
+</p>
+<form class="ui form" method="post" action="/authentication/signup">
     <div class="field">
-        <label>Dag</label>
-        <input name="day" type="number" value="1" min="1" max="31" required>
+        <div class="ui checkbox">
+            <input type="checkbox" name="agree">
+            <label>Ik ga akkoord</label>
+        </div>
     </div>
-    <div class="field">
-        <label>Maand</label>
-        <select class="ui selection dropdown" name="month">
-            <option value="1" selected>Januari</option>
-            <option value="2">Februari</option>
-            <option value="3">Maart</option>
-            <option value="4">April</option>
-            <option value="5">Mei</option>
-            <option value="6">Juni</option>
-            <option value="7">Juli</option>
-            <option value="8">Augustus</option>
-            <option value="9">September</option>
-            <option value="10">Oktober</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
-        </select>
-    </div>
-    <div class="field">
-        <label>Jaar</label>
-        <input name="year" type="number" value="1987" required>
-    </div>
-    <button class="ui button" type="submit">Account aanmaken</button>
-    <div class="ui error message">
-        <div class="header">Account aanmaken mislukt</div>
-        <p>Geef een geldige datum in en probeer opnieuw.</p>
-    </div>
+    <button class="ui primary button" id="submit" type="submit" disabled>Account aanmaken</button>
 </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$("input[type='checkbox']").on("change", function() {
+    if (this.checked) {
+        $("#submit").removeAttr("disabled");
+    } else {
+        $("#submit").attr("disabled", true);
+    }
+});
+</script>
 {% endblock %}
