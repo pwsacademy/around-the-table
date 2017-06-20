@@ -45,23 +45,14 @@ struct GameViewContext: ViewContext {
     }
     
     func gameDataMapper(_ data: GameData) throws -> [String: Any] {
-        guard case .fixed(let playerCount) = data.playerCount else {
-            try logAndThrow(ServerError.invalidState)
-        }
-        var output: [String: Any] = [
+        return [
             "id": data.id,
             "name": data.name,
-            "playerCount": playerCount,
+            "playerCount": data.playerCount.upperBound,
+            "minPlayingTime": data.playingTime.lowerBound,
+            "maxPlayingTime": data.playingTime.upperBound,
             "picture": data.picture?.absoluteString ?? Settings.defaultGamePicture
         ]
-        switch data.playingTime {
-        case .average(time: let time):
-            output["playingTime"] = time
-        case .range(min: let minTime, max: let maxTime):
-            output["minPlayingTime"] = minTime
-            output["maxPlayingTime"] = maxTime
-        }
-        return output
     }
     
     func requestMapper(_ request: Request) throws -> [String: Any] {

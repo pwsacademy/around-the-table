@@ -15,13 +15,13 @@
                 <div class="header">{{ game.name }}</div>
                 <div class="meta">{{ game.year }}</div>
                 <div class="description">
-                    {% if game.playerCount %}
-                        <p><i class="user icon"></i> {{ game.playerCount }}</p>
+                    {% if game.minPlayerCount == game.maxPlayerCount %}
+                        <p><i class="user icon"></i> {{ game.minPlayerCount }}</p>
                     {% else %}
                         <p><i class="user icon"></i> {{ game.minPlayerCount }} - {{ game.maxPlayerCount }}</p>
                     {% endif %}
-                    {% if game.playingTime %}
-                        <p><i class="wait icon"></i> {{ game.playingTime }}</p>
+                    {% if game.minPlayingTime == game.maxPlayingTime %}
+                        <p><i class="wait icon"></i> {{ game.minPlayingTime }}</p>
                     {% else %}
                         <p><i class="wait icon"></i> {{ game.minPlayingTime }} - {{ game.maxPlayingTime }}</p>
                     {% endif %}

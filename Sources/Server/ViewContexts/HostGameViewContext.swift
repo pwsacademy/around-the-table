@@ -30,13 +30,8 @@ struct HostGameViewContext: ViewContext {
         if let prereservedSeats = prereservedSeats {
             contents["prereservedSeats"] = prereservedSeats
         } else {
-            // Calculate the possible number of seats to prereserve, making sure at least one seat is left.
-            switch game.playerCount {
-            case .fixed(amount: let players):
-                contents["prereservedSeatsOptions"] = Array(0..<players)
-            case .range(_, let max):
-                contents["prereservedSeatsOptions"] = Array(0..<max)
-            }
+            // Make sure at least one seat is left.
+            contents["prereservedSeatsOptions"] = Array(0..<game.playerCount.upperBound)
         }
         if error {
             contents["error"] = true
@@ -47,17 +42,15 @@ struct HostGameViewContext: ViewContext {
         var output: [String: Any] = [
             "id": game.id
         ]
-        if let names = game.names,
-           names.count > 1 {
+        if let names = game.names, names.count > 1 {
             output["nameOptions"] = names
         } else {
             output["name"] = game.name
         }
-        switch game.playerCount {
-        case .fixed(amount: let players):
-            output["playerCount"] = players
-        case .range(let min, let max):
-            output["playerCountOptions"] = Array(min...max)
+        if game.playerCount.count == 1 {
+            output["playerCount"] = game.playerCount.lowerBound
+        } else {
+            output["playerCountOptions"] = Array(game.playerCount)
         }
         return output
     }

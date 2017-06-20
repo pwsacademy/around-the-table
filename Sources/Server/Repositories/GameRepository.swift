@@ -98,10 +98,7 @@ struct GameRepository {
      Computes and adds the number of available (remaining) seats to a game.
      */
     private func addAvailableSeats(to game: Game) throws {
-        guard case .fixed(let playerCount) = game.data.playerCount else {
-            try logAndThrow(ServerError.invalidState)
-        }
         let approvedSeats = try RequestRepository().approvedSeats(for: game)
-        game.availableSeats = playerCount - game.prereservedSeats - approvedSeats
+        game.availableSeats = game.data.playerCount.upperBound - game.prereservedSeats - approvedSeats
     }
 }

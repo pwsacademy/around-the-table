@@ -1,18 +1,6 @@
 import Foundation
 import LoggerAPI
 
-enum PlayerCount {
-    
-    case fixed(amount: Int)
-    case range(min: Int, max: Int)
-}
-
-enum PlayingTime {
-    
-    case average(time: Int)
-    case range(min: Int, max: Int)
-}
-
 /*
  Game data gathered from BoardGameGeek.
  */
@@ -22,8 +10,8 @@ struct GameData {
     var name: String // Primary name. Replaced by the name selected by the user when hosting a game.
     var names: [String]? // All known names, primary and alternate. Can be removed once the user has selected a name to display.
     let yearPublished: Int
-    var playerCount: PlayerCount // Possible player counts. Replaced by the player count selected by the user when hosting a game.
-    let playingTime: PlayingTime
+    var playerCount: CountableClosedRange<Int> // Possible player counts. Replaced by the player count selected by the user when hosting a game.
+    let playingTime: CountableClosedRange<Int>
     let picture: URL?
     
     var thumbnail: URL? {
@@ -65,16 +53,14 @@ extension GameData {
               let maxPlayerCount = Int(maxPlayerCountString) else {
             try logAndThrow(BoardGameGeekError.missingElement(name: "maxplayers", id: id))
         }
-        let playerCount: PlayerCount = try {
+        let playerCount: CountableClosedRange<Int> = try {
             switch (minPlayerCount, maxPlayerCount) {
             case let (min, max) where min <= 0 && max <= 0:
                 try logAndThrow(BoardGameGeekError.invalidElement(name: "minplayers/maxplayers", id: id))
             case (let amount, 0), (0, let amount):
-                return .fixed(amount: amount)
-            case let (min, max) where min == max:
-                return .fixed(amount: min)
+                return amount...amount
             case let (min, max):
-                return .range(min: min, max: max)
+                return min...max
             }
         }()
         guard let minPlayingTimeString = try xml.nodes(forXPath: "minplaytime/@value").first?.stringValue,
@@ -85,16 +71,14 @@ extension GameData {
               let maxPlayingTime = Int(maxPlayingTimeString) else {
             try logAndThrow(BoardGameGeekError.missingElement(name: "maxplaytime", id: id))
         }
-        let playingTime: PlayingTime = try {
+        let playingTime: CountableClosedRange<Int> = try {
             switch (minPlayingTime, maxPlayingTime) {
             case let (min, max) where min <= 0 && max <= 0:
                 try logAndThrow(BoardGameGeekError.invalidElement(name: "minplaytime/maxplaytime", id: id))
             case (let time, 0), (0, let time):
-                return .average(time: time)
-            case let (min, max) where min == max:
-                return .average(time: min)
+                return time...time
             case let (min, max):
-                return .range(min: min, max: max)
+                return min...max
             }
         }()
         let picture: URL? = try {
@@ -151,32 +135,20 @@ extension GameData {
         guard let yearPublished = Int(bson["yearPublished"]) else {
             try logAndThrow(BSONError.missingField(name: "yearPublished"))
         }
-        let playerCount: PlayerCount = try {
-            if let players = Int(bson["players"]) {
-                return .fixed(amount: players)
-            } else {
-                guard let minPlayers = Int(bson["minPlayers"]) else {
-                    try logAndThrow(BSONError.missingField(name: "minPlayers"))
-                }
-                guard let maxPlayers = Int(bson["maxPlayers"]) else {
-                    try logAndThrow(BSONError.missingField(name: "maxPlayers"))
-                }
-                return .range(min: minPlayers, max: maxPlayers)
-            }
-        }()
-        let playingTime: PlayingTime = try {
-            if let playingtime = Int(bson["playingTime"]) {
-                return .average(time: playingtime)
-            } else {
-                guard let minPlayingTime = Int(bson["minPlayingTime"]) else {
-                    try logAndThrow(BSONError.missingField(name: "minPlayingTime"))
-                }
-                guard let maxPlayingTime = Int(bson["maxPlayingTime"]) else {
-                    try logAndThrow(BSONError.missingField(name: "maxPlayingTime"))
-                }
-                return .range(min: minPlayingTime, max: maxPlayingTime)
-            }
-        }()
+        guard let minPlayers = Int(bson["minPlayers"]) else {
+            try logAndThrow(BSONError.missingField(name: "minPlayers"))
+        }
+        guard let maxPlayers = Int(bson["maxPlayers"]) else {
+            try logAndThrow(BSONError.missingField(name: "maxPlayers"))
+        }
+        let playerCount = minPlayers...maxPlayers
+        guard let minPlayingTime = Int(bson["minPlayingTime"]) else {
+            try logAndThrow(BSONError.missingField(name: "minPlayingTime"))
+        }
+        guard let maxPlayingTime = Int(bson["maxPlayingTime"]) else {
+            try logAndThrow(BSONError.missingField(name: "maxPlayingTime"))
+        }
+        let playingTime = minPlayingTime...maxPlayingTime
         let picture: URL? = {
             if let urlString = String(bson["picture"]) {
                 return URL(string: urlString)
@@ -197,24 +169,14 @@ extension GameData {
         var bson: Document = [
             "_id": id,
             "name": name,
-            "yearPublished": yearPublished
+            "yearPublished": yearPublished,
+            "minPlayers": playerCount.lowerBound,
+            "maxPlayers": playerCount.upperBound,
+            "minPlayingTime": playingTime.lowerBound,
+            "maxPlayingTime": playingTime.upperBound
         ]
         if let names = names {
             bson["names"] = names
-        }
-        switch playerCount {
-        case .fixed(amount: let amount):
-            bson["players"] = amount
-        case .range(min: let min, max: let max):
-            bson["minPlayers"] = min
-            bson["maxPlayers"] = max
-        }
-        switch playingTime {
-        case .average(time: let time):
-            bson["playingTime"] = time
-        case .range(min: let min, max: let max):
-            bson["minPlayingTime"] = min
-            bson["maxPlayingTime"] = max
         }
         if let picture = picture {
             bson["picture"] = picture.absoluteString

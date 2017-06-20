@@ -20,8 +20,8 @@
                 <div class="ui huge dividing header">{{ data.name }}</div>
                 <div class="description">
                     <p><i class="user icon"></i> {{ data.playerCount }}</p>
-                    {% if data.playingTime %}
-                        <p><i class="wait icon"></i> {{ data.playingTime }}</p>
+                    {% if data.minPlayingTime == data.maxPlayingTime %}
+                        <p><i class="wait icon"></i> {{ data.minPlayingTime }}</p>
                     {% else %}
                         <p><i class="wait icon"></i> {{ data.minPlayingTime }} - {{ data.maxPlayingTime }}</p>
                     {% endif %}

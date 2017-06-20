@@ -35,8 +35,8 @@
                         </span>
                     {% endif %}
                     <i class="user icon"></i> {{ game.data.playerCount }}
-                    {% if game.data.playingTime %}
-                        <i class="wait icon"></i> {{ game.data.playingTime }}
+                    {% if game.data.minPlayingTime == game.data.maxPlayingTime %}
+                        <i class="wait icon"></i> {{ game.data.minPlayingTime }}
                     {% else %}
                         <i class="wait icon"></i> {{ game.data.minPlayingTime }} - {{ game.data.maxPlayingTime }}
                     {% endif %}
@@ -83,8 +83,8 @@
                         </span>
                     {% endif %}
                     <i class="user icon"></i> {{ game.data.playerCount }}
-                    {% if game.data.playingTime %}
-                        <i class="wait icon"></i> {{ game.data.playingTime }}
+                    {% if game.data.minPlayingTime == game.data.maxPlayingTime %}
+                        <i class="wait icon"></i> {{ game.data.minPlayingTime }}
                     {% else %}
                         <i class="wait icon"></i> {{ game.data.minPlayingTime }} - {{ game.data.maxPlayingTime }}
                     {% endif %}
@@ -133,8 +133,8 @@
                         <i class="marker icon"></i> {{ game.distance }}km
                     </span>
                     <i class="user icon"></i> {{ game.data.playerCount }}
-                    {% if game.data.playingTime %}
-                        <i class="wait icon"></i> {{ game.data.playingTime }}
+                    {% if game.data.minPlayingTime == game.data.maxPlayingTime %}
+                        <i class="wait icon"></i> {{ game.data.minPlayingTime }}
                     {% else %}
                         <i class="wait icon"></i> {{ game.data.minPlayingTime }} - {{ game.data.maxPlayingTime }}
                     {% endif %}

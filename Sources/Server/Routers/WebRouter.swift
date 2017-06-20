@@ -208,18 +208,11 @@ func configureWebRouter(using router: Router) {
         data.name = name
         data.names = nil
         // Make sure the player count is valid for the selected game.
-        switch data.playerCount {
-        case .fixed(let amount):
-            guard playerCount == amount else {
-                try logAndThrow(ServerError.invalidRequest)
-            }
-        case .range(let min, let max):
-            guard (min...max).contains(playerCount) else {
-                try logAndThrow(ServerError.invalidRequest)
-            }
-            // Update the game data to use the selected player count.
-            data.playerCount = .fixed(amount: playerCount)
+        guard data.playerCount.contains(playerCount) else {
+            try logAndThrow(ServerError.invalidRequest)
         }
+        // Update the game data to use the selected player count.
+        data.playerCount = playerCount...playerCount
         // Make sure the number of prereserved seats makes sense for the player count.
         // There should also be at least one seat left.
         guard (0..<playerCount).contains(prereservedSeats) else {

@@ -32,25 +32,18 @@ struct GamesPageViewContext: ViewContext {
     private func gameMapper(_ game: Game) throws -> [String: Any] {
         guard let id = game.id,
               let distance = game.location.distance,
-              let seats = game.availableSeats,
-              case .fixed(let amount) = game.data.playerCount else {
+              let seats = game.availableSeats else {
             try logAndThrow(ServerError.invalidState)
-        }
-        var data: [String: Any] = [
-            "name": game.data.name,
-            "playerCount": amount,
-            "picture": game.data.picture?.absoluteString ?? Settings.defaultGamePicture,
-        ]
-        switch game.data.playingTime {
-        case .average(time: let time):
-            data["playingTime"] = time
-        case .range(min: let minTime, max: let maxTime):
-            data["minPlayingTime"] = minTime
-            data["maxPlayingTime"] = maxTime
         }
         return [
             "id": id,
-            "data": data,
+            "data": [
+                "name": game.data.name,
+                "playerCount": game.data.playerCount.upperBound,
+                "minPlayingTime": game.data.playingTime.lowerBound,
+                "maxPlayingTime": game.data.playingTime.upperBound,
+                "picture": game.data.picture?.absoluteString ?? Settings.defaultGamePicture,
+            ],
             "date": formatted(game.date, dateStyle: .long),
             "host": [
                 "name": game.host.name,
