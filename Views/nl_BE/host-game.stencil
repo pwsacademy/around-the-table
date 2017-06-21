@@ -31,7 +31,7 @@
     <div class="field">
         <label>Aantal spelers</label>
         {% if game.playerCountOptions %}
-            <select class="ui selection dropdown" name="playerCount">
+            <select id="playerCount" class="ui selection dropdown" name="playerCount">
                 {% for playerCount in game.playerCountOptions %}
                     {% if playerCount == game.playerCountOptions|max %}
                         <option value="{{ playerCount }}" selected>{{ playerCount }}</option>
@@ -41,7 +41,7 @@
                 {% endfor %}
             </select>
         {% else %}
-            <input name="playerCount" type="text" value="{{ game.playerCount }}" readonly>
+            <input id="playerCount" name="playerCount" type="text" value="{{ game.playerCount }}" readonly>
         {% endif %}
         <p>Dit is het totaal aantal spelers, organisatoren meegerekend.</p>
     </div>
@@ -59,7 +59,7 @@
                         <div class="item" data-value="{{ seatCount }}">{{ seatCount }}</div>
                     {% endif %}
                 {% endfor %}
-                <!-- The default value of 1 will be selected in code later on. -->
+                <!-- The default value will be selected in code later on. -->
             </div>
         </div>
     </div>
@@ -126,17 +126,21 @@ var picker = new Pikaday({
         $("#year").val(date.getFullYear());
     },
     i18n: {
-        previousMonth : 'Vorige maand',
-        nextMonth     : 'Volgende maand',
-        months        : ['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'],
-        weekdays      : ['Zondag','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag'],
-        weekdaysShort : ['Zon','Ma','Di','Woe','Do','Vrij','Zat']
+        previousMonth : "Vorige maand",
+        nextMonth     : "Volgende maand",
+        months        : ["Januari","Februari","Maart","April","Mei","Juni","Juli","Augustus","September","Oktober","November","December"],
+        weekdays      : ["Zondag","Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag"],
+        weekdaysShort : ["Zon","Ma","Di","Woe","Do","Vrij","Zat"]
     }
 });
 
-$("#prereservedSeats").dropdown('set selected', 1);
+if ($("#prereservedSeats div.item").length > 1) {
+    $("#prereservedSeats").dropdown("set selected", "1");
+} else {
+    $("#prereservedSeats").dropdown("set selected", "0");
+}
 // Adjust the prereservedSeats options according to the selected playerCount.
-$("select[name='playerCount']").on("change", function() {
+$("#playerCount").on("change", function() {
     var playerCount = $(this).val();
     $("#prereservedSeats div.item").each(function() {
         var seatCount = $(this).attr("data-value");
@@ -150,7 +154,7 @@ $("select[name='playerCount']").on("change", function() {
     // If we disabled the selected option, select the highest non-disabled option.
     if (!$("#prereservedSeats div.active.selected").length) {
         var option = $("#prereservedSeats div.item").not(".disabled").last();
-        $("#prereservedSeats").dropdown('set selected', option.attr("data-value"));
+        $("#prereservedSeats").dropdown("set selected", option.attr("data-value"));
     }
 });
 
