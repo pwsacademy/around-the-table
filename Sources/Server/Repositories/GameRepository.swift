@@ -30,21 +30,21 @@ struct GameRepository {
     }
     
     func newestGames(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int) throws -> [Game] {
-        return try games(matching: ["date": ["$gt": Date()]],
+        return try games(matching: ["date": ["$gt": Date()], "deadline": ["$gt": Date()]],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["creationDate": .descending],
                          startingFrom: start, limitedTo: limit)
     }
     
     func upcomingGames(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int) throws -> [Game] {
-        return try games(matching: ["date": ["$gt": Date()]],
+        return try games(matching: ["date": ["$gt": Date()], "deadline": ["$gt": Date()]],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["date": .ascending, "location.distance": .ascending],
                          startingFrom: start, limitedTo: limit)
     }
     
     func gamesNearMe(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int) throws -> [Game] {
-        return try games(matching: ["date": ["$gt": Date()]],
+        return try games(matching: ["date": ["$gt": Date()], "deadline": ["$gt": Date()]],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["location.distance": .ascending, "date": .ascending],
                          startingFrom: start, limitedTo: limit)
