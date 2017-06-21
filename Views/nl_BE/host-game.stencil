@@ -46,6 +46,25 @@
         <p>Dit is het totaal aantal spelers, organisatoren meegerekend.</p>
     </div>
     <div class="field">
+        <label>Minimum aantal spelers</label>
+        <div class="ui selection dropdown" id="minPlayerCount">
+            <input type="hidden" name="minPlayerCount">
+            <i class="dropdown icon"></i>
+            <div class="text"></div>
+            <div class="menu">
+                {% if game.playerCountOptions %}
+                    {% for playerCount in game.playerCountOptions %}
+                        <div class="item" data-value="{{ playerCount }}">{{ playerCount }}</div>
+                    {% endfor %}
+                {% else %}
+                    <div class="item" data-value="{{ game.playerCount }}">{{ game.playerCount }}</div>
+                {% endif %}
+                <!-- The default value will be selected in code later on. -->
+            </div>
+        </div>
+        <p>Het minimum aantal spelers dat nodig is om het spel te laten doorgaan.</p>
+    </div>
+    <div class="field">
         <label>Aantal plaatsen te reserveren voor organisatoren</label>
         <div class="ui selection dropdown" id="prereservedSeats">
             <input type="hidden" name="prereservedSeats">
@@ -62,6 +81,7 @@
                 <!-- The default value will be selected in code later on. -->
             </div>
         </div>
+        <p>Dit aantal wordt afgetrokken van het totaal aantal spelers bij het berekenen van het aantal vrije plaatsen.</p>
     </div>
 
     <h2>Datum en tijdstip</h2>
@@ -85,18 +105,46 @@
             <input name="minute" type="number" value="{{ date.minute }}" min="0" max="59" required>
         </div>
     </div>
+    <div class="grouped fields">
+        <label>Deadline voor inschrijving</label>
+        <div class="field">
+            <div class="ui radio checkbox">
+                <input type="radio" name="deadline" value="one hour">
+                <label>een uur op voorhand</label>
+            </div>
+        </div>
+        <div class="field">
+            <div class="ui radio checkbox">
+                <input type="radio" name="deadline" value="one day" checked>
+                <label>een dag op voorhand</label>
+            </div>
+        </div>
+        <div class="field">
+            <div class="ui radio checkbox">
+                <input type="radio" name="deadline" value="two days">
+                <label>twee dagen op voorhand</label>
+            </div>
+        </div>
+        <div class="field">
+            <div class="ui radio checkbox">
+                <input type="radio" name="deadline" value="one week">
+                <label>een week op voorhand</label>
+            </div>
+        </div>
+        <p>Na het verstrijken van de deadline kan je als organisator nog steeds aanvragen goedkeuren of het spel annuleren.</p>
+    </div>
 
     <h2>Adres</h2>
     <p>Geef je volledige adres in. Deze adresgegevens worden getoond aan de spelers wiens aanvraag jij hebt goedkeurd.</p>
-    <p>
-        Maak gebruik van de automatische aanvulling en kies een adres uit de voorgestelde opties.
-        Er zal een aanduiding verschijnen op de kaart wanneer je adres correct is ingegeven.
-    </p>
     <div class="field">
         <input id="address" name="address" type="text" placeholder="Adres" required>
         <input id="latitude" name="latitude" type="hidden">
         <input id="longitude" name="longitude" type="hidden">
     </div>
+    <p>
+        Maak gebruik van de automatische aanvulling en kies een adres uit de voorgestelde opties.
+        Er zal een aanduiding verschijnen op de kaart wanneer je adres correct is ingegeven.
+    </p>
     <div id="map">
     </div>
 
@@ -133,15 +181,31 @@ var picker = new Pikaday({
         weekdaysShort : ["Zon","Ma","Di","Woe","Do","Vrij","Zat"]
     }
 });
-
+// Select the lowest possible minPlayerCount by default.
+$("#minPlayerCount").dropdown("set selected", $("#minPlayerCount div.item").first().attr("data-value"));
+// Set prereservedSeats to 1 by default. Set it to 0 for a single player game.
 if ($("#prereservedSeats div.item").length > 1) {
     $("#prereservedSeats").dropdown("set selected", "1");
 } else {
     $("#prereservedSeats").dropdown("set selected", "0");
 }
-// Adjust the prereservedSeats options according to the selected playerCount.
 $("#playerCount").on("change", function() {
     var playerCount = $(this).val();
+    // Adjust the minPlayerCount options.
+    $("#minPlayerCount div.item").each(function() {
+        var minPlayerCount = $(this).attr("data-value");
+        if (minPlayerCount <= playerCount) {
+            $(this).removeClass("disabled");
+        } else {
+            $(this).addClass("disabled");
+            $(this).removeClass("active selected");
+        }
+    });
+    // If we disabled the selected option, select the new playerCount.
+    if (!$("#minPlayerCount div.active.selected").length) {
+        $("#minPlayerCount").dropdown("set selected", playerCount);
+    }
+    // Adjust the prereservedSeats options.
     $("#prereservedSeats div.item").each(function() {
         var seatCount = $(this).attr("data-value");
         if (seatCount < playerCount) {

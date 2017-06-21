@@ -184,12 +184,14 @@ func configureWebRouter(using router: Router) {
               let idString = body["id"], let id = Int(idString),
               let name = body["name"],
               let playerCountString = body["playerCount"], let playerCount = Int(playerCountString),
+              let minPlayerCountString = body["minPlayerCount"], let minPlayerCount = Int(minPlayerCountString),
               let prereservedSeatsString = body["prereservedSeats"], let prereservedSeats = Int(prereservedSeatsString),
               let dayString = body["day"], let day = Int(dayString),
               let monthString = body["month"], let month = Int(monthString),
               let yearString = body["year"], let year = Int(yearString),
               let hourString = body["hour"], let hour = Int(hourString),
               let minuteString = body["minute"], let minute = Int(minuteString),
+              let deadlineType = body["deadline"],
               let address = body["address"], address.characters.count > 0,
               let latitudeString = body["latitude"], let latitude = Double(latitudeString),
               let longitudeString = body["longitude"], let longitude = Double(longitudeString),
@@ -207,20 +209,23 @@ func configureWebRouter(using router: Router) {
         // Update the game data to use the selected name.
         data.name = name
         data.names = nil
-        // Make sure the player count is valid for the selected game.
-        guard data.playerCount.contains(playerCount) else {
+        // Make sure the player counts are valid for the selected game.
+        guard data.playerCount.contains(playerCount),
+              data.playerCount.contains(minPlayerCount),
+              minPlayerCount <= playerCount else {
             try logAndThrow(ServerError.invalidRequest)
         }
-        // Update the game data to use the selected player count.
-        data.playerCount = playerCount...playerCount
-        // Make sure the number of prereserved seats makes sense for the player count.
+        // Update the game data to use the selected player counts.
+        data.playerCount = minPlayerCount...playerCount
+        // Make sure the number of prereserved seats makes sense for the selected player count.
         // There should also be at least one seat left.
         guard (0..<playerCount).contains(prereservedSeats) else {
             try logAndThrow(ServerError.invalidRequest)
         }
         // Make sure the date is valid and in the future.
+        let calendar = Calendar(identifier: .gregorian)
         var dateComponents = DateComponents()
-        dateComponents.calendar = Calendar(identifier: .gregorian)
+        dateComponents.calendar = calendar
         dateComponents.day = day
         dateComponents.month = month
         dateComponents.year = year
@@ -230,6 +235,23 @@ func configureWebRouter(using router: Router) {
         guard dateComponents.isValidDate,
               let date = dateComponents.date,
               date.compare(Date()) == .orderedDescending else {
+            try logAndThrow(ServerError.invalidRequest)
+        }
+        // Calculate the deadline and make sure it is in the future.
+        let deadline: Date
+        switch deadlineType {
+        case "one hour":
+            deadline = calendar.date(byAdding: .hour, value: -1, to: date)!
+        case "one day":
+            deadline = calendar.date(byAdding: .day, value: -1, to: date)!
+        case "two days":
+            deadline = calendar.date(byAdding: .day, value: -2, to: date)!
+        case "one week":
+            deadline = calendar.date(byAdding: .weekOfYear, value: -1, to: date)!
+        default:
+            try logAndThrow(ServerError.invalidRequest)
+        }
+        guard deadline.compare(Date()) == .orderedDescending else {
             try logAndThrow(ServerError.invalidRequest)
         }
         guard let hostID = request.userProfile?.id else {
@@ -242,6 +264,7 @@ func configureWebRouter(using router: Router) {
                         prereservedSeats: prereservedSeats,
                         data: data,
                         date: date,
+                        deadline: deadline,
                         location: Location(address: address, latitude: latitude, longitude: longitude),
                         info: info)
         try GameRepository().add(game)

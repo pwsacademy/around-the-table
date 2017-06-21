@@ -8,28 +8,31 @@ final class Game {
     let prereservedSeats: Int // Used when the hosts wants to reserve seats.
     let data: GameData
     let date: Date
+    let deadline: Date // Deadline for submitting requests.
     let location: Location
     let info: String
     
     var availableSeats: Int? // Calculated and set by the repository. Not persisted.
     
-    init(host: User, prereservedSeats: Int = 1, data: GameData, date: Date, location: Location, info: String = "") {
+    init(host: User, prereservedSeats: Int = 1, data: GameData, date: Date, deadline: Date, location: Location, info: String = "") {
         creationDate = Date()
         self.host = host
         self.prereservedSeats = prereservedSeats
         self.data = data
         self.date = date
+        self.deadline = deadline
         self.location = location
         self.info = info
     }
     
-    fileprivate init(id: String, creationDate: Date, host: User, prereservedSeats: Int, data: GameData, date: Date, location: Location, info: String) {
+    fileprivate init(id: String, creationDate: Date, host: User, prereservedSeats: Int, data: GameData, date: Date, deadline: Date, location: Location, info: String) {
         self.id = id
         self.creationDate = creationDate
         self.host = host
         self.prereservedSeats = prereservedSeats
         self.data = data
         self.date = date
+        self.deadline = deadline
         self.location = location
         self.info = info
     }
@@ -63,6 +66,9 @@ extension Game {
         guard let date = Date(bson["date"]) else {
             try logAndThrow(BSONError.missingField(name: "date"))
         }
+        guard let deadline = Date(bson["deadline"]) else {
+            try logAndThrow(BSONError.missingField(name: "deadline"))
+        }
         guard let location = Document(bson["location"]) else {
             try logAndThrow(BSONError.missingField(name: "location"))
         }
@@ -75,6 +81,7 @@ extension Game {
                   prereservedSeats: prereservedSeats,
                   data: try GameData(bson: data),
                   date: date,
+                  deadline: deadline,
                   location: try Location(bson: location),
                   info: info)
     }
@@ -86,6 +93,7 @@ extension Game {
             "prereservedSeats": prereservedSeats,
             "data": data.toBSON(),
             "date": date,
+            "deadline": deadline,
             "location": location.toBSON(),
             "info": info
         ]
