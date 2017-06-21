@@ -141,7 +141,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
 //        }
 //        var dummy = try UserRepository().user(withID: id)
 //        if dummy == nil {
-//            dummy = User(id: id, name: id, dateOfBirth: Date(), picture: nil)
+//            dummy = User(id: id, name: id, picture: nil)
 //            try UserRepository().add(dummy!)
 //        }
 //        session["userProfile"] = JSON([
@@ -149,6 +149,12 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
 //            "displayName": dummy!.name,
 //            "provider": "dummy"
 //        ])
+//        session["coordinates"] = JSON([
+//            "latitude": Settings.defaultCoordinates.latitude,
+//            "longitude": Settings.defaultCoordinates.longitude,
+//            "geolocated": false
+//        ])
+//        try response.redirect("/web/home")
 //        next()
 //    }
     
