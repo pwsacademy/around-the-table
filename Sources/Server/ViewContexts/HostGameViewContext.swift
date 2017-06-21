@@ -8,7 +8,7 @@ struct HostGameViewContext: ViewContext {
     let base: [String: Any]
     var contents: [String: Any] = [:]
     
-    init(base: [String: Any], game: GameData, prereservedSeats: Int? = nil, info: String = "", error: Bool = false) {
+    init(base: [String: Any], game: GameData) {
         self.base = base
         let calendar = Calendar(identifier: .gregorian)
         // Default to tomorrow at 19:00.
@@ -25,17 +25,8 @@ struct HostGameViewContext: ViewContext {
                 "hour": dateComponents.hour!,
                 "minute": dateComponents.minute!
             ],
-            "info": info
+            "prereservedSeatsOptions": Array(0..<game.playerCount.upperBound) // Make sure at least one seat is left.
         ]
-        if let prereservedSeats = prereservedSeats {
-            contents["prereservedSeats"] = prereservedSeats
-        } else {
-            // Make sure at least one seat is left.
-            contents["prereservedSeatsOptions"] = Array(0..<game.playerCount.upperBound)
-        }
-        if error {
-            contents["error"] = true
-        }
     }
     
     private func gameDataMapper(_ game: GameData) -> [String: Any] {

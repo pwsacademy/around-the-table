@@ -230,15 +230,7 @@ func configureWebRouter(using router: Router) {
         guard dateComponents.isValidDate,
               let date = dateComponents.date,
               date.compare(Date()) == .orderedDescending else {
-            try response.render("\(Settings.locale)/host-game", context: HostGameViewContext(
-                base: request.userInfo,
-                game: data,
-                prereservedSeats: prereservedSeats,
-                info: info,
-                error: true
-            ))
-            next()
-            return
+            try logAndThrow(ServerError.invalidRequest)
         }
         guard let hostID = request.userProfile?.id else {
             try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))

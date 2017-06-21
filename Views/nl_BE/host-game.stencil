@@ -13,12 +13,7 @@
 {% block content %}
 <h1 class="ui dividing header">Organiseer een spel</h1>
 <p>Vul het onderstaande formulier in om je spel aan te maken.</p>
-<form class="ui form {% if error %}error{% endif %}" method="post" action="/web/host-game">
-    <div class="ui error message">
-        <div class="header">Spel aanmaken mislukt</div>
-        <p>Geef een geldige datum in en probeer opnieuw. Je zal ook je adres opnieuw moeten ingeven.<p>
-    </div>
-
+<form class="ui form" method="post" action="/web/host-game">
     <h2>Spel</h2>
     <input name="id" type="hidden" value="{{ game.id }}">
     <div class="field">
@@ -52,25 +47,21 @@
     </div>
     <div class="field">
         <label>Aantal plaatsen te reserveren voor organisatoren</label>
-        {% if prereservedSeatsOptions %}
-            <div class="ui selection dropdown" id="prereservedSeats">
-                <input type="hidden" name="prereservedSeats">
-                <i class="dropdown icon"></i>
-                <div class="text"></div>
-                <div class="menu">
-                    {% for seatCount in prereservedSeatsOptions %}
-                        {% if seatCount == 0 %}
-                            <div class="item" data-value="{{ seatCount }}">Geen (ik neem niet deel)</div>
-                        {% else %}
-                            <div class="item" data-value="{{ seatCount }}">{{ seatCount }}</div>
-                        {% endif %}
-                    {% endfor %}
-                    <!-- The default value of 1 will be selected in code later on. -->
-                </div>
+        <div class="ui selection dropdown" id="prereservedSeats">
+            <input type="hidden" name="prereservedSeats">
+            <i class="dropdown icon"></i>
+            <div class="text"></div>
+            <div class="menu">
+                {% for seatCount in prereservedSeatsOptions %}
+                    {% if seatCount == 0 %}
+                        <div class="item" data-value="{{ seatCount }}">Geen (ik neem niet deel)</div>
+                    {% else %}
+                        <div class="item" data-value="{{ seatCount }}">{{ seatCount }}</div>
+                    {% endif %}
+                {% endfor %}
+                <!-- The default value of 1 will be selected in code later on. -->
             </div>
-        {% else %}
-            <input name="prereservedSeats" type="text" value="{{ prereservedSeats }}" readonly>
-        {% endif %}
+        </div>
     </div>
 
     <h2>Datum en tijdstip</h2>
@@ -111,7 +102,7 @@
 
     <h2>Extra informatie</h2>
     <div class="field">
-        <textarea name="info" rows="8">{{ info }}</textarea>
+        <textarea name="info" rows="8"></textarea>
     </div>
     <button class="ui button" type="submit" disabled>Spel aanmaken</button>
 </form>
