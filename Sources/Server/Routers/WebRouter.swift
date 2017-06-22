@@ -293,7 +293,8 @@ func configureWebRouter(using router: Router) {
         }
         let location = Location(address: "", latitude: latitude, longitude: longitude)
         guard let id = request.parameters["id"],
-              let game = try GameRepository().game(withID: id, withDistanceMeasuredFrom: location) else {
+              let game = try GameRepository().game(withID: id, withDistanceMeasuredFrom: location),
+              game.date.compare(Date()) == .orderedDescending else {
             try logAndThrow(ServerError.invalidRequest)
         }
         let requests = try RequestRepository().requests(for: game)

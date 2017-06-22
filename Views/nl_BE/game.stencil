@@ -76,33 +76,41 @@
         {% endfor %}
     </div>
 {% endif %}
-{% if userIsPlayer or userIsHost %}
-    {% if availableSeats < 1 %}
-        <p>Dit spel is volzet.</p>
-    {% elif availableSeats == 1 %}
+{% if availableSeats < 1 %}
+    <p>Dit spel is volzet.</p>
+{% elif userHasRequested and not userIsPlayer %}
+    <p><i class="large hourglass empty icon"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
+{% else %}
+    {% if availableSeats == 1 %}
         <p>Er is nog 1 plaats beschikbaar.</p>
     {% else %}
         <p>Er zijn nog {{ availableSeats }} plaatsen beschikbaar.</p>
     {% endif %}
-{% elif userHasRequested %}
-    <p><i class="large hourglass empty icon"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
-{% else %}
-    {% if availableSeats < 1 %}
-        <p>Dit spel is volzet.</p>
+    {% if deadlineHasPassed %}
+        <p>Inschrijven voor dit spel is niet meer mogelijk.</p>
     {% else %}
-        <p>Wens je mee te spelen?</p>
-        <form class="ui form" method="post" action="/web/requests">
-            <input type="hidden" name="game" value="{{ id }}">
-            <div class="ui left action input">
-                <select class="ui compact selection dropdown" name="seats">
-                    {% for seat in seatOptions %}
-                        <option value="{{ seat }}">{{ seat }}</option>
-                    {% endfor %}
-                </select>
-                <input id="seatsText" type="text" value="plaats" readonly>
-            </div>
-            <button class="ui right attached button" type="submit">aanvragen</button>
-        </form>
+        <p>Inschrijven is mogelijk tot {{ deadlineDate }} om {{ deadlineTime }}.</p>
+        {% if not userIsPlayer and not userIsHost %}
+            <form class="ui form" method="post" action="/web/requests" style="margin: 1em 0em">
+                <input type="hidden" name="game" value="{{ id }}">
+                <div class="ui left action input">
+                    <select class="ui compact selection dropdown" name="seats">
+                        {% for seat in seatOptions %}
+                            <option value="{{ seat }}">{{ seat }}</option>
+                        {% endfor %}
+                    </select>
+                    <input id="seatsText" type="text" value="plaats" readonly>
+                </div>
+                <button class="ui right attached button" type="submit">aanvragen</button>
+            </form>
+        {% endif %}
+    {% endif %}
+    {% if not minPlayerCountIsReached %}
+        {% if data.minPlayerCount == 1 %}
+            <p>Dit spel gaat door vanaf 1 speler.</p>
+        {% else %}
+            <p>Dit spel gaat door vanaf {{ data.minPlayerCount }} spelers.</p>
+        {% endif %}
     {% endif %}
 {% endif %}
 
