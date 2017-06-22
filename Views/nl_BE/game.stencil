@@ -47,6 +47,10 @@
         en {{ prereservedSeats|previous }} extra personen
     {% endif %}
 </p>
+{% if info %}
+    <h2>Extra informatie</h2>
+    <p>{{ info }}</p>
+{% endif %}
 
 <h2>Adres</h2>
 <p>

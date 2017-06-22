@@ -266,7 +266,7 @@ func configureWebRouter(using router: Router) {
                         date: date,
                         deadline: deadline,
                         location: Location(address: address, latitude: latitude, longitude: longitude),
-                        info: info)
+                        info: info.trimmingCharacters(in: .whitespacesAndNewlines))
         try GameRepository().add(game)
         guard let gameID = game.id else {
             try logAndThrow(ServerError.invalidState)

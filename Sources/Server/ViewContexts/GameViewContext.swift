@@ -29,6 +29,7 @@ struct GameViewContext: ViewContext {
                 "longitude": game.location.longitude,
                 "distance": Int(ceil(distance / 1000))
             ],
+            "info": game.info,
             "date": formatted(game.date, dateStyle: .full),
             "time": formatted(game.date, timeStyle: .short),
             "deadlineDate": formatted(game.deadline, dateStyle: .full),
