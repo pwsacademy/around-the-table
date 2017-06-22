@@ -17,7 +17,7 @@ struct MessagesViewContext: ViewContext {
     
     private func messageMapper(_ message: Message) throws -> [String: Any] {
         var output: [String: Any] = [
-            "creationDate": formatted(message.creationDate, dateStyle: .long, timeStyle: .none),
+            "creationDate": formatted(message.creationDate, dateStyle: .long, timeStyle: .short),
             "category": message.category.description
         ]
         switch message.category {
@@ -32,7 +32,7 @@ struct MessagesViewContext: ViewContext {
             ]
             output["game"] = [
                 "name": request.game.data.name,
-                "date": formatted(request.game.date, dateStyle: .long, timeStyle: .none)
+                "date": formatted(request.game.date, dateStyle: .full)
             ]
         case .requestApproved(let request):
             guard let gameID = request.game.id else {
@@ -45,7 +45,7 @@ struct MessagesViewContext: ViewContext {
             ]
             output["game"] = [
                 "name": request.game.data.name,
-                "date": formatted(request.game.date, dateStyle: .long, timeStyle: .none)
+                "date": formatted(request.game.date, dateStyle: .full)
             ]
         }
         return output
