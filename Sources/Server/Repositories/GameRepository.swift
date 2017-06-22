@@ -21,39 +21,33 @@ struct GameRepository {
                              sortedBy: ["creationDate": .descending],
                              startingFrom: 0, limitedTo: 1).first
         } else {
-            guard let game = try collection(.games).findOne(["_id": ObjectId(id)]).map({ try Game(bson: $0) }) else {
-                return nil
-            }
-            try addAvailableSeats(to: game)
-            return game
+            return try collection(.games).findOne(["_id": ObjectId(id)]).map { try Game(bson: $0) }
         }
     }
     
     func newestGames(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int) throws -> [Game] {
-        return try games(matching: ["date": ["$gt": Date()], "deadline": ["$gt": Date()]],
+        return try games(matching: ["date": ["$gt": Date()], "deadline": ["$gt": Date()], "availableSeats": ["$gt": 0]],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["creationDate": .descending],
                          startingFrom: start, limitedTo: limit)
     }
     
     func upcomingGames(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int) throws -> [Game] {
-        return try games(matching: ["date": ["$gt": Date()], "deadline": ["$gt": Date()]],
+        return try games(matching: ["date": ["$gt": Date()], "deadline": ["$gt": Date()], "availableSeats": ["$gt": 0]],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["date": .ascending, "location.distance": .ascending],
                          startingFrom: start, limitedTo: limit)
     }
     
     func gamesNearMe(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int) throws -> [Game] {
-        return try games(matching: ["date": ["$gt": Date()], "deadline": ["$gt": Date()]],
+        return try games(matching: ["date": ["$gt": Date()], "deadline": ["$gt": Date()], "availableSeats": ["$gt": 0]],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["location.distance": .ascending, "date": .ascending],
                          startingFrom: start, limitedTo: limit)
     }
     
     func games(hostedBy host: User) throws -> [Game] {
-        let games = try collection(.games).find(["host": host.id, "date": ["$gt": Date()]], sortedBy: ["date": .ascending]).map { try Game(bson: $0) }
-        try games.forEach(addAvailableSeats(to:))
-        return games
+        return try collection(.games).find(["host": host.id, "date": ["$gt": Date()]], sortedBy: ["date": .ascending]).map { try Game(bson: $0) }
     }
     
     func games(joinedBy player: User, withDistanceMeasuredFrom location: Location) throws -> [Game] {
@@ -89,16 +83,6 @@ struct GameRepository {
             )),
             .sort(sort)
         ]).dropFirst(start).prefix(limit)
-        let games = try results.map { try Game(bson: $0) }
-        try games.forEach(addAvailableSeats(to:))
-        return games
-    }
-    
-    /*
-     Computes and adds the number of available (remaining) seats to a game.
-     */
-    private func addAvailableSeats(to game: Game) throws {
-        let approvedSeats = try RequestRepository().approvedSeats(for: game)
-        game.availableSeats = game.data.playerCount.upperBound - game.prereservedSeats - approvedSeats
+        return try results.map { try Game(bson: $0) }
     }
 }

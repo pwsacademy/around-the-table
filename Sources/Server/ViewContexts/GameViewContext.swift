@@ -10,8 +10,7 @@ struct GameViewContext: ViewContext {
     
     init(base: [String: Any], user: User, game: Game, requests: [Request]) throws {
         guard let id = game.id,
-              let distance = game.location.distance,
-              let availableSeats = game.availableSeats else {
+              let distance = game.location.distance else {
             try logAndThrow(ServerError.invalidState)
         }
         self.base = base
@@ -36,16 +35,16 @@ struct GameViewContext: ViewContext {
             "deadlineTime": formatted(game.deadline, timeStyle: .short),
             "deadlineHasPassed": game.deadline.compare(Date()) == .orderedAscending,
             "prereservedSeats": game.prereservedSeats,
-            "availableSeats": availableSeats,
-            "minPlayerCountIsReached": game.data.playerCount.upperBound - availableSeats >= game.data.playerCount.lowerBound,
+            "availableSeats": game.availableSeats,
+            "minPlayerCountIsReached": game.data.playerCount.upperBound - game.availableSeats >= game.data.playerCount.lowerBound,
             "approvedRequests": try requests.filter { $0.approved }.map { try requestMapper($0) },
-            "requests": try requests.filter { !$0.approved }.map { try requestMapper($0).appending(["willCauseOverbooking": $0.seats > availableSeats]) },
+            "requests": try requests.filter { !$0.approved }.map { try requestMapper($0).appending(["willCauseOverbooking": $0.seats > game.availableSeats]) },
             "userIsPlayer": requests.filter { $0.approved }.contains { $0.player == user },
             "userIsHost": game.host == user,
             "userHasRequested": requests.contains { $0.player == user }
         ]
-        if availableSeats > 0 {
-            contents["seatOptions"] = Array(1...availableSeats)
+        if game.availableSeats > 0 {
+            contents["seatOptions"] = Array(1...game.availableSeats)
         }
     }
     

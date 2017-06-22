@@ -60,10 +60,13 @@ struct RequestRepository {
     }
     
     func approve(_ request: Request) throws {
-        guard let id = request.id else {
+        guard let id = request.id,
+              let gameID = request.game.id else {
             try logAndThrow(ServerError.unpersistedEntity)
         }
         request.approved = true
         try collection(.requests).update(["_id": try ObjectId(id)], to: ["$set": ["approved": true]])
+        request.game.availableSeats = max(request.game.availableSeats - request.seats, 0)
+        try collection(.games).update(["_id": try ObjectId(gameID)], to: ["$set": ["availableSeats": request.game.availableSeats]])
     }
 }

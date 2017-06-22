@@ -17,8 +17,7 @@ struct MyGamesViewContext: ViewContext {
     }
     
     private func hostedGameMapper(_ game: Game) throws -> [String: Any] {
-        guard let id = game.id,
-              let availableSeats = game.availableSeats else {
+        guard let id = game.id else {
             try logAndThrow(ServerError.invalidState)
         }
         let players = try UserRepository().players(for: game)
@@ -34,15 +33,14 @@ struct MyGamesViewContext: ViewContext {
             ],
             "date": formatted(game.date, dateStyle: .full),
             "players": players.map { ["picture": $0.picture?.absoluteString ?? Settings.defaultProfilePicture ] },
-            "availableSeats": availableSeats,
+            "availableSeats": game.availableSeats,
             "requests": requests
         ]
     }
     
     private func playingGameMapper(_ game: Game) throws -> [String: Any] {
         guard let id = game.id,
-              let distance = game.location.distance,
-              let availableSeats = game.availableSeats else {
+              let distance = game.location.distance else {
             try logAndThrow(ServerError.invalidState)
         }
         let players = try UserRepository().players(for: game)
@@ -61,7 +59,7 @@ struct MyGamesViewContext: ViewContext {
             ],
             "date": formatted(game.date, dateStyle: .full),
             "players": players.map { ["picture": $0.picture?.absoluteString ?? Settings.defaultProfilePicture ] },
-            "availableSeats": availableSeats,
+            "availableSeats": game.availableSeats,
             "distance": Int(ceil(distance / 1000))
         ]
     }

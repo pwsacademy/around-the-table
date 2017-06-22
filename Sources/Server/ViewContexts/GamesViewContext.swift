@@ -19,8 +19,7 @@ struct GamesViewContext: ViewContext {
     
     private func gameMapper(_ game: Game) throws -> [String: Any] {
         guard let id = game.id,
-              let distance = game.location.distance,
-              let seats = game.availableSeats else {
+              let distance = game.location.distance else {
             try logAndThrow(ServerError.invalidState)
         }
         return [
@@ -38,7 +37,7 @@ struct GamesViewContext: ViewContext {
                 "picture": game.host.picture?.absoluteString ?? Settings.defaultProfilePicture
             ],
             "distance": Int(ceil(distance / 1000)),
-            "seats": seats
+            "seats": game.availableSeats
         ]
     }
 }

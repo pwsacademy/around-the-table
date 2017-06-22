@@ -321,10 +321,7 @@ func configureWebRouter(using router: Router) {
               seats >= 1 else {
             try logAndThrow(ServerError.invalidRequest)
         }
-        guard let availableSeats = game.availableSeats else {
-            try logAndThrow(ServerError.invalidState)
-        }
-        guard seats <= availableSeats else {
+        guard seats <= game.availableSeats else {
             try logAndThrow(ServerError.invalidRequest)
         }
         guard let userID = routerRequest.userProfile?.id else {

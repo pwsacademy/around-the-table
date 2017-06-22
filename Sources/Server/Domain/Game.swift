@@ -6,18 +6,18 @@ final class Game {
     let creationDate: Date
     let host: User
     let prereservedSeats: Int // Used when the hosts wants to reserve seats.
+    var availableSeats: Int // Denormalized, required to filter out games that are fully booked.
     let data: GameData
     let date: Date
     let deadline: Date // Deadline for submitting requests.
     let location: Location
     let info: String
     
-    var availableSeats: Int? // Calculated and set by the repository. Not persisted.
-    
     init(host: User, prereservedSeats: Int = 1, data: GameData, date: Date, deadline: Date, location: Location, info: String = "") {
         creationDate = Date()
         self.host = host
         self.prereservedSeats = prereservedSeats
+        availableSeats = data.playerCount.upperBound - prereservedSeats
         self.data = data
         self.date = date
         self.deadline = deadline
@@ -25,11 +25,12 @@ final class Game {
         self.info = info
     }
     
-    fileprivate init(id: String, creationDate: Date, host: User, prereservedSeats: Int, data: GameData, date: Date, deadline: Date, location: Location, info: String) {
+    fileprivate init(id: String, creationDate: Date, host: User, prereservedSeats: Int, availableSeats: Int, data: GameData, date: Date, deadline: Date, location: Location, info: String) {
         self.id = id
         self.creationDate = creationDate
         self.host = host
         self.prereservedSeats = prereservedSeats
+        self.availableSeats = availableSeats
         self.data = data
         self.date = date
         self.deadline = deadline
@@ -60,6 +61,9 @@ extension Game {
         guard let prereservedSeats = Int(bson["prereservedSeats"]) else {
             try logAndThrow(BSONError.missingField(name: "prereservedSeats"))
         }
+        guard let availableSeats = Int(bson["availableSeats"]) else {
+            try logAndThrow(BSONError.missingField(name: "availableSeats"))
+        }
         guard let data = Document(bson["data"]) else {
             try logAndThrow(BSONError.missingField(name: "data"))
         }
@@ -79,6 +83,7 @@ extension Game {
                   creationDate: creationDate,
                   host: host,
                   prereservedSeats: prereservedSeats,
+                  availableSeats: availableSeats,
                   data: try GameData(bson: data),
                   date: date,
                   deadline: deadline,
@@ -91,6 +96,7 @@ extension Game {
             "creationDate": creationDate,
             "host": host.id,
             "prereservedSeats": prereservedSeats,
+            "availableSeats": availableSeats,
             "data": data.toBSON(),
             "date": date,
             "deadline": deadline,
