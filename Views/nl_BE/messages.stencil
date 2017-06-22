@@ -1,6 +1,13 @@
 {% extends "base.stencil" %}
 
 {% block title %}{{ block.super }} - Berichten{% endblock %}
+{% block header %}
+<style>
+.ui.icon.message > i.icon {
+    width: 42px !important;
+}
+</style>
+{% endblock %}
 
 {% block content %}
 <h1 class="ui dividing header">Berichten</h1>
@@ -11,7 +18,12 @@
                 <i class="help icon"></i>
                 <div class="content">
                     <img class="ui right floated mini circular image" src="{{ message.sender.picture }}">
-                    <div class="header">{{ message.creationDate }}</div>
+                    <div class="header">
+                        {{ message.creationDate }}
+                        {% if not message.read %}
+                            <i class="red asterisk icon"></i>
+                        {% endif %}
+                    </div>
                     <p>
                         {{ message.sender.name }} wenst deel te nemen aan {{ message.game.name }} op {{ message.game.date }}.
                     </p>
@@ -22,7 +34,12 @@
                 <i class="checkmark icon"></i>
                 <div class="content">
                     <img class="ui right floated mini circular image" src="{{ message.sender.picture }}">
-                    <div class="header">{{ message.creationDate }}</div>
+                    <div class="header">
+                        {{ message.creationDate }}
+                        {% if not message.read %}
+                            <i class="red asterisk icon"></i>
+                        {% endif %}
+                    </div>
                     <p>
                         {{ message.sender.name }} heeft je aanvraag om deel te te nemen aan {{ message.game.name }} op {{ message.game.date }} goedgekeurd.
                     </p>
@@ -31,6 +48,6 @@
         {% endif %}
     {% endfor %}
 {% else %}
-    <p>Geen nieuwe berichten.</p>
+    <p>Geen berichten.</p>
 {% endif %}
 {% endblock %}

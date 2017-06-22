@@ -403,7 +403,7 @@ func configureWebRouter(using router: Router) {
         guard let user = try UserRepository().user(withID: userID) else {
             try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
-        let messages = try MessageRepository().unreadMessages(for: user)
+        let messages = try MessageRepository().messages(for: user)
         try response.render("\(Settings.locale)/messages", context: try MessagesViewContext(
             base: request.userInfo,
             messages: messages

@@ -18,7 +18,8 @@ struct MessagesViewContext: ViewContext {
     private func messageMapper(_ message: Message) throws -> [String: Any] {
         var output: [String: Any] = [
             "creationDate": formatted(message.creationDate, dateStyle: .long, timeStyle: .short),
-            "category": message.category.description
+            "category": message.category.description,
+            "read": message.read
         ]
         switch message.category {
         case .requestReceived(let request):

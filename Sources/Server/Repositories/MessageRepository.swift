@@ -1,3 +1,4 @@
+import Foundation
 import MongoKitten
 
 struct MessageRepository {
@@ -16,9 +17,14 @@ struct MessageRepository {
         return try collection(.messages).count(["recipient": user.id, "read": false])
     }
     
-    func unreadMessages(`for` user: User) throws -> [Message] {
-        let results = try collection(.messages).find(["recipient": user.id, "read": false], sortedBy: ["creationDate": .descending])
-        return try results.map { try Message(bson: $0) }
+    func messages(`for` user: User) throws -> [Message] {
+        let results = try collection(.messages).find(["recipient": user.id], sortedBy: ["creationDate": .descending])
+        return try results.map { try Message(bson: $0) }.filter {
+            switch $0.category {
+            case .requestApproved(let request), .requestReceived(let request):
+                return request.game.date.compare(Date()) == .orderedDescending
+            }
+        }
     }
     
     func markAsRead(_ messages: [Message]) throws {
