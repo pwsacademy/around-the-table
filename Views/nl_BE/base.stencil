@@ -49,7 +49,8 @@
     </div>
     <footer class="ui center aligned very padded basic segment">
         © 2017 - Steven Van Impe<br>
-        Broncode beschikbaar op <a href="https://github.com/svanimpe/around-the-table.git">GitHub</a>
+        Like ons op <a href="https://www.facebook.com/ronddetafelsite">Facebook</a> <i class="thumbs outline up icon"></i><br>
+        Broncode beschikbaar op <a href="https://github.com/svanimpe/around-the-table.git">GitHub</a> <i class="github icon"></i>
     </footer>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
