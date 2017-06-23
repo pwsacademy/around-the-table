@@ -77,6 +77,22 @@
                     </p>
                 </div>
             </a>
+        {% elif message.category == "hostCancelledGame" %}
+            <div class="ui negative icon message">
+                <i class="remove icon"></i>
+                <div class="content">
+                    <img class="ui right floated mini circular image" src="{{ message.sender.picture }}">
+                    <div class="header">
+                        {{ message.creationDate }}
+                        {% if not message.read %}
+                            <i class="red asterisk icon"></i>
+                        {% endif %}
+                    </div>
+                    <p>
+                        {{ message.sender.name }} heeft het spel {{ message.game.name }} op {{ message.game.date }} geannuleerd.
+                    </p>
+                </div>
+            </div>
         {% endif %}
     {% endfor %}
 {% else %}

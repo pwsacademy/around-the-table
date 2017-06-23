@@ -22,6 +22,15 @@ struct MessagesViewContext: ViewContext {
             "read": message.read
         ]
         switch message.category {
+        case .hostCancelledGame(let game):
+            output["sender"] = [
+                "name": game.host.name,
+                "picture": game.host.picture?.absoluteString ?? Settings.defaultProfilePicture
+            ]
+            output["game"] = [
+                "name": game.data.name,
+                "date": formatted(game.date, dateStyle: .full)
+            ]
         case .requestReceived(let request), .playerCancelledRequest(let request):
             guard let gameID = request.game.id else {
                 try logAndThrow(ServerError.invalidState)

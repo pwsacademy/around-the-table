@@ -4,6 +4,7 @@ final class Message {
     
     enum Category {
         
+        case hostCancelledGame(Game)
         case hostCancelledRequest(Request)
         case playerCancelledRequest(Request)
         case requestApproved(Request)
@@ -11,6 +12,8 @@ final class Message {
         
         var description: String {
             switch self {
+            case .hostCancelledGame:
+                return "hostCancelledGame"
             case .hostCancelledRequest:
                 return "hostCancelledRequest"
             case .playerCancelledRequest:
@@ -63,6 +66,14 @@ extension Message {
                 try logAndThrow(BSONError.missingField(name: "category"))
             }
             switch category {
+            case "hostCancelledGame":
+                guard let gameID = String(bson["game"]) else {
+                    try logAndThrow(BSONError.missingField(name: "game"))
+                }
+                guard let game = try GameRepository().game(withID: gameID) else {
+                    try logAndThrow(BSONError.invalidField(name: "game"))
+                }
+                return Category.hostCancelledGame(game)
             case "hostCancelledRequest":
                 guard let requestID = String(bson["request"]) else {
                     try logAndThrow(BSONError.missingField(name: "request"))
@@ -127,6 +138,11 @@ extension Message {
         }
         bson["category"] = category.description
         switch category {
+        case .hostCancelledGame(let game):
+            guard let id = game.id else {
+                try logAndThrow(ServerError.unpersistedEntity)
+            }
+            bson["game"] = id
         case .hostCancelledRequest(let request),
              .playerCancelledRequest(let request),
              .requestApproved(let request),

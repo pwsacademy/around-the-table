@@ -26,28 +26,28 @@ struct GameRepository {
     }
     
     func newestGames(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int) throws -> [Game] {
-        return try games(matching: ["date": ["$gt": Date()], "deadline": ["$gt": Date()], "availableSeats": ["$gt": 0]],
+        return try games(matching: ["deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["creationDate": .descending],
                          startingFrom: start, limitedTo: limit)
     }
     
     func upcomingGames(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int) throws -> [Game] {
-        return try games(matching: ["date": ["$gt": Date()], "deadline": ["$gt": Date()], "availableSeats": ["$gt": 0]],
+        return try games(matching: ["deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["date": .ascending, "location.distance": .ascending],
                          startingFrom: start, limitedTo: limit)
     }
     
     func gamesNearMe(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int) throws -> [Game] {
-        return try games(matching: ["date": ["$gt": Date()], "deadline": ["$gt": Date()], "availableSeats": ["$gt": 0]],
+        return try games(matching: ["deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["location.distance": .ascending, "date": .ascending],
                          startingFrom: start, limitedTo: limit)
     }
     
     func games(hostedBy host: User) throws -> [Game] {
-        return try collection(.games).find(["host": host.id, "date": ["$gt": Date()]], sortedBy: ["date": .ascending]).map { try Game(bson: $0) }
+        return try collection(.games).find(["host": host.id, "date": ["$gt": Date()], "cancelled": false], sortedBy: ["date": .ascending]).map { try Game(bson: $0) }
     }
     
     func games(joinedBy player: User, withDistanceMeasuredFrom location: Location) throws -> [Game] {
@@ -55,14 +55,14 @@ struct GameRepository {
             .find(["player": player.id, "approved": true, "cancelled": false], projecting: ["_id": false, "game": true])
             .flatMap { String($0["game"]) }
             .map { try ObjectId($0) }
-        return try games(matching: ["_id": ["$in": gameIDs], "date": ["$gt": Date()]],
+        return try games(matching: ["_id": ["$in": gameIDs], "date": ["$gt": Date()], "cancelled": false],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["date": .ascending],
                          startingFrom: 0, limitedTo: gameIDs.count)
     }
     
     func availableGamesCount() throws -> Int {
-        return try collection(.games).count(["date": ["$gt": Date()]])
+        return try collection(.games).count(["deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]])
     }
     
     /*
@@ -84,5 +84,13 @@ struct GameRepository {
             .sort(sort)
         ]).dropFirst(start).prefix(limit)
         return try results.map { try Game(bson: $0) }
+    }
+    
+    func cancel(_ game: Game) throws {
+        guard let id = game.id else {
+            try logAndThrow(ServerError.unpersistedEntity)
+        }
+        game.cancelled = true
+        try collection(.games).update(["_id": try ObjectId(id)], to: ["$set": ["cancelled": true]])
     }
 }

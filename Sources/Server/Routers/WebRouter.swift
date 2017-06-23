@@ -294,7 +294,8 @@ func configureWebRouter(using router: Router) {
         let location = Location(address: "", latitude: latitude, longitude: longitude)
         guard let id = request.parameters["id"],
               let game = try GameRepository().game(withID: id, withDistanceMeasuredFrom: location),
-              game.date.compare(Date()) == .orderedDescending else {
+              game.date.compare(Date()) == .orderedDescending,
+              !game.cancelled else {
             try logAndThrow(ServerError.invalidRequest)
         }
         let requests = try RequestRepository().requests(for: game)
@@ -308,6 +309,36 @@ func configureWebRouter(using router: Router) {
     }
     
     /*
+     Cancel a game.
+     */
+    router.post("/game/:id", middleware: BodyParser())
+    router.post("/game/:id") {
+        request, response, next in
+        guard let userID = request.userProfile?.id else {
+            try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard let user = try UserRepository().user(withID: userID) else {
+            try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
+        guard let gameID = request.parameters["id"],
+              let game = try GameRepository().game(withID: gameID),
+              game.date.compare(Date()) == .orderedDescending,
+              let body = request.body?.asURLEncoded else {
+            try logAndThrow(ServerError.invalidRequest)
+        }
+        if let cancelled = body["cancelled"], cancelled == "on", user == game.host {
+            try GameRepository().cancel(game)
+            for player in try UserRepository().players(for: game) {
+                try MessageRepository().add(Message(category: .hostCancelledGame(game), recipient: player))
+            }
+        } else {
+            try logAndThrow(ServerError.invalidRequest)
+        }
+        try response.redirect("/web/home")
+        next()
+    }
+    
+    /*
      Submit a request to join a game.
      */
     router.post("/requests", middleware: BodyParser())
@@ -317,12 +348,10 @@ func configureWebRouter(using router: Router) {
               let gameID = body["game"],
               let game = try GameRepository().game(withID: gameID),
               game.deadline.compare(Date()) == .orderedDescending,
+              !game.cancelled,
               let seatsString = body["seats"],
               let seats = Int(seatsString),
-              seats >= 1 else {
-            try logAndThrow(ServerError.invalidRequest)
-        }
-        guard seats <= game.availableSeats else {
+              seats >= 1 && seats <= game.availableSeats else {
             try logAndThrow(ServerError.invalidRequest)
         }
         guard let userID = routerRequest.userProfile?.id else {
@@ -353,6 +382,7 @@ func configureWebRouter(using router: Router) {
         guard let requestID = routerRequest.parameters["id"],
               let request = try RequestRepository().request(withID: requestID),
               request.game.date.compare(Date()) == .orderedDescending,
+              !request.game.cancelled,
               let body = routerRequest.body?.asURLEncoded else {
             try logAndThrow(ServerError.invalidRequest)
         }

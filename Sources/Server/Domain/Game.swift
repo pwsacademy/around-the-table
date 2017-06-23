@@ -12,6 +12,7 @@ final class Game {
     let deadline: Date // Deadline for submitting requests.
     let location: Location
     let info: String
+    var cancelled: Bool
     
     init(host: User, prereservedSeats: Int = 1, data: GameData, date: Date, deadline: Date, location: Location, info: String = "") {
         creationDate = Date()
@@ -23,9 +24,10 @@ final class Game {
         self.deadline = deadline
         self.location = location
         self.info = info
+        cancelled = false
     }
     
-    fileprivate init(id: String, creationDate: Date, host: User, prereservedSeats: Int, availableSeats: Int, data: GameData, date: Date, deadline: Date, location: Location, info: String) {
+    fileprivate init(id: String, creationDate: Date, host: User, prereservedSeats: Int, availableSeats: Int, data: GameData, date: Date, deadline: Date, location: Location, info: String, cancelled: Bool) {
         self.id = id
         self.creationDate = creationDate
         self.host = host
@@ -36,6 +38,7 @@ final class Game {
         self.deadline = deadline
         self.location = location
         self.info = info
+        self.cancelled = cancelled
     }
 }
 
@@ -79,6 +82,9 @@ extension Game {
         guard let info = String(bson["info"]) else {
             try logAndThrow(BSONError.missingField(name: "info"))
         }
+        guard let cancelled = Bool(bson["cancelled"]) else {
+            try logAndThrow(BSONError.missingField(name: "cancelled"))
+        }
         self.init(id: id,
                   creationDate: creationDate,
                   host: host,
@@ -88,7 +94,8 @@ extension Game {
                   date: date,
                   deadline: deadline,
                   location: try Location(bson: location),
-                  info: info)
+                  info: info,
+                  cancelled: cancelled)
     }
     
     func toBSON() throws -> Document {
@@ -101,7 +108,8 @@ extension Game {
             "date": date,
             "deadline": deadline,
             "location": location.toBSON(),
-            "info": info
+            "info": info,
+            "cancelled": cancelled
         ]
         if let id = id {
             bson["_id"] = try ObjectId(id)

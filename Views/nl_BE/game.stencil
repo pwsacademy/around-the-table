@@ -36,6 +36,12 @@
     </div>
 </div>
 
+{% if userIsHost %}
+    <form class="ui form" style="float: right" method="post" action="/web/game/{{ id }}">
+        <input type="hidden" name="cancelled" value="on">
+        <button class="ui negative icon button" type="submit"><i class="remove icon"></i> Spel annuleren</button>
+    </form>
+{% endif %}
 <p>
     <img class="ui tiny avatar image" src="{{ host.picture }}">
     Georganiseerd door <a href="https://facebook.com/{{ host.id }}" target="_blank">{{ host.name }}</a>
