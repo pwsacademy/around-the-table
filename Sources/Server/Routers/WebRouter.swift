@@ -401,9 +401,6 @@ func configureWebRouter(using router: Router) {
         next()
     }
     
-    /*
-     Unread messages.
-     */
     router.get("messages") {
         request, response, next in
         guard let userID = request.userProfile?.id else {
