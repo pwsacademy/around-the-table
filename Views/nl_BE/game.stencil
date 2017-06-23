@@ -167,6 +167,13 @@
 
 {% block scripts %}
 <script>
+$(".negative.button").on("click", function() {
+    if ($(this).attr("data-confirmed") !== "confirmed") {
+        $(this).text("Annulatie bevestigen");
+        $(this).attr("data-confirmed", "confirmed");
+        return false;
+    }
+});
 $(".ui.dropdown").on("change", function() {
     var seats = $(this).val();
     if (seats == 1) {
