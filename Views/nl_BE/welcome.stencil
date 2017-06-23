@@ -5,7 +5,12 @@
 {% block content %}
 <h1 class="ui dividing header">Welkom</h1>
 <p>
-    Welkom bij Rond de Tafel. Deze site maakt gebruik van Facebook om je aan te melden.
+    Welkom bij Rond de tafel, de site die mensen samen brengt rond de speltafel.
+    Zoek je medespelers voor een spel dat maar niet op tafel raakt? Wens je een bepaald spel uit te proberen?
+    Of wil je gewoon wat nieuwe spellen en mensen leren kennen? Hier vind je zeker wat je zoekt!
+</p>
+<p>
+    Deze site maakt gebruik van Facebook om je aan te melden.
     Wanneer je voor het eerst aanmeldt zal er een account worden aangemaakt.
     Deze account wordt gekoppeld aan je profiel op Facebook. Je hoeft dus geen aparte gebruikersnaam of wachtwoord te kiezen.
 </p>
@@ -29,15 +34,6 @@
     <input id="latitude" name="latitude" type="hidden">
     <input id="longitude" name="longitude" type="hidden">
 </form>
-<div class="ui icon message">
-    <i class="info icon"></i>
-    <div class="content">
-        <div class="header">Privacyverklaring</div>
-        Enkel je gebruikersnaam en profielfoto worden opgevraagd bij Facebook.
-        Er worden geen berichten op je tijdlijn geplaatst.
-        Je gegevens worden niet gebruikt voor commerciële doeleinden en worden niet gedeeld met derden.
-    </div>
-</div>
 {% endblock %}
 
 {% block scripts %}
