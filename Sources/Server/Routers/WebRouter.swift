@@ -316,6 +316,7 @@ func configureWebRouter(using router: Router) {
         guard let body = routerRequest.body?.asURLEncoded,
               let gameID = body["game"],
               let game = try GameRepository().game(withID: gameID),
+              game.deadline.compare(Date()) == .orderedDescending,
               let seatsString = body["seats"],
               let seats = Int(seatsString),
               seats >= 1 else {
@@ -351,6 +352,7 @@ func configureWebRouter(using router: Router) {
         }
         guard let requestID = routerRequest.parameters["id"],
               let request = try RequestRepository().request(withID: requestID),
+              request.game.date.compare(Date()) == .orderedDescending,
               let body = routerRequest.body?.asURLEncoded else {
             try logAndThrow(ServerError.invalidRequest)
         }
