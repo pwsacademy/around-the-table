@@ -59,6 +59,8 @@ extension GameData {
                 try logAndThrow(BoardGameGeekError.invalidElement(name: "minplayers/maxplayers", id: id))
             case (let amount, 0), (0, let amount):
                 return amount...amount
+            case let (min, max) where min > max:
+                return max...min
             case let (min, max):
                 return min...max
             }
@@ -77,6 +79,8 @@ extension GameData {
                 try logAndThrow(BoardGameGeekError.invalidElement(name: "minplaytime/maxplaytime", id: id))
             case (let time, 0), (0, let time):
                 return time...time
+            case let (min, max) where min > max:
+                return max...min
             case let (min, max):
                 return min...max
             }
