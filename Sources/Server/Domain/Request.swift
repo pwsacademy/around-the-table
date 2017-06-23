@@ -8,6 +8,7 @@ final class Request {
     let game: Game
     let seats: Int
     var approved: Bool
+    var cancelled: Bool
     
     init(player: User, game: Game, seats: Int = 1) {
         creationDate = Date()
@@ -15,15 +16,17 @@ final class Request {
         self.game = game
         self.seats = seats
         approved = false
+        cancelled = false
     }
     
-    fileprivate init(id: String, creationDate: Date, player: User, game: Game, seats: Int, approved: Bool) {
+    fileprivate init(id: String, creationDate: Date, player: User, game: Game, seats: Int, approved: Bool, cancelled: Bool) {
         self.id = id
         self.creationDate = creationDate
         self.player = player
         self.game = game
         self.seats = seats
         self.approved = approved
+        self.cancelled = cancelled
     }
 }
 
@@ -58,12 +61,16 @@ extension Request {
         guard let approved = Bool(bson["approved"]) else {
             try logAndThrow(BSONError.missingField(name: "approved"))
         }
+        guard let cancelled = Bool(bson["cancelled"]) else {
+            try logAndThrow(BSONError.missingField(name: "cancelled"))
+        }
         self.init(id: id,
                   creationDate: creationDate,
                   player: player,
                   game: game,
                   seats: seats,
-                  approved: approved)
+                  approved: approved,
+                  cancelled: cancelled)
     }
     
     func toBSON() throws -> Document {
@@ -72,7 +79,8 @@ extension Request {
             "player": player.id,
             "game": game.id,
             "seats": seats,
-            "approved": approved
+            "approved": approved,
+            "cancelled": cancelled
         ]
         if let id = id {
             bson["_id"] = try ObjectId(id)

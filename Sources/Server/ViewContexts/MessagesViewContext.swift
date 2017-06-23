@@ -22,7 +22,7 @@ struct MessagesViewContext: ViewContext {
             "read": message.read
         ]
         switch message.category {
-        case .requestReceived(let request):
+        case .requestReceived(let request), .playerCancelledRequest(let request):
             guard let gameID = request.game.id else {
                 try logAndThrow(ServerError.invalidState)
             }
@@ -35,7 +35,7 @@ struct MessagesViewContext: ViewContext {
                 "name": request.game.data.name,
                 "date": formatted(request.game.date, dateStyle: .full)
             ]
-        case .requestApproved(let request):
+        case .requestApproved(let request), .hostCancelledRequest(let request):
             guard let gameID = request.game.id else {
                 try logAndThrow(ServerError.invalidState)
             }

@@ -351,13 +351,22 @@ func configureWebRouter(using router: Router) {
         }
         guard let requestID = routerRequest.parameters["id"],
               let request = try RequestRepository().request(withID: requestID),
-              let body = routerRequest.body?.asURLEncoded,
-              let approved = body["approved"], approved == "on",
-              user == request.game.host else {
+              let body = routerRequest.body?.asURLEncoded else {
             try logAndThrow(ServerError.invalidRequest)
         }
-        try RequestRepository().approve(request)
-        try MessageRepository().add(Message(category: .requestApproved(request), recipient: request.player))
+        if let approved = body["approved"], approved == "on", user == request.game.host {
+            try RequestRepository().approve(request)
+            try MessageRepository().add(Message(category: .requestApproved(request), recipient: request.player))
+        } else if let cancelled = body["cancelled"], cancelled == "on", user == request.player || user == request.game.host {
+            try RequestRepository().cancel(request)
+            if user == request.game.host {
+                try MessageRepository().add(Message(category: .hostCancelledRequest(request), recipient: request.player))
+            } else {
+                try MessageRepository().add(Message(category: .playerCancelledRequest(request), recipient: request.game.host))
+            }
+        } else {
+            try logAndThrow(ServerError.invalidRequest)
+        }
         guard let gameID = request.game.id else {
             try logAndThrow(ServerError.invalidState)
         }

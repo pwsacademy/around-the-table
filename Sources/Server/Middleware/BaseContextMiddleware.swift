@@ -18,6 +18,7 @@ struct BaseContextMiddleware: RouterMiddleware {
         let unreadMessageCount = try MessageRepository().unreadMessageCount(for: user)
         request.userInfo.append([
             "user": [
+                "id": user.id,
                 "name": user.name,
                 "picture": user.picture?.absoluteString ?? Settings.defaultProfilePicture
             ],

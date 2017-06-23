@@ -21,7 +21,10 @@ struct MessageRepository {
         let results = try collection(.messages).find(["recipient": user.id], sortedBy: ["creationDate": .descending])
         return try results.map { try Message(bson: $0) }.filter {
             switch $0.category {
-            case .requestApproved(let request), .requestReceived(let request):
+            case .hostCancelledRequest(let request),
+                 .playerCancelledRequest(let request),
+                 .requestApproved(let request),
+                 .requestReceived(let request):
                 return request.game.date.compare(Date()) == .orderedDescending
             }
         }

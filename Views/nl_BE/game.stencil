@@ -67,6 +67,14 @@
     <div class="ui middle aligned very relaxed list">
         {% for request in approvedRequests %}
             <div class="item">
+                {% if userIsHost or user.id == request.player.id %}
+                    <div class="right floated content">
+                        <form class="ui form" method="post" action="/web/request/{{ request.id }}">
+                            <input type="hidden" name="cancelled" value="on">
+                            <button class="ui negative icon button" type="submit"><i class="remove icon"></i> Annuleren</button>
+                        </form>
+                    </div>
+                {% endif %}
                 <img class="ui tiny avatar image" src="{{ request.player.picture }}">
                 <div class="content">
                     <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a>

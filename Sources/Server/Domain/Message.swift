@@ -4,11 +4,17 @@ final class Message {
     
     enum Category {
         
+        case hostCancelledRequest(Request)
+        case playerCancelledRequest(Request)
         case requestApproved(Request)
         case requestReceived(Request)
         
         var description: String {
             switch self {
+            case .hostCancelledRequest:
+                return "hostCancelledRequest"
+            case .playerCancelledRequest:
+                return "playerCancelledRequest"
             case .requestApproved:
                 return "requestApproved"
             case .requestReceived:
@@ -57,14 +63,23 @@ extension Message {
                 try logAndThrow(BSONError.missingField(name: "category"))
             }
             switch category {
-            case "requestReceived":
+            case "hostCancelledRequest":
                 guard let requestID = String(bson["request"]) else {
                     try logAndThrow(BSONError.missingField(name: "request"))
                 }
                 guard let request = try RequestRepository().request(withID: requestID) else {
                     try logAndThrow(BSONError.invalidField(name: "request"))
                 }
-                return Category.requestReceived(request)
+                return Category.hostCancelledRequest(request)
+            case "playerCancelledRequest":
+                guard let requestID = String(bson["request"]) else {
+                    try logAndThrow(BSONError.missingField(name: "request"))
+                }
+                guard let request = try RequestRepository().request(withID: requestID) else {
+                    try logAndThrow(BSONError.invalidField(name: "request"))
+                }
+                return Category.playerCancelledRequest(request)
+                
             case "requestApproved":
                 guard let requestID = String(bson["request"]) else {
                     try logAndThrow(BSONError.missingField(name: "request"))
@@ -73,6 +88,14 @@ extension Message {
                     try logAndThrow(BSONError.invalidField(name: "request"))
                 }
                 return Category.requestApproved(request)
+            case "requestReceived":
+                guard let requestID = String(bson["request"]) else {
+                    try logAndThrow(BSONError.missingField(name: "request"))
+                }
+                guard let request = try RequestRepository().request(withID: requestID) else {
+                    try logAndThrow(BSONError.invalidField(name: "request"))
+                }
+                return Category.requestReceived(request)
             default:
                 try logAndThrow(BSONError.invalidField(name: "category"))
             }
@@ -104,7 +127,10 @@ extension Message {
         }
         bson["category"] = category.description
         switch category {
-        case .requestReceived(let request), .requestApproved(let request):
+        case .hostCancelledRequest(let request),
+             .playerCancelledRequest(let request),
+             .requestApproved(let request),
+             .requestReceived(let request):
             guard let id = request.id else {
                 try logAndThrow(ServerError.unpersistedEntity)
             }
