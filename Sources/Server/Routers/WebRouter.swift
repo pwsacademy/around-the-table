@@ -339,7 +339,7 @@ func configureWebRouter(using router: Router) {
     }
     
     /*
-     Approve a request.
+     Approve or cancel a request.
      */
     router.post("/request/:id", middleware: BodyParser())
     router.post("/request/:id") {
