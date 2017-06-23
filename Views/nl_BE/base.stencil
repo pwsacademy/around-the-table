@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="nl">
 <head>
-    <title>{% block title %}Rond de Tafel{% endblock %}</title>
+    <title>{% block title %}Rond de tafel{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Steven Van Impe">
