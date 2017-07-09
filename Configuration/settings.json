@@ -5,7 +5,8 @@
         "database": {
             "bluemixService": "MongoDB",
             "localURI": "mongodb://localhost:27017",
-            "name": "aroundthetable"
+            "name": "aroundthetable",
+            "test": "aroundthetable-test"
         },
         "defaultCoordinates": {
             "latitude": 51.047546,
