@@ -5,19 +5,19 @@
       "package": "BSON",
       "reason": null,
       "repositoryURL": "https://github.com/OpenKitten/BSON.git",
-      "version": "5.0.5"
+      "version": "5.1.4"
     },
     {
       "package": "CCurl",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/CCurl.git",
-      "version": "0.2.3"
+      "version": "0.4.0"
     },
     {
       "package": "Cheetah",
       "reason": null,
       "repositoryURL": "https://github.com/OpenKitten/Cheetah.git",
-      "version": "1.0.1"
+      "version": "1.0.3"
     },
     {
       "package": "CloudFoundryEnv",
@@ -47,7 +47,7 @@
       "package": "Cryptor",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/BlueCryptor.git",
-      "version": "0.8.14"
+      "version": "0.8.15"
     },
     {
       "package": "HeliumLogger",
@@ -65,7 +65,7 @@
       "package": "Kitura",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/Kitura.git",
-      "version": "1.7.4"
+      "version": "1.7.6"
     },
     {
       "package": "Kitura-Credentials",
@@ -95,7 +95,7 @@
       "package": "Kitura-net",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/Kitura-net.git",
-      "version": "1.7.7"
+      "version": "1.7.13"
     },
     {
       "package": "KituraRequest",
@@ -107,7 +107,7 @@
       "package": "KituraStencil",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/Kitura-StencilTemplateEngine.git",
-      "version": "1.8.1"
+      "version": "1.8.2"
     },
     {
       "package": "LoggerAPI",
@@ -119,7 +119,7 @@
       "package": "MongoKitten",
       "reason": null,
       "repositoryURL": "https://github.com/OpenKitten/MongoKitten.git",
-      "version": "4.0.9"
+      "version": "4.0.11"
     },
     {
       "package": "PathKit",
@@ -131,7 +131,7 @@
       "package": "SSLService",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/BlueSSLService.git",
-      "version": "0.12.40"
+      "version": "0.12.45"
     },
     {
       "package": "Schrodinger",
@@ -143,7 +143,7 @@
       "package": "Socket",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/BlueSocket.git",
-      "version": "0.12.52"
+      "version": "0.12.56"
     },
     {
       "package": "Spectre",
@@ -161,7 +161,7 @@
       "package": "SwiftyJSON",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/SwiftyJSON.git",
-      "version": "16.0.0"
+      "version": "16.0.1"
     }
   ],
   "version": 1

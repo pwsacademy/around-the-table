@@ -1,4 +1,4 @@
-{% extends "base.stencil" %}
+{% extends "nl_BE/base.stencil" %}
 
 {% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
 {% block header %}
