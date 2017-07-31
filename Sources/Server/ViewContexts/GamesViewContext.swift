@@ -31,7 +31,7 @@ struct GamesViewContext: ViewContext {
                 "maxPlayingTime": game.data.playingTime.upperBound,
                 "picture": game.data.picture?.absoluteString ?? Settings.defaultGamePicture,
             ],
-            "date": formatted(game.date, dateStyle: .full),
+            "date": game.date.formatted(dateStyle: .full),
             "host": [
                 "name": game.host.name,
                 "picture": game.host.picture?.absoluteString ?? Settings.defaultProfilePicture

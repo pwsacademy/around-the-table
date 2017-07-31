@@ -17,21 +17,6 @@ protocol ViewContext {
     var contents: [String: Any] { get }
 }
 
-extension ViewContext {
-    
-    /*
-     Format a date using the current locale and time zone.
-     */
-    func formatted(_ date: Date, dateStyle: DateFormatter.Style = .none, timeStyle: DateFormatter.Style = .none) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: Settings.locale)
-        formatter.timeZone = Settings.timeZone
-        formatter.dateStyle = dateStyle
-        formatter.timeStyle = timeStyle
-        return formatter.string(from: date)
-    }
-}
-
 extension RouterResponse {
     
     /*

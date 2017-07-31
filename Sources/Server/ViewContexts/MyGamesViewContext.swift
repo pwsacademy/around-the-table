@@ -31,7 +31,7 @@ struct MyGamesViewContext: ViewContext {
                 "maxPlayingTime": game.data.playingTime.upperBound,
                 "picture": game.data.picture?.absoluteString ?? Settings.defaultGamePicture,
             ],
-            "date": formatted(game.date, dateStyle: .full),
+            "date": game.date.formatted(dateStyle: .full),
             "players": players.map { ["picture": $0.picture?.absoluteString ?? Settings.defaultProfilePicture ] },
             "availableSeats": game.availableSeats,
             "requests": requests
@@ -57,7 +57,7 @@ struct MyGamesViewContext: ViewContext {
                 "name": game.host.name,
                 "picture": game.host.picture?.absoluteString ?? Settings.defaultProfilePicture
             ],
-            "date": formatted(game.date, dateStyle: .full),
+            "date": game.date.formatted(dateStyle: .full),
             "players": players.map { ["picture": $0.picture?.absoluteString ?? Settings.defaultProfilePicture ] },
             "availableSeats": game.availableSeats,
             "distance": Int(ceil(distance / 1000))

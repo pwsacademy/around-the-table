@@ -1,3 +1,5 @@
+import Foundation
+
 extension Dictionary {
 
     mutating func append(_ dictionary: [Key: Value]) {
@@ -22,5 +24,20 @@ extension Sequence where Iterator.Element: Equatable {
             elements, element in
             return elements.contains(element) ? elements : elements + [element]
         }
+    }
+}
+
+extension Date {
+    
+    /*
+     Format a date using the current locale and time zone.
+     */
+    func formatted(dateStyle: DateFormatter.Style = .none, timeStyle: DateFormatter.Style = .none) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: Settings.locale)
+        formatter.timeZone = Settings.timeZone
+        formatter.dateStyle = dateStyle
+        formatter.timeStyle = timeStyle
+        return formatter.string(from: self)
     }
 }
