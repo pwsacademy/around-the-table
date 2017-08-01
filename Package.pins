@@ -76,8 +76,8 @@
     {
       "package": "Kitura-CredentialsFacebook",
       "reason": null,
-      "repositoryURL": "https://github.com/IBM-Swift/Kitura-CredentialsFacebook.git",
-      "version": "1.7.0"
+      "repositoryURL": "https://github.com/svanimpe/Kitura-CredentialsFacebook.git",
+      "version": "1.7.1"
     },
     {
       "package": "Kitura-Session",

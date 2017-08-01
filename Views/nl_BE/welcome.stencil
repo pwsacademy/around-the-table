@@ -34,6 +34,16 @@
     <input id="latitude" name="latitude" type="hidden">
     <input id="longitude" name="longitude" type="hidden">
 </form>
+<div class="ui icon message">
+  <i class="info icon"></i>
+  <div class="content">
+      Bij het aanmelden zal gevraagd worden om toestemming om berichten te plaatsen in jouw naam.
+      Deze toestemming wordt enkel gebruikt om de spellen die je aanmaakt op de site,
+      ook in de <a href="https://www.facebook.com/groups/ronddetafel/" target="_blank">Facebookgroep</a> aan te kondigen (als je lid bent van deze groep).
+      Er worden geen berichten op je tijdlijn geplaatst.
+      Je kan deze toestemming uiteraard ook weigeren en de site gebruiken zonder deze functionaliteit.
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}

@@ -1,6 +1,7 @@
 import Credentials
 import Foundation
 import Kitura
+import KituraSession
 import KituraStencil
 import LoggerAPI
 
@@ -271,6 +272,13 @@ func configureWebRouter(using router: Router) {
         guard let gameID = game.id else {
             try logAndThrow(ServerError.invalidState)
         }
+        guard let session = request.session else {
+            try logAndThrow(ServerError.missingMiddleware(type: Session.self))
+        }
+        guard let token = session["facebookAccessToken"].string else {
+            try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
+        try FacebookService(accessToken: token).accounce(game)
         try response.redirect("/web/game/\(gameID)")
         next()
     }

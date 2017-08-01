@@ -47,4 +47,10 @@ enum Settings {
             settings["settings:database:name"] as! String :
             settings["settings:database:test"] as! String
     }
+    
+    /*
+     Facebook group for the site.
+     If set, games created on the site will be announced in this group.
+     */
+    static let facebookGroupID = settings["settings:facebookGroupID"] as? String
 }
