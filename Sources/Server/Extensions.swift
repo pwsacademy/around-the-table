@@ -40,4 +40,15 @@ extension Date {
         formatter.timeStyle = timeStyle
         return formatter.string(from: self)
     }
+    
+    /*
+     Format a date using a custom format.
+     */
+    func formatted(format: String) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: Settings.locale)
+        formatter.timeZone = Settings.timeZone
+        formatter.setLocalizedDateFormatFromTemplate(format)
+        return formatter.string(from: self)
+    }
 }
