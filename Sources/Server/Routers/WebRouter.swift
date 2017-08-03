@@ -27,7 +27,7 @@ func configureWebRouter(using router: Router) {
               let longitude = coordinates["longitude"] as? Double else {
             try logAndThrow(ServerError.missingMiddleware(type: LocationMiddleware.self))
         }
-        let location = Location(address: "", latitude: latitude, longitude: longitude)
+        let location = Location(latitude: latitude, longitude: longitude)
         let newestGames = try GameRepository().newestGames(withDistanceMeasuredFrom: location, limitedTo: 4)
         let upcomingGames = try GameRepository().upcomingGames(withDistanceMeasuredFrom: location, limitedTo: 4)
         let gamesNearMe = try GameRepository().gamesNearMe(withDistanceMeasuredFrom: location, limitedTo: 4)
@@ -54,7 +54,7 @@ func configureWebRouter(using router: Router) {
               let longitude = coordinates["longitude"] as? Double else {
             try logAndThrow(ServerError.missingMiddleware(type: LocationMiddleware.self))
         }
-        let location = Location(address: "", latitude: latitude, longitude: longitude)
+        let location = Location(latitude: latitude, longitude: longitude)
         let pageSize = 8
         let games = try GameRepository().newestGames(withDistanceMeasuredFrom: location, startingFrom: page * pageSize, limitedTo: pageSize)
         let remainingGames = try GameRepository().availableGamesCount() - (page + 1) * pageSize
@@ -82,7 +82,7 @@ func configureWebRouter(using router: Router) {
               let longitude = coordinates["longitude"] as? Double else {
             try logAndThrow(ServerError.missingMiddleware(type: LocationMiddleware.self))
         }
-        let location = Location(address: "", latitude: latitude, longitude: longitude)
+        let location = Location(latitude: latitude, longitude: longitude)
         let pageSize = 8
         let games = try GameRepository().upcomingGames(withDistanceMeasuredFrom: location, startingFrom: page * pageSize, limitedTo: pageSize)
         let remainingGames = try GameRepository().availableGamesCount() - (page + 1) * pageSize
@@ -110,7 +110,7 @@ func configureWebRouter(using router: Router) {
               let longitude = coordinates["longitude"] as? Double else {
             try logAndThrow(ServerError.missingMiddleware(type: LocationMiddleware.self))
         }
-        let location = Location(address: "", latitude: latitude, longitude: longitude)
+        let location = Location(latitude: latitude, longitude: longitude)
         let pageSize = 8
         let games = try GameRepository().gamesNearMe(withDistanceMeasuredFrom: location, startingFrom: page * pageSize, limitedTo: pageSize)
         let remainingGames = try GameRepository().availableGamesCount() - (page + 1) * pageSize
@@ -194,6 +194,7 @@ func configureWebRouter(using router: Router) {
               let minuteString = body["minute"], let minute = Int(minuteString),
               let deadlineType = body["deadline"],
               let address = body["address"], address.characters.count > 0,
+              let city = body["city"], city.characters.count > 0,
               let latitudeString = body["latitude"], let latitude = Double(latitudeString),
               let longitudeString = body["longitude"], let longitude = Double(longitudeString),
               let info = body["info"] else {
@@ -266,7 +267,7 @@ func configureWebRouter(using router: Router) {
                         data: data,
                         date: date,
                         deadline: deadline,
-                        location: Location(address: address, latitude: latitude, longitude: longitude),
+                        location: Location(address: address, city: city, latitude: latitude, longitude: longitude),
                         info: info.trimmingCharacters(in: .whitespacesAndNewlines))
         try GameRepository().add(game)
         guard let gameID = game.id else {
@@ -299,7 +300,7 @@ func configureWebRouter(using router: Router) {
               let longitude = coordinates["longitude"] as? Double else {
             try logAndThrow(ServerError.missingMiddleware(type: LocationMiddleware.self))
         }
-        let location = Location(address: "", latitude: latitude, longitude: longitude)
+        let location = Location(latitude: latitude, longitude: longitude)
         guard let id = request.parameters["id"],
               let game = try GameRepository().game(withID: id, withDistanceMeasuredFrom: location),
               game.date.compare(Date()) == .orderedDescending,
@@ -430,7 +431,7 @@ func configureWebRouter(using router: Router) {
               let longitude = coordinates["longitude"] as? Double else {
             try logAndThrow(ServerError.missingMiddleware(type: LocationMiddleware.self))
         }
-        let location = Location(address: "", latitude: latitude, longitude: longitude)
+        let location = Location(latitude: latitude, longitude: longitude)
         let hostedGames = try GameRepository().games(hostedBy: user)
         let playingGames = try GameRepository().games(joinedBy: user, withDistanceMeasuredFrom: location)
         try response.render("\(Settings.locale)/my-games", context: try MyGamesViewContext(

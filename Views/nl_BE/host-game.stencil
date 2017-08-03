@@ -138,6 +138,7 @@
     <p>Geef je volledige adres in. Deze adresgegevens worden getoond aan de spelers wiens aanvraag jij hebt goedkeurd.</p>
     <div class="field">
         <input id="address" name="address" type="text" placeholder="Adres" required>
+        <input id="city" name="city" type="hidden">
         <input id="latitude" name="latitude" type="hidden">
         <input id="longitude" name="longitude" type="hidden">
     </div>
@@ -244,7 +245,17 @@ var autocomplete = new google.maps.places.Autocomplete(document.getElementById("
 var marker;
 autocomplete.addListener("place_changed", function() {
     var place = autocomplete.getPlace();
-    var coordinates = place.geometry.location
+    var cityComponent = place.address_components.find(function(component) {
+        return component.types.indexOf("locality") != -1;
+    });
+    if (!cityComponent) {
+        $("#address").val("");
+        $("button[type=submit]").attr("disabled", "disabled");
+        return
+    }
+    var city = cityComponent.long_name;
+    var coordinates = place.geometry.location;
+    $("#city").val(city);
     $("#latitude").val(coordinates.lat);
     $("#longitude").val(coordinates.lng);
     if (!marker) {
