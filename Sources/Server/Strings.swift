@@ -12,5 +12,6 @@ enum Strings {
         return (strings["facebookGameAnnouncement"] as! String)
             .replacingOccurrences(of: "<title>", with: game.data.name)
             .replacingOccurrences(of: "<date>", with: game.date.formatted(format: "EEEE d MMMM"))
+            .replacingOccurrences(of: "<city>", with: game.location.city)
     }
 }

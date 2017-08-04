@@ -38,14 +38,6 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="extra content">
-                    <i class="user icon"></i> {{ game.data.playerCount }}
-                    {% if game.data.minPlayingTime == game.data.maxPlayingTime %}
-                        <i class="wait icon"></i> {{ game.data.minPlayingTime }}
-                    {% else %}
-                        <i class="wait icon"></i> {{ game.data.minPlayingTime }} - {{ game.data.maxPlayingTime }}
-                    {% endif %}
-                </div>
             </a>
         {% endfor %}
     </div>
@@ -86,15 +78,10 @@
                 <div class="extra content">
                     {% if coordinates.geolocated %}
                         <span class="right floated">
-                            <i class="marker icon"></i> {{ game.distance }}km
+                            {{ game.distance }}km
                         </span>
                     {% endif %}
-                    <i class="user icon"></i> {{ game.data.playerCount }}
-                    {% if game.data.minPlayingTime == game.data.maxPlayingTime %}
-                        <i class="wait icon"></i> {{ game.data.minPlayingTime }}
-                    {% else %}
-                        <i class="wait icon"></i> {{ game.data.minPlayingTime }} - {{ game.data.maxPlayingTime }}
-                    {% endif %}
+                    <i class="marker icon"></i> {{ game.city }}
                 </div>
             </a>
         {% endfor %}

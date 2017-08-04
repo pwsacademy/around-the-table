@@ -27,9 +27,12 @@
                     {% endif %}
                     <p><i class="calendar icon"></i> {{ date }}</p>
                     <p><i class="wait icon"></i> {{ time }}</p>
-                    {% if not userIsHost and coordinates.geolocated %}
-                        <p><i class="marker icon"></i> {{ location.distance }}km</p>
-                    {% endif %}
+                    <p>
+                        <i class="marker icon"></i> {{ location.city }}
+                        {% if not userIsHost and coordinates.geolocated %}
+                             ({{ location.distance }}km)
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>

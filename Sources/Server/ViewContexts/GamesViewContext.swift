@@ -26,16 +26,11 @@ struct GamesViewContext: ViewContext {
             "id": id,
             "data": [
                 "name": game.data.name,
-                "playerCount": game.data.playerCount.upperBound,
-                "minPlayingTime": game.data.playingTime.lowerBound,
-                "maxPlayingTime": game.data.playingTime.upperBound,
                 "picture": game.data.picture?.absoluteString ?? Settings.defaultGamePicture,
             ],
             "date": game.date.formatted(dateStyle: .full),
-            "host": [
-                "name": game.host.name,
-                "picture": game.host.picture?.absoluteString ?? Settings.defaultProfilePicture
-            ],
+            "host": game.host.name,
+            "city": game.location.city,
             "distance": Int(ceil(distance / 1000)),
             "seats": game.availableSeats
         ]

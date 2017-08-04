@@ -26,9 +26,6 @@ struct MyGamesViewContext: ViewContext {
             "id": id,
             "data": [
                 "name": game.data.name,
-                "playerCount": game.data.playerCount.upperBound,
-                "minPlayingTime": game.data.playingTime.lowerBound,
-                "maxPlayingTime": game.data.playingTime.upperBound,
                 "picture": game.data.picture?.absoluteString ?? Settings.defaultGamePicture,
             ],
             "date": game.date.formatted(dateStyle: .full),
@@ -48,9 +45,6 @@ struct MyGamesViewContext: ViewContext {
             "id": id,
             "data": [
                 "name": game.data.name,
-                "playerCount": game.data.playerCount.upperBound,
-                "minPlayingTime": game.data.playingTime.lowerBound,
-                "maxPlayingTime": game.data.playingTime.upperBound,
                 "picture": game.data.picture?.absoluteString ?? Settings.defaultGamePicture,
             ],
             "host": [
@@ -60,6 +54,7 @@ struct MyGamesViewContext: ViewContext {
             "date": game.date.formatted(dateStyle: .full),
             "players": players.map { ["picture": $0.picture?.absoluteString ?? Settings.defaultProfilePicture ] },
             "availableSeats": game.availableSeats,
+            "city": game.location.city,
             "distance": Int(ceil(distance / 1000))
         ]
     }

@@ -24,6 +24,7 @@ struct GameViewContext: ViewContext {
             ],
             "location": [
                 "address": game.location.address,
+                "city": game.location.city,
                 "latitude": game.location.latitude,
                 "longitude": game.location.longitude,
                 "distance": Int(ceil(distance / 1000))
