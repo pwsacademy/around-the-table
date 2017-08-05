@@ -1,22 +1,20 @@
 {
-    "settings": {
-        "countries": ["be", "nl"],
-        "customDomainName": "www.rond-de-tafel.be",
-        "database": {
-            "bluemixService": "MongoDB",
-            "localURI": "mongodb://localhost:27017",
-            "name": "aroundthetable",
-            "test": "aroundthetable-test"
-        },
-        "defaultCoordinates": {
-            "latitude": 51.047546,
-            "longitude": 3.753204
-        },
-        "defaultGamePicture": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
-        "defaultGameThumbnail": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
-        "defaultProfilePicture": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
-        "facebookGroupID": "134748127078703",
-        "locale": "nl_BE",
-        "timeZone": "Europe/Brussels"
-    }
+    "countries": ["be", "nl"],
+    "customDomainName": "www.rond-de-tafel.be",
+    "database": {
+        "bluemixService": "MongoDB",
+        "localURI": "mongodb://localhost:27017",
+        "name": "aroundthetable",
+        "test": "aroundthetable-test"
+    },
+    "defaultCoordinates": {
+        "latitude": 51.047546,
+        "longitude": 3.753204
+    },
+    "defaultGamePicture": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
+    "defaultGameThumbnail": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
+    "defaultProfilePicture": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
+    "facebookGroupID": "134748127078703",
+    "locale": "nl_BE",
+    "timeZone": "Europe/Brussels"
 }

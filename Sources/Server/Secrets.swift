@@ -8,12 +8,12 @@ enum Secrets {
     private static let secrets = ConfigurationManager().load(file: "Configuration/secrets.json", relativeFrom: .project)
     
     // Used to encrypt the session ID cookie.
-    static let sessionSecret = secrets["secrets:sessionSecret"] as! String
+    static let sessionSecret = secrets["sessionSecret"] as! String
     
     // Used to authenticate with Facebook for Web Login.
-    static let facebookAppID = secrets["secrets:facebookAppID"] as! String
-    static let facebookAppSecret = secrets["secrets:facebookAppSecret"] as! String
+    static let facebookAppID = secrets["facebookAppID"] as! String
+    static let facebookAppSecret = secrets["facebookAppSecret"] as! String
     
     // Used to authenticate with Google for Maps and Places.
-    static let googleAPIKey = secrets["secrets:googleAPIKey"] as! String
+    static let googleAPIKey = secrets["googleAPIKey"] as! String
 }
