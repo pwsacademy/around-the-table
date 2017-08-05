@@ -109,13 +109,13 @@
         <label>Deadline voor inschrijving</label>
         <div class="field">
             <div class="ui radio checkbox">
-                <input type="radio" name="deadline" value="one hour">
+                <input type="radio" name="deadline" value="one hour" checked>
                 <label>een uur op voorhand</label>
             </div>
         </div>
         <div class="field">
             <div class="ui radio checkbox">
-                <input type="radio" name="deadline" value="one day" checked>
+                <input type="radio" name="deadline" value="one day">
                 <label>een dag op voorhand</label>
             </div>
         </div>
