@@ -6,8 +6,8 @@ import Foundation
 final class User {
     
     let id: String // Facebook ID.
-    let name: String
-    let picture: URL?
+    var name: String
+    var picture: URL?
     
     init(id: String, name: String, picture: URL? = nil) {
         self.id = id

@@ -22,4 +22,8 @@ struct UserRepository {
             .flatMap { String($0["player"]) }
         return try collection(.users).find(["_id": ["$in": Array(playerIDs)]]).map { try User(bson: $0) }
     }
+    
+    func update(_ user: User) throws {
+        try collection(.users).update(["_id": user.id], to: user.toBSON())
+    }
 }

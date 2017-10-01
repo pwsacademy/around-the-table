@@ -64,10 +64,16 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
         guard let session = request.session else {
             try logAndThrow(ServerError.missingMiddleware(type: Session.self))
         }
-        guard let id = request.userProfile?.id else {
+        guard let profile = request.userProfile else {
             try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
         }
-        if try UserRepository().user(withID: id) != nil {
+        if let user = try UserRepository().user(withID: profile.id) {
+            // Update the user's name and picture.
+            user.name = profile.displayName
+            if let picture = profile.photos?.first?.value {
+                user.picture = URL(string: picture)
+            }
+            try UserRepository().update(user)
             // Skip sign-up if the user has already signed up.
             if let returnAddress = session["originalReturnTo"].string, !returnAddress.contains("authentication") {
                 session.remove(key: "originalReturnTo")
