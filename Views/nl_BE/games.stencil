@@ -3,6 +3,10 @@
 {% block title %}{{ block.super }} - Spellen{% endblock %}
 
 {% block content %}
+<div class="ui message">
+    Spellen die je zelf organiseert worden niet getoond op deze pagina.
+    Deze spellen zijn te vinden in je persoonlijk menu, onder "Mijn spellen".
+</div>
 <h1 class="ui dividing header">Nieuwste spellen</h1>
 {% if newestGames %}
     <div class="ui four doubling link cards">

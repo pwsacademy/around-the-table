@@ -25,22 +25,22 @@ struct GameRepository {
         }
     }
     
-    func newestGames(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int) throws -> [Game] {
-        return try games(matching: ["deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]],
+    func newestGames(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int, excludingGamesHostedBy host: User) throws -> [Game] {
+        return try games(matching: ["host": ["$ne": host.id], "deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["creationDate": .descending],
                          startingFrom: start, limitedTo: limit)
     }
     
-    func upcomingGames(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int) throws -> [Game] {
-        return try games(matching: ["deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]],
+    func upcomingGames(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int, excludingGamesHostedBy host: User) throws -> [Game] {
+        return try games(matching: ["host": ["$ne": host.id], "deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["date": .ascending, "location.distance": .ascending],
                          startingFrom: start, limitedTo: limit)
     }
     
-    func gamesNearMe(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int) throws -> [Game] {
-        return try games(matching: ["deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]],
+    func gamesNearMe(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int, excludingGamesHostedBy host: User) throws -> [Game] {
+        return try games(matching: ["host": ["$ne": host.id], "deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["location.distance": .ascending, "date": .ascending],
                          startingFrom: start, limitedTo: limit)
@@ -61,8 +61,8 @@ struct GameRepository {
                          startingFrom: 0, limitedTo: gameIDs.count)
     }
     
-    func availableGamesCount() throws -> Int {
-        return try collection(.games).count(["deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]])
+    func availableGamesCount(excludingGamesHostedBy host: User) throws -> Int {
+        return try collection(.games).count(["host": ["$ne": host.id], "deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]])
     }
     
     /*
