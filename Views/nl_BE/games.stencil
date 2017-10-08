@@ -11,7 +11,7 @@
 {% if newestGames %}
     <div class="ui four doubling link cards">
         {% for game in newestGames %}
-            <a {% if game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %} href="/web/game/{{ game.id }}">
+            <a {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %} href="/web/game/{{ game.id }}">
                 <div class="image">
                     <img src="{{ game.data.picture }}">
                 </div>
@@ -46,7 +46,7 @@
 {% if upcomingGames %}
     <div class="ui four doubling link cards">
         {% for game in upcomingGames %}
-            <a {% if game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %} href="/web/game/{{ game.id }}">
+            <a {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %} href="/web/game/{{ game.id }}">
                 <div class="image">
                     <img src="{{ game.data.picture }}">
                 </div>
@@ -85,7 +85,7 @@
 {% elif gamesNearMe %}
     <div class="ui four doubling link cards">
         {% for game in gamesNearMe %}
-            <a {% if game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %} href="/web/game/{{ game.id }}">
+            <a {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %} href="/web/game/{{ game.id }}">
                 <div class="image">
                     <img src="{{ game.data.picture }}">
                 </div>

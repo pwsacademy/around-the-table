@@ -26,21 +26,21 @@ struct GameRepository {
     }
     
     func newestGames(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int, excludingGamesHostedBy host: User) throws -> [Game] {
-        return try games(matching: ["host": ["$ne": host.id], "deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]],
+        return try games(matching: ["host": ["$ne": host.id], "deadline": ["$gt": Date()], "cancelled": false],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["creationDate": .descending],
                          startingFrom: start, limitedTo: limit)
     }
     
     func upcomingGames(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int, excludingGamesHostedBy host: User) throws -> [Game] {
-        return try games(matching: ["host": ["$ne": host.id], "deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]],
+        return try games(matching: ["host": ["$ne": host.id], "deadline": ["$gt": Date()], "cancelled": false],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["date": .ascending, "location.distance": .ascending],
                          startingFrom: start, limitedTo: limit)
     }
     
     func gamesNearMe(withDistanceMeasuredFrom location: Location, startingFrom start: Int = 0, limitedTo limit: Int, excludingGamesHostedBy host: User) throws -> [Game] {
-        return try games(matching: ["host": ["$ne": host.id], "deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]],
+        return try games(matching: ["host": ["$ne": host.id], "deadline": ["$gt": Date()], "cancelled": false],
                          withDistanceMeasuredFrom: location,
                          sortedBy: ["location.distance": .ascending, "date": .ascending],
                          startingFrom: start, limitedTo: limit)
@@ -62,7 +62,7 @@ struct GameRepository {
     }
     
     func availableGamesCount(excludingGamesHostedBy host: User) throws -> Int {
-        return try collection(.games).count(["host": ["$ne": host.id], "deadline": ["$gt": Date()], "cancelled": false, "availableSeats": ["$gt": 0]])
+        return try collection(.games).count(["host": ["$ne": host.id], "deadline": ["$gt": Date()], "cancelled": false])
     }
     
     /*
