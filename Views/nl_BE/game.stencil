@@ -1,196 +1,230 @@
 {% extends "nl_BE/base.stencil" %}
 
 {% block title %}{{ block.super }} - {{ data.name }}{% endblock %}
-{% block header %}
+{% block additional-head %}
 <style>
+#image {
+    width: 100%;
+}
+@media(min-width: 768px) { /* medium and up */
+    #image {
+        width: 250px;
+    }
+}
 #map {
-    height: 400px;
+    height: 200px;
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="ui segment">
-    <div class="ui items">
-        <div class="item">
-            <a class="ui medium rounded image" href="https://boardgamegeek.com/boardgame/{{ data.id }}" target="_blank">
-                <img src="{{ data.picture }}">
-            </a>
-            <div class="content">
-                <div class="ui huge dividing header">{{ data.name }}</div>
-                <div class="description">
-                    <p><i class="user icon"></i> {{ data.playerCount }}</p>
-                    {% if data.minPlayingTime == data.maxPlayingTime %}
-                        <p><i class="wait icon"></i> {{ data.minPlayingTime }}</p>
-                    {% else %}
-                        <p><i class="wait icon"></i> {{ data.minPlayingTime }} - {{ data.maxPlayingTime }}</p>
-                    {% endif %}
-                    <p><i class="calendar icon"></i> {{ date }}</p>
-                    <p><i class="wait icon"></i> {{ time }}</p>
-                    <p>
-                        <i class="marker icon"></i> {{ location.city }}
-                        {% if not userIsHost and coordinates.geolocated %}
-                             ({{ location.distance }}km)
-                        {% endif %}
-                    </p>
-                </div>
-            </div>
-        </div>
+<!-- Game information -->
+<div class="d-flex flex-column flex-md-row mb-3">
+    <div class="mr-md-3 mb-3 mb-md-0">
+        <a href="https://boardgamegeek.com/boardgame/{{ data.id }}" target="_blank">
+            <img id="image" class="rounded" src="{{ data.picture }}">
+        </a>
+    </div>
+    <div>
+        <h2>{{ data.name }}</h2>
+        <p><i class="fa fa-user"></i> {{ data.playerCount }}</p>
+        {% if data.minPlayingTime == data.maxPlayingTime %}
+            <p><i class="fa fa-clock-o"></i> {{ data.minPlayingTime }}</p>
+        {% else %}
+            <p><i class="fa fa-clock-o"></i> {{ data.minPlayingTime }} - {{ data.maxPlayingTime }}</p>
+        {% endif %}
+        <p><i class="fa fa-calendar"></i> {{ date }} om {{ time }}</p>
+        <p>
+            <i class="fa fa-map-marker"></i>
+            {% if userIsPlayer or userIsHost %}
+                <a id="address" class="d-none d-md-inline" target="_blank">{{ location.address }}</a>
+                <!-- The href is set in code as this requires URI encoding -->
+                <span class="d-md-none">{{ location.address }}</span>
+            {% else %}
+                {{ location.city }}
+            {% endif %}
+            {% if not userIsHost and coordinates.geolocated %}
+                ({{ location.distance }}km)
+            {% endif %}
+        </p>
+        {% if userIsPlayer or userIsHost %}
+            <div id="map" class="d-md-none"></div>
+        {% endif %}
     </div>
 </div>
-
-{% if userIsHost %}
-    <form class="ui form" style="float: right" method="post" action="/web/game/{{ id }}">
-        <input type="hidden" name="cancelled" value="on">
-        <button class="ui negative icon button" type="submit"><i class="remove icon"></i> Spel annuleren</button>
-    </form>
-{% endif %}
-<p>
-    <img class="ui tiny avatar image" src="{{ host.picture }}">
-    Georganiseerd door <a href="https://facebook.com/{{ host.id }}" target="_blank">{{ host.name }}</a>
-    {% if prereservedSeats == 0 %}
-        (neemt zelf niet deel)
-    {% elif prereservedSeats == 2 %}
-        en 1 extra persoon
-    {% elif prereservedSeats > 2 %}
-        en {{ prereservedSeats|previous }} extra personen
-    {% endif %}
-</p>
 {% if info %}
     <h2>Extra informatie</h2>
     <p>{{ info }}</p>
 {% endif %}
-
-<h2>Adres</h2>
-<p>
-    {% if userIsPlayer or userIsHost %}
-        <p>{{ location.address }}</p>
-        <div id="map"></div>
-    {% else %}
-        Adresgegevens zullen zichtbaar zijn van zodra je aanvraag om mee te spelen is goedgekeurd.
-    {% endif %}
-</p>
-
-<h2>Spelers</h2>
-{% if approvedRequests %}
-    <div class="ui middle aligned very relaxed list">
+<!-- Host and player information (for visitors and players) -->
+{% if not userIsHost %}
+    <h2>Spelers</h2>
+    <p>
+        <img class="avatar rounded-circle mr-2" src="{{ host.picture }}">
+        <a href="https://facebook.com/{{ host.id }}" target="_blank">{{ host.name }}</a>
+        {% if prereservedSeats == 0 %}
+            (neemt zelf niet deel)
+        {% elif prereservedSeats == 2 %}
+            en 1 extra persoon
+        {% elif prereservedSeats > 2 %}
+            en {{ prereservedSeats|previous }} extra personen
+        {% endif %}
+        <i class="fa fa-home"></i>
+    </p>
+    {% if approvedRequests %}
         {% for request in approvedRequests %}
-            <div class="item">
-                {% if userIsHost or user.id == request.player.id %}
-                    <div class="right floated content">
-                        <form class="ui form" method="post" action="/web/request/{{ request.id }}">
-                            <input type="hidden" name="cancelled" value="on">
-                            <button class="ui negative icon button" type="submit"><i class="remove icon"></i> Annuleren</button>
-                        </form>
-                    </div>
+            {% if user.id == request.player.id %}
+                <form method="post" action="/web/request/{{ request.id }}" style="float: right">
+                    <input type="hidden" name="cancelled" value="on">
+                    <button class="btn btn-danger responsive" type="submit">
+                        <i class="fa fa-times"></i><span class="d-none d-md-inline"> Annuleren</span>
+                    </button>
+                </form>
+            {% endif %}
+            <p>
+                <img class="avatar rounded-circle mr-2" src="{{ request.player.picture }}">
+                <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a>
+                {% if request.seats == 2 %}
+                    en 1 extra speler
+                {% elif request.seats > 2 %}
+                    en {{ request.seats|previous }} extra spelers
                 {% endif %}
-                <img class="ui tiny avatar image" src="{{ request.player.picture }}">
-                <div class="content">
-                    <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a>
-                    {% if request.seats == 2 %}
-                        en 1 extra speler
-                    {% elif request.seats > 2 %}
-                        en {{ request.seats|previous }} extra spelers
-                    {% endif %}
-                </div>
-            </div>
+            </p>
         {% endfor %}
-    </div>
-{% endif %}
-{% if availableSeats < 1 %}
-    <p>Dit spel is volzet.</p>
-{% elif userHasRequested and not userIsPlayer %}
-    <p><i class="large hourglass empty icon"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
-{% else %}
-    {% if availableSeats == 1 %}
-        <p>Er is nog 1 plaats beschikbaar.</p>
-    {% else %}
-        <p>Er zijn nog {{ availableSeats }} plaatsen beschikbaar.</p>
     {% endif %}
-    {% if deadlineHasPassed %}
-        <p>Inschrijven voor dit spel is niet meer mogelijk.</p>
+    <!-- Request seats -->
+    {% if availableSeats < 1 %}
+        <p>Dit spel is volzet.</p>
+    {% elif userHasRequested and not userIsPlayer %}
+        <p><i class="fa fa-hourglass-o fa-lg"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
     {% else %}
-        <p>Inschrijven is mogelijk tot {{ deadlineDate }} om {{ deadlineTime }}.</p>
-        {% if not userIsPlayer and not userIsHost %}
-            <form class="ui form" method="post" action="/web/requests" style="margin: 1em 0em">
-                <input type="hidden" name="game" value="{{ id }}">
-                <div class="ui left action input">
-                    <select class="ui compact selection dropdown" name="seats">
+        {% if availableSeats == 1 %}
+            <p>Er is nog 1 plaats beschikbaar.</p>
+        {% else %}
+            <p>Er zijn nog {{ availableSeats }} plaatsen beschikbaar.</p>
+        {% endif %}
+        {% if deadlineHasPassed %}
+            <p>Inschrijven voor dit spel is niet meer mogelijk.</p>
+        {% else %}
+            <p>Inschrijven is mogelijk tot {{ deadlineDate }} om {{ deadlineTime }}.</p>
+            {% if not userIsPlayer %}
+                <form class="form-inline mb-3" method="post" action="/web/requests">
+                    <input name="game" type="hidden" value="{{ id }}">
+                    <select id="seats" class="custom-select mr-3" name="seats">
                         {% for seat in seatOptions %}
                             <option value="{{ seat }}">{{ seat }}</option>
                         {% endfor %}
                     </select>
-                    <input id="seatsText" type="text" value="plaats" readonly>
-                </div>
-                <button class="ui right attached button" type="submit">aanvragen</button>
-            </form>
-        {% endif %}
-    {% endif %}
-    {% if not minPlayerCountIsReached %}
-        {% if data.minPlayerCount == 1 %}
-            <p>Dit spel gaat door vanaf 1 speler.</p>
-        {% else %}
-            <p>Dit spel gaat door vanaf {{ data.minPlayerCount }} spelers.</p>
+                    <span id="seatsText" class="mr-3">plaats</span>
+                    <button class="btn btn-primary" type="submit">aanvragen</button>
+                </form>
+            {% endif %}
         {% endif %}
     {% endif %}
 {% endif %}
-
+<!-- Player management (for host) -->
 {% if userIsHost %}
     <h2>Aanvragen</h2>
-    {% if requests %}
-        <div class="ui middle aligned very relaxed list">
-            {% for request in requests %}
-                <div class="item">
-                    <div class="right floated content">
-                        <form class="ui form" method="post" action="/web/request/{{ request.id }}">
-                            <input type="hidden" name="approved" value="on">
-                            {% if request.willCauseOverbooking %}
-                                <button class="ui yellow icon button" type="submit"><i class="question icon"></i> Goedkeuren</button>
-                            {% else %}
-                                <button class="ui positive icon button" type="submit"><i class="checkmark icon"></i> Goedkeuren</button>
-                            {% endif %}
-                        </form>
-                    </div>
-                    <img class="ui tiny avatar image" src="{{ request.player.picture }}">
-                    <div class="content">
-                        <p>
-                            <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a> wenst mee te spelen
-                            {% if request.seats == 2 %}
-                                en brengt 1 extra speler mee
-                            {% elif request.seats > 2 %}
-                                en brengt {{ request.seats|previous }} extra spelers mee
-                            {% endif %}
-                        </p>
-                        {% if request.willCauseOverbooking %}
-                            <p>Opgelet: deze aanvraag goedkeuren leidt tot overboeking!</p>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+    <h4 class="mb-3">Goedgekeurd</h4>
+    {% if approvedRequests %}
+        {% for request in approvedRequests %}
+            <form method="post" action="/web/request/{{ request.id }}" style="float: right">
+                <input name="cancelled" type="hidden" value="on">
+                <button class="btn btn-danger responsive" type="submit">
+                    <i class="fa fa-times"></i><span class="d-none d-md-inline"> Annuleren</span>
+                </button>
+            </form>
+            <p>
+                <img class="avatar rounded-circle mr-2" src="{{ request.player.picture }}">
+                <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a>
+                {% if request.seats == 2 %}
+                    en 1 extra speler
+                {% elif request.seats > 2 %}
+                    en {{ request.seats|previous }} extra spelers
+                {% endif %}
+            </p>
+        {% endfor %}
     {% else %}
-        <p>Er zijn nog geen aanvragen ontvangen.</p>
+        <p>Je hebt nog geen aanvragen goedgekeurd.</p>
     {% endif %}
+    <h4 class="mb-3">Ontvangen</h4>
+    {% if requests %}
+        {% for request in requests %}
+            <form method="post" action="/web/request/{{ request.id }}" style="float: right">
+                <input name="approved" type="hidden" value="on">
+                {% if request.willCauseOverbooking %}
+                    <button class="btn btn-warning" type="submit">
+                        <i class="fa fa-check"></i><span class="d-none d-md-inline"> Goedkeuren</span>
+                    </button>
+                {% else %}
+                    <button class="btn btn-success" type="submit">
+                        <i class="fa fa-check"></i><span class="d-none d-md-inline"> Goedkeuren</span>
+                    </button>
+                {% endif %}
+            </form>
+            <p>
+                <img class="avatar rounded-circle mr-2" src="{{ request.player.picture }}">
+                <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a>
+                {% if request.seats == 2 %}
+                    en 1 extra speler
+                {% elif request.seats > 2 %}
+                    en {{ request.seats|previous }} extra spelers
+                {% endif %}
+            </p>
+            {% if request.willCauseOverbooking %}
+                <p>Opgelet: deze aanvraag goedkeuren leidt tot overboeking!</p>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p>Je hebt nog geen aanvragen ontvangen.</p>
+    {% endif %}
+{% endif %}
+{% if not minPlayerCountIsReached %}
+    {% if data.minPlayerCount == 1 %}
+        <p>Dit spel gaat door vanaf 1 speler.</p>
+    {% else %}
+        <p>Dit spel gaat door vanaf {{ data.minPlayerCount }} spelers.</p>
+    {% endif %}
+{% endif %}
+<!-- Administration tasks -->
+{% if userIsHost %}
+<h2>Beheer</h2>
+<form method="post" action="/web/game/{{ id }}">
+    <input type="hidden" name="cancelled" value="on">
+    <button class="btn btn-danger" type="submit">
+        <i class="fa fa-times"></i> Spel annuleren</span>
+    </button>
+</form>
 {% endif %}
 {% endblock %}
 
-{% block scripts %}
+{% block additional-body %}
 <script>
-$(".negative.button").on("click", function() {
+// Add a confirmation step to all cancellation buttons.
+$(".btn-danger").on("click", function() {
     if ($(this).attr("data-confirmed") !== "confirmed") {
-        $(this).text("Annulatie bevestigen");
+        if ($(this).is(".responsive")) {
+            $(this).html("<i class='fa fa-trash-o'></i><span class='d-none d-md-inline'> Bevestigen</span>");
+        } else {
+            $(this).html("<i class='fa fa-trash-o'></i> Bevestigen");
+        }
         $(this).attr("data-confirmed", "confirmed");
         return false;
     }
 });
-$(".ui.dropdown").on("change", function() {
+// Pick the appropriate seatsText for the selected number of seats.
+$("#seats").on("change", function() {
     var seats = $(this).val();
     if (seats == 1) {
-        $("#seatsText").val("plaats");
+        $("#seatsText").text("plaats");
     } else {
-        $("#seatsText").val("plaatsen");
+        $("#seatsText").text("plaatsen");
     }
 });
+// Add the href attribute to the address link.
+var googleMapsLink = "https://maps.google.com/?q=" + encodeURIComponent("{{ location.address }}");
+$("#address").attr("href", googleMapsLink);
+// Set up the map.
 var coordinates = {
     lat: {{ location.latitude }},
     lng: {{ location.longitude }}

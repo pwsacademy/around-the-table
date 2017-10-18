@@ -1,101 +1,67 @@
 {% extends "nl_BE/base.stencil" %}
 
 {% block title %}{{ block.super }} - Berichten{% endblock %}
-{% block header %}
-<style>
-.ui.icon.message > i.icon {
-    width: 42px !important;
-}
-</style>
-{% endblock %}
 
 {% block content %}
-<h1 class="ui dividing header">Berichten</h1>
+<h2>Berichten</h2>
 {% if messages %}
     {% for message in messages %}
-        {% if message.category == "requestReceived" %}
-            <a class="ui icon message" href="{{ message.link }}">
-                <i class="help icon"></i>
-                <div class="content">
-                    <img class="ui right floated mini circular image" src="{{ message.sender.picture }}">
-                    <div class="header">
-                        {{ message.creationDate }}
-                        {% if not message.read %}
-                            <i class="red asterisk icon"></i>
-                        {% endif %}
-                    </div>
-                    <p>
-                        {{ message.sender.name }} wenst deel te nemen aan {{ message.game.name }} op {{ message.game.date }}.
-                    </p>
-                </div>
-            </a>
-        {% elif message.category == "requestApproved" %}
-            <a class="ui icon positive message" href="{{ message.link }}">
-                <i class="checkmark icon"></i>
-                <div class="content">
-                    <img class="ui right floated mini circular image" src="{{ message.sender.picture }}">
-                    <div class="header">
-                        {{ message.creationDate }}
-                        {% if not message.read %}
-                            <i class="red asterisk icon"></i>
-                        {% endif %}
-                    </div>
-                    <p>
-                        {{ message.sender.name }} heeft je aanvraag om deel te te nemen aan {{ message.game.name }} op {{ message.game.date }} goedgekeurd.
-                    </p>
-                </div>
-            </a>
-        {% elif message.category == "hostCancelledRequest" %}
-            <a class="ui negative icon message" href="{{ message.link }}">
-                <i class="remove icon"></i>
-                <div class="content">
-                    <img class="ui right floated mini circular image" src="{{ message.sender.picture }}">
-                    <div class="header">
-                        {{ message.creationDate }}
-                        {% if not message.read %}
-                            <i class="red asterisk icon"></i>
-                        {% endif %}
-                    </div>
-                    <p>
-                        {{ message.sender.name }} heeft je deelname aan {{ message.game.name }} op {{ message.game.date }} geannuleerd.
-                    </p>
-                </div>
-            </a>
-        {% elif message.category == "playerCancelledRequest" %}
-            <a class="ui negative icon message" href="{{ message.link }}">
-                <i class="remove icon"></i>
-                <div class="content">
-                    <img class="ui right floated mini circular image" src="{{ message.sender.picture }}">
-                    <div class="header">
-                        {{ message.creationDate }}
-                        {% if not message.read %}
-                            <i class="red asterisk icon"></i>
-                        {% endif %}
-                    </div>
-                    <p>
-                        {{ message.sender.name }} zal niet deelnemen aan {{ message.game.name }} op {{ message.game.date }}.
-                    </p>
-                </div>
-            </a>
-        {% elif message.category == "hostCancelledGame" %}
-            <div class="ui negative icon message">
-                <i class="remove icon"></i>
-                <div class="content">
-                    <img class="ui right floated mini circular image" src="{{ message.sender.picture }}">
-                    <div class="header">
-                        {{ message.creationDate }}
-                        {% if not message.read %}
-                            <i class="red asterisk icon"></i>
-                        {% endif %}
-                    </div>
-                    <p>
-                        {{ message.sender.name }} heeft het spel {{ message.game.name }} op {{ message.game.date }} geannuleerd.
-                    </p>
-                </div>
+        <div class="media alert" data-category="{{ message.category }}" {% if message.category != "hostCancelledGame" %} data-link="{{ message.link }}" {% endif %}>
+            <i class="fa"></i>
+            <div class="media-body">
+                <h6 class="alert-heading">
+                    {{ message.creationDate }}
+                    {% if not message.read %}
+                        <i class="fa fa-asterisk text-danger"></i>
+                    {% endif %}
+                </h6>
+                {% if message.category == "requestReceived" %}
+                    {{ message.sender.name }} wenst deel te nemen aan {{ message.game.name }} op {{ message.game.date }}.
+                {% elif message.category == "requestApproved" %}
+                    {{ message.sender.name }} heeft je aanvraag om deel te te nemen aan {{ message.game.name }} op {{ message.game.date }} goedgekeurd.
+                {% elif message.category == "hostCancelledRequest" %}
+                    {{ message.sender.name }} heeft je deelname aan {{ message.game.name }} op {{ message.game.date }} geannuleerd.
+                {% elif message.category == "playerCancelledRequest" %}
+                    {{ message.sender.name }} zal niet deelnemen aan {{ message.game.name }} op {{ message.game.date }}.
+                {% elif message.category == "hostCancelledGame" %}
+                    {{ message.sender.name }} heeft het spel {{ message.game.name }} op {{ message.game.date }} geannuleerd.
+                {% endif %}
             </div>
-        {% endif %}
+        </div>
     {% endfor %}
 {% else %}
     <p>Geen berichten.</p>
 {% endif %}
+{% endblock %}
+
+{% block additional-body %}
+<script>
+$(".media.alert").each(function() {
+    var category = $(this).attr("data-category");
+    // Set a message's color and icon based on its category.
+    switch (category) {
+        case "requestReceived":
+            $(this).addClass("alert-secondary");
+            $(this).find("> i.fa").addClass("fa-question");
+            break;
+        case "requestApproved":
+            $(this).addClass("alert-success");
+            $(this).find("> i.fa").addClass("fa-check");
+            break;
+        case "hostCancelledRequest":
+        case "playerCancelledRequest":
+        case "hostCancelledGame":
+            $(this).addClass("alert-danger");
+            $(this).find("> i.fa").addClass("fa-times");
+            break;
+    }
+});
+// Add links to messages if they have a data-link attribute.
+$(".media.alert").on("click", function() {
+    var link = $(this).attr("data-link");
+    if (link) {
+        window.location = link;
+    }
+});
+</script>
 {% endblock %}

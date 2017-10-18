@@ -3,31 +3,40 @@
 {% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
 
 {% block content %}
-<h1 class="ui dividing header">Kies een spel</h1>
+<h2>Kies een spel</h2>
 <p>Kies het spel dat je wenst te spelen uit de onderstaande lijst.</p>
-<div class="ui very relaxed link items">
-    {% for game in results %}
-        <a class="item" href="/web/host-game?id={{ game.id }}">
-            <div class="image">
-                <img src="{{ game.picture }}">
-            </div>
-            <div class="content">
-                <div class="header">{{ game.name }}</div>
-                <div class="meta">{{ game.year }}</div>
-                <div class="description">
-                    {% if game.minPlayerCount == game.maxPlayerCount %}
-                        <p><i class="user icon"></i> {{ game.minPlayerCount }}</p>
-                    {% else %}
-                        <p><i class="user icon"></i> {{ game.minPlayerCount }} - {{ game.maxPlayerCount }}</p>
-                    {% endif %}
-                    {% if game.minPlayingTime == game.maxPlayingTime %}
-                        <p><i class="wait icon"></i> {{ game.minPlayingTime }}</p>
-                    {% else %}
-                        <p><i class="wait icon"></i> {{ game.minPlayingTime }} - {{ game.maxPlayingTime }}</p>
-                    {% endif %}
-                </div>
-            </div>
-        </a>
-    {% endfor %}
-</div>
+{% for game in results %}
+    <div class="media mb-3" data-link="/web/host-game?id={{ game.id }}">
+        <img class="d-flex mr-4" style="width: 200px" src="{{ game.picture }}">
+        <div class="media-body">
+            <h5>{{ game.name }}</h5>
+            <p class="text-muted">{{ game.year }}</p>
+            <p>
+                {% if game.minPlayerCount == game.maxPlayerCount %}
+                    <i class="fa fa-user"></i> {{ game.minPlayerCount }}
+                {% else %}
+                    <i class="fa fa-user"></i> {{ game.minPlayerCount }} - {{ game.maxPlayerCount }}
+                {% endif %}
+            </p>
+            <p>
+                {% if game.minPlayingTime == game.maxPlayingTime %}
+                    <i class="fa fa-clock-o"></i> {{ game.minPlayingTime }}
+                {% else %}
+                    <i class="fa fa-clock-o"></i> {{ game.minPlayingTime }} - {{ game.maxPlayingTime }}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}
+
+{% block additional-body %}
+<script>
+$(".media").on("click", function() {
+    var link = $(this).attr("data-link");
+    if (link) {
+        window.location = link;
+    }
+});
+</script>
 {% endblock %}

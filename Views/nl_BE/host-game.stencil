@@ -1,8 +1,8 @@
 {% extends "nl_BE/base.stencil" %}
 
 {% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
-{% block header %}
-<link rel="stylesheet" href="/static/css/pikaday.min.css">
+{% block additional-head %}
+<link rel="stylesheet" href="/public/css/pikaday.min.css">
 <style>
 #map {
     height: 400px;
@@ -11,27 +11,27 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="ui dividing header">Organiseer een spel</h1>
+<h2>Organiseer een spel</h2>
 <p>Vul het onderstaande formulier in om je spel aan te maken.</p>
-<form class="ui form" method="post" action="/web/host-game">
-    <h2>Spel</h2>
+<form method="post" action="/web/host-game">
+    <h3>Spel</h3>
     <input name="id" type="hidden" value="{{ game.id }}">
-    <div class="field">
+    <div class="form-group">
         <label>Naam</label>
         {% if game.nameOptions %}
-            <select class="ui selection dropdown" name="name">
+            <select class="form-control custom-select" name="name">
                 {% for name in game.nameOptions %}
                     <option value="{{ name }}">{{ name }}</option>
                 {% endfor %}
             </select>
         {% else %}
-            <input name="name" type="text" value="{{ game.name }}" readonly>
+            <input class="form-control" name="name" type="text" value="{{ game.name }}" readonly>
         {% endif %}
     </div>
-    <div class="field">
+    <div class="form-group">
         <label>Aantal spelers</label>
         {% if game.playerCountOptions %}
-            <select id="playerCount" class="ui selection dropdown" name="playerCount">
+            <select id="playerCount" class="form-control custom-select" name="playerCount">
                 {% for playerCount in game.playerCountOptions %}
                     {% if playerCount == game.playerCountOptions|max %}
                         <option value="{{ playerCount }}" selected>{{ playerCount }}</option>
@@ -41,125 +41,124 @@
                 {% endfor %}
             </select>
         {% else %}
-            <input id="playerCount" name="playerCount" type="text" value="{{ game.playerCount }}" readonly>
+            <input class="form-control" name="playerCount" type="text" value="{{ game.playerCount }}" readonly>
         {% endif %}
-        <p>Dit is het totaal aantal spelers, organisatoren meegerekend.</p>
+        <p class="form-text text-muted">
+            Dit is het totaal aantal spelers, organisatoren meegerekend.
+        </p>
     </div>
-    <div class="field">
+    <div class="form-group">
         <label>Minimum aantal spelers</label>
-        <div class="ui selection dropdown" id="minPlayerCount">
-            <input type="hidden" name="minPlayerCount">
-            <i class="dropdown icon"></i>
-            <div class="text"></div>
-            <div class="menu">
-                {% if game.playerCountOptions %}
-                    {% for playerCount in game.playerCountOptions %}
-                        <div class="item" data-value="{{ playerCount }}">{{ playerCount }}</div>
-                    {% endfor %}
-                {% else %}
-                    <div class="item" data-value="{{ game.playerCount }}">{{ game.playerCount }}</div>
-                {% endif %}
-                <!-- The default value will be selected in code later on. -->
-            </div>
-        </div>
-        <p>Het minimum aantal spelers dat nodig is om het spel te laten doorgaan.</p>
-    </div>
-    <div class="field">
-        <label>Aantal plaatsen te reserveren voor organisatoren</label>
-        <div class="ui selection dropdown" id="prereservedSeats">
-            <input type="hidden" name="prereservedSeats">
-            <i class="dropdown icon"></i>
-            <div class="text"></div>
-            <div class="menu">
-                {% for seatCount in prereservedSeatsOptions %}
-                    {% if seatCount == 0 %}
-                        <div class="item" data-value="{{ seatCount }}">Geen (ik neem niet deel)</div>
-                    {% else %}
-                        <div class="item" data-value="{{ seatCount }}">{{ seatCount }}</div>
-                    {% endif %}
+        {% if game.playerCountOptions %}
+            <select id="minPlayerCount" class="form-control custom-select" name="minPlayerCount">
+                {% for playerCount in game.playerCountOptions %}
+                    <option value="{{ playerCount }}">{{ playerCount }}</option>
                 {% endfor %}
-                <!-- The default value will be selected in code later on. -->
-            </div>
-        </div>
-        <p>Dit aantal wordt afgetrokken van het totaal aantal spelers bij het berekenen van het aantal vrije plaatsen.</p>
+            </select>
+        {% else %}
+            <input class="form-control" name="minPlayerCount" type="text" value="{{ game.playerCount }}" readonly>
+        {% endif %}        
+        <p class="form-text text-muted">
+            Het minimum aantal spelers dat nodig is om het spel te laten doorgaan.
+        </p>
     </div>
-
-    <h2>Datum en tijdstip</h2>
-    <div class="three fields">
-        <div class="eight wide field">
+    <div class="form-group">
+        <label>Aantal plaatsen te reserveren voor organisatoren</label>
+        <select id="prereservedSeats" class="form-control custom-select" name="prereservedSeats">
+            {% for seatCount in prereservedSeatsOptions %}
+                {% if seatCount == 0 %}
+                    <option value="{{ seatCount }}">Geen (ik neem niet deel)</option>
+                {% else %}
+                    <option value="{{ seatCount }}">{{ seatCount }}</option>
+                {% endif %}
+            {% endfor %}
+            <!-- The default value will be selected in code later on. -->
+        </select>
+        <p class="form-text text-muted">
+            Dit aantal wordt afgetrokken van het totaal aantal spelers bij het berekenen van het aantal vrije plaatsen.
+        </p>
+    </div>
+    <h3>Datum en tijdstip</h3>
+    <div class="form-row">
+        <div class="form-group col-md-6">
             <label>Datum</label>
-            <div class="ui icon input">
-                <input id="datepicker" type="text" readonly required>
-                <i class="calendar icon"></i>
+            <div class="input-group">
+                <i class="input-group-addon fa fa-calendar"></i>
+                <input id="datepicker" class="form-control" type="text" readonly required>
             </div>
             <input id="day" name="day" type="hidden" value="{{ date.day }}">
             <input id="month" name="month" type="hidden" value="{{ date.month }}">
             <input id="year" name="year" type="hidden" value="{{ date.year }}">
         </div>
-        <div class="four wide field">
+        <div class="form-group col-md-3">
             <label>Uur</label>
-            <input name="hour" type="number" value="{{ date.hour }}" min="0" max="23" required>
+            <input class="form-control" name="hour" type="number" value="{{ date.hour }}" min="0" max="23" required>
         </div>
-        <div class="four wide field">
+        <div class="form-group col-md-3">
             <label>Minuut</label>
-            <input name="minute" type="number" value="{{ date.minute }}" min="0" max="59" required>
+            <input class="form-control" name="minute" type="number" value="{{ date.minute }}" min="0" max="59" required>
         </div>
     </div>
-    <div class="grouped fields">
+    <div class="form-group">
         <label>Deadline voor inschrijving</label>
-        <div class="field">
-            <div class="ui radio checkbox">
-                <input type="radio" name="deadline" value="one hour" checked>
-                <label>een uur op voorhand</label>
-            </div>
+        <div class="form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="deadline" value="one hour" checked>
+                een uur op voorhand
+            </label>
         </div>
-        <div class="field">
-            <div class="ui radio checkbox">
-                <input type="radio" name="deadline" value="one day">
-                <label>een dag op voorhand</label>
-            </div>
+        <div class="form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="deadline" value="one day">
+                een dag op voorhand
+            </label>
         </div>
-        <div class="field">
-            <div class="ui radio checkbox">
-                <input type="radio" name="deadline" value="two days">
-                <label>twee dagen op voorhand</label>
-            </div>
+        <div class="form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="deadline" value="two days">
+                twee dagen op voorhand
+            </label>
         </div>
-        <div class="field">
-            <div class="ui radio checkbox">
-                <input type="radio" name="deadline" value="one week">
-                <label>een week op voorhand</label>
-            </div>
+        <div class="form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="deadline" value="one week">
+                een week op voorhand
+            </label>
         </div>
-        <p>Na het verstrijken van de deadline kan je als organisator nog steeds aanvragen goedkeuren of het spel annuleren.</p>
+        <p class="form-text text-muted">
+            Na het verstrijken van de deadline kan je als organisator nog steeds aanvragen goedkeuren of het spel annuleren.
+        </p>
     </div>
-
-    <h2>Adres</h2>
-    <p>Geef je volledige adres in. Deze adresgegevens worden getoond aan de spelers wiens aanvraag jij hebt goedkeurd.</p>
-    <div class="field">
-        <input id="address" name="address" type="text" placeholder="Adres" required>
+    <h3>Adres</h3>
+    <div class="form-group">
+        <label>Geef je volledige adres in. Deze adresgegevens worden getoond aan de spelers wiens aanvraag jij hebt goedkeurd.</label>
+        <div class="input-group">
+            <i class="input-group-addon fa fa-map-marker"></i>
+            <input id="address" class="form-control" name="address" type="text" placeholder="Adres" required>
+        </div>
         <input id="city" name="city" type="hidden">
         <input id="latitude" name="latitude" type="hidden">
         <input id="longitude" name="longitude" type="hidden">
+        <p class="form-text text-muted">
+            Maak gebruik van de automatische aanvulling en kies een adres uit de voorgestelde opties.
+            Er zal een aanduiding verschijnen op de kaart wanneer je adres correct is ingegeven.
+        </p>
+        <div id="map"></div>
     </div>
-    <p>
-        Maak gebruik van de automatische aanvulling en kies een adres uit de voorgestelde opties.
-        Er zal een aanduiding verschijnen op de kaart wanneer je adres correct is ingegeven.
-    </p>
-    <div id="map">
+    <h3>Extra informatie</h3>
+    <div class="form-group">
+        <textarea class="form-control" name="info" rows="8"></textarea>
     </div>
-
-    <h2>Extra informatie</h2>
-    <div class="field">
-        <textarea name="info" rows="8"></textarea>
+    <div class="form-group">
+        <button id="submit" class="btn btn-primary" type="submit" disabled>Spel aanmaken</button>
     </div>
-    <button class="ui button" type="submit" disabled>Spel aanmaken</button>
 </form>
 {% endblock %}
 
-{% block scripts %}
-<script src="/static/js/pikaday.min.js"></script>
+{% block additional-body %}
+<script src="/public/js/pikaday.min.js"></script>
 <script>
+// Set up the date picker.
 var picker = new Pikaday({
     field: document.getElementById("datepicker"),
     firstDay: 1,
@@ -182,47 +181,43 @@ var picker = new Pikaday({
         weekdaysShort : ["Zon","Ma","Di","Woe","Do","Vrij","Zat"]
     }
 });
-// Select the lowest possible minPlayerCount by default.
-$("#minPlayerCount").dropdown("set selected", $("#minPlayerCount div.item").first().attr("data-value"));
-// Set prereservedSeats to 1 by default. Set it to 0 for a single player game.
-if ($("#prereservedSeats div.item").length > 1) {
-    $("#prereservedSeats").dropdown("set selected", "1");
+// Set prereservedSeats to 1 by default, or 0 for a single player game.
+if ($("#prereservedSeats option").length > 1) {
+    $("#prereservedSeats").val("1");
 } else {
-    $("#prereservedSeats").dropdown("set selected", "0");
+    $("#prereservedSeats").val("0");
 }
+// Adjust minPlayerCount and prereservedSeats when a new playerCount is selected.
 $("#playerCount").on("change", function() {
     var playerCount = $(this).val();
-    // Adjust the minPlayerCount options.
-    $("#minPlayerCount div.item").each(function() {
-        var minPlayerCount = $(this).attr("data-value");
+    // If minPlayerCount is now invalid, set it to the new playerCount.
+    if ($("#minPlayerCount").val() > playerCount) {
+		$("#minPlayerCount").val(playerCount);
+    }
+    // Adjust the minPlayerCount options based on the new playerCount.
+    $("#minPlayerCount option").each(function() {
+        var minPlayerCount = $(this).attr("value");
         if (minPlayerCount <= playerCount) {
-            $(this).removeClass("disabled");
+            $(this).removeAttr("disabled");
         } else {
-            $(this).addClass("disabled");
-            $(this).removeClass("active selected");
+            $(this).attr("disabled", "disabled");
         }
     });
-    // If we disabled the selected option, select the new playerCount.
-    if (!$("#minPlayerCount div.active.selected").length) {
-        $("#minPlayerCount").dropdown("set selected", playerCount);
+    // If prereservedSeats is now invalid, set it to the highest valid option.
+    if ($("#prereservedSeats").val() >= playerCount) {
+        $("#prereservedSeats").val(playerCount - 1);
     }
-    // Adjust the prereservedSeats options.
-    $("#prereservedSeats div.item").each(function() {
-        var seatCount = $(this).attr("data-value");
+    // Adjust the prereservedSeats options based on the new playerCount.
+    $("#prereservedSeats option").each(function() {
+        var seatCount = $(this).attr("value");
         if (seatCount < playerCount) {
-            $(this).removeClass("disabled");
+            $(this).removeAttr("disabled");
         } else {
-            $(this).addClass("disabled");
-            $(this).removeClass("active selected");
+            $(this).attr("disabled", "disabled");
         }
     });
-    // If we disabled the selected option, select the highest non-disabled option.
-    if (!$("#prereservedSeats div.active.selected").length) {
-        var option = $("#prereservedSeats div.item").not(".disabled").last();
-        $("#prereservedSeats").dropdown("set selected", option.attr("data-value"));
-    }
 });
-
+// Set up the map.
 var map;
 function loadMap() {
     map = new google.maps.Map(document.getElementById("map"), {
@@ -236,21 +231,23 @@ function loadMap() {
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ googleAPIKey }}&libraries=places&callback=loadMap"></script>
 <script>
+// Set up the autocomplete address field.
 var autocomplete = new google.maps.places.Autocomplete(document.getElementById("address"), {
     componentRestrictions: {
         country: {{ countries }}
     }
 });
-
+// Adjust the map and set a marker when the user enters an address.
 var marker;
 autocomplete.addListener("place_changed", function() {
     var place = autocomplete.getPlace();
     var cityComponent = place.address_components.find(function(component) {
         return component.types.indexOf("locality") != -1;
     });
+    // Make sure the location contains a city (and it's not just a province or country).
     if (!cityComponent) {
         $("#address").val("");
-        $("button[type=submit]").attr("disabled", "disabled");
+        $("#submit").attr("disabled", "disabled");
         return
     }
     var city = cityComponent.long_name;
@@ -267,7 +264,7 @@ autocomplete.addListener("place_changed", function() {
         marker.setPosition(coordinates);
     }
     map.setCenter(coordinates);
-    $("button[type=submit]").removeAttr("disabled");
+    $("#submit").removeAttr("disabled");
 });
 </script>
 {% endblock %}

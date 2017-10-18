@@ -3,13 +3,13 @@
 {% block title %}{{ block.super }} - Account aanmaken{% endblock %}
 
 {% block content %}
-<h1 class="ui dividing header">Account aanmaken</h1>
-<h2>Gebruiksvoorwaarden</h2>
+<h2>Account aanmaken</h2>
+<h3>Gebruiksvoorwaarden</h3>
 <ul>
     <li>Deze site is en blijft gratis in gebruik voor zowel spelers als organisatoren.</li>
     <li>
         Het doel van deze site is louter om spelers en organisatoren samen te brengen.
-        Elke gebruiker is zelf verantwoordelijk voor de spellen en activiteiten die hij/zij organiseert of waaraan hij/zij deelneemt.
+        Elke gebruiker is zelf verantwoordelijk voor de spellen die hij/zij organiseert of waaraan hij/zij deelneemt.
     </li>
     <li>De gegevens die deze site verzamelt worden enkel gebruikt voor de werking van de site en worden niet gedeeld met derden.</li>
     <li>
@@ -19,31 +19,31 @@
     </li>
     <li>Minderjarigen mogen deze site enkel gebruiken mits medeweten en toestemming van een ouder of voogd.</li>
 </ul>
-<h2>Gedragsregels</h2>
+<h3>Gedragsregels</h3>
 <ul>
     <li>Respecteer elkaar en elkaars eigendom.</li>
     <li>Respecteer de huisregels van elke organisator.</li>
     <li>Discriminatie op basis van afkomst, geaardheid, geslacht, leeftijd of uiterlijk wordt niet getolereerd.</li>
 </ul>
 <p>Het niet naleven van deze regels leidt tot een verwijdering en blokkering van je account.</p>
-<form class="ui form" method="post" action="/authentication/signup">
-    <div class="field">
-        <div class="ui checkbox">
-            <input type="checkbox" name="agree">
-            <label>Ik ga akkoord</label>
-        </div>
+<form method="post" action="/authentication/signup">
+    <div class="form-check">
+        <label class="form-check-label">
+            <input id="agree" class="form-check-input" type="checkbox" name="agree">
+            Ik ga akkoord
+        </label>
     </div>
-    <button class="ui primary button" id="submit" type="submit" disabled>Account aanmaken</button>
+    <button id="submit" class="btn btn-primary" type="submit" disabled>Account aanmaken</button>
 </form>
 {% endblock %}
 
-{% block scripts %}
+{% block additional-body %}
 <script>
-$("input[type='checkbox']").on("change", function() {
+$("#agree").on("change", function() {
     if (this.checked) {
         $("#submit").removeAttr("disabled");
     } else {
-        $("#submit").attr("disabled", true);
+        $("#submit").attr("disabled", "disabled");
     }
 });
 </script>

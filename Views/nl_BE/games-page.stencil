@@ -11,65 +11,64 @@
 {% endblock %}
 
 {% block content %}
-<div class="ui message">
+<div class="alert alert-info">
     Spellen die je zelf organiseert worden niet getoond op deze pagina.
     Deze spellen zijn te vinden in je persoonlijk menu, onder "Mijn spellen".
 </div>
 {% if type == "newest-games" %}
-    <h1 class="ui dividing header">Nieuwste spellen</h1>
+    <h2>Nieuwste spellen</h2>
 {% elif type == "upcoming-games" %}
-    <h1 class="ui dividing header">Binnenkort op de agenda</h1>
+    <h2>Binnenkort op de agenda</h2>
 {% elif type == "games-near-me" %}
-    <h1 class="ui dividing header">In mijn buurt</h1>
+    <h2>In mijn buurt</h2>
 {% endif %}
-
 {% if games %}
-    <div class="ui four doubling link cards">
+    <div class="row">
         {% for game in games %}
-            <a {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %} href="/web/game/{{ game.id }}">
-                <div class="image">
-                    <img src="{{ game.data.picture }}">
-                </div>
-                <div class="content">
-                    <div class="header">{{ game.data.name }}</div>
-                    <div class="meta">
-                        <i class="calendar icon"></i> {{ game.date }}
+            <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
+                <div {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>
+                    <a href="/web/game/{{ game.id }}">
+                        <img class="card-img-top" src="{{ game.data.picture }}">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ game.data.name }}</h5>
+                        <p class="card-subtitle text-muted mb-2">
+                            <i class="fa fa-calendar"></i> {{ game.date }}
+                        </p>
+                        <p class="card-text">
+                            Bij {{ game.host }}.
+                        </p>
                     </div>
-                    <div class="description">
-                        Bij {{ game.host }}.
+                    <div class="card-footer text-muted">
+                        {% if coordinates.geolocated %}
+                            <span class="float-right">
+                                {{ game.distance }}km
+                            </span>
+                        {% endif %}
+                        <i class="fa fa-map-marker"></i> {{ game.city }}
                     </div>
                 </div>
-                <div class="extra content">
-                    {% if coordinates.geolocated %}
-                        <span class="right floated">
-                            {{ game.distance }}km
-                        </span>
-                    {% endif %}
-                    <i class="marker icon"></i> {{ game.city }}
-                </div>
-            </a>
+            </div>
         {% endfor %}
     </div>
     {% if previousPage or nextPage %}
-        <div style="margin-top: 1em">
-            {% if previousPage and nextPage %}
-                <!-- Use floating for the right button if both buttons are present -->
-                <a class="ui right floated right labeled basic icon button" href="{{ nextPage }}">
-                    <i class="right arrow icon"></i> Volgende pagina
-                </a>
-                <a class="ui labeled basic icon button" href="{{ previousPage }}">
-                    <i class="left arrow icon"></i> Vorige pagina
-                </a>
-            {% elif nextPage %}
-                <a class="ui right labeled basic icon button" href="{{ nextPage }}">
-                    <i class="right arrow icon"></i> Volgende pagina
-                </a>
-            {% else %}
-                <a class="ui labeled basic icon button" href="{{ previousPage }}">
-                    <i class="left arrow icon"></i> Vorige pagina
-                </a>
-            {% endif %}
-        </div>
+        {% if previousPage and nextPage %}
+            <!-- Use floating for the right button if both buttons are present -->
+            <a class="btn btn-outline-secondary mb-3 float-right" href="{{ nextPage }}">
+                Volgende pagina <i class="fa fa-angle-right"></i>
+            </a>
+            <a class="btn btn-outline-secondary mb-3" href="{{ previousPage }}">
+                <i class="fa fa-angle-left"></i> Vorige pagina
+            </a>
+        {% elif nextPage %}
+            <a class="btn btn-outline-secondary mb-3" href="{{ nextPage }}">
+                Volgende pagina <i class="fa fa-angle-right"></i>
+            </a>
+        {% else %}
+            <a class="btn btn-outline-secondary mb-3" href="{{ previousPage }}">
+                <i class="fa fa-angle-left"></i> Vorige pagina
+            </a>
+        {% endif %}
     {% endif %}
 {% else %}
     <p>Geen spellen gepland.</p>

@@ -3,114 +3,136 @@
 {% block title %}{{ block.super }} - Spellen{% endblock %}
 
 {% block content %}
-<div class="ui message">
+<div class="alert alert-info">
     Spellen die je zelf organiseert worden niet getoond op deze pagina.
     Deze spellen zijn te vinden in je persoonlijk menu, onder "Mijn spellen".
 </div>
-<h1 class="ui dividing header">Nieuwste spellen</h1>
+<h2>Nieuwste spellen</h2>
 {% if newestGames %}
-    <div class="ui four doubling link cards">
+    <div class="row">
         {% for game in newestGames %}
-            <a {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %} href="/web/game/{{ game.id }}">
-                <div class="image">
-                    <img src="{{ game.data.picture }}">
-                </div>
-                <div class="content">
-                    <div class="header">{{ game.data.name }}</div>
-                    <div class="meta">
-                        <i class="calendar icon"></i> {{ game.date }}
+            {% if forloop.counter <= 4 %}
+                {% if forloop.counter <= 3 %}
+                    <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
+                {% else %}
+                    <div class="col-md-6 col-lg-4 col-xl-3 d-lg-none d-xl-flex mb-3">
+                {% endif %}
+                    <div {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>                    
+                        <a href="/web/game/{{ game.id }}">
+                            <img class="card-img-top" src="{{ game.data.picture }}">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ game.data.name }}</h5>
+                            <p class="card-subtitle text-muted mb-2">
+                                <i class="fa fa-calendar"></i> {{ game.date }}
+                            </p>
+                            <p class="card-text">
+                                Bij {{ game.host }}.
+                            </p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            {% if coordinates.geolocated %}
+                                <span class="float-right">
+                                    {{ game.distance }}km
+                                </span>
+                            {% endif %}
+                            <i class="fa fa-map-marker"></i> {{ game.city }}
+                        </div>
                     </div>
-                    <div class="description">
-                        Bij {{ game.host }}.<br>
-                    </div>
                 </div>
-                <div class="extra content">
-                    {% if coordinates.geolocated %}
-                        <span class="right floated">
-                            {{ game.distance }}km
-                        </span>
-                    {% endif %}
-                    <i class="marker icon"></i> {{ game.city }}
-                </div>
-            </a>
+            {% endif %}
         {% endfor %}
     </div>
-    <a class="ui right labeled basic icon button" href="/web/newest-games?page=0" style="margin-top: 1em">
-        <i class="right angle icon"></i> Meer
+    <a class="btn btn-outline-secondary mb-3" href="/web/newest-games?page=0">
+        Meer <i class="fa fa-angle-right"></i>
     </a>
 {% else %}
     <p>Geen spellen gepland.</p>
 {% endif %}
-
-<h1 class="ui dividing header">Binnenkort op de agenda</h1>
+<h2>Binnenkort op de agenda</h2>
 {% if upcomingGames %}
-    <div class="ui four doubling link cards">
+    <div class="row">
         {% for game in upcomingGames %}
-            <a {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %} href="/web/game/{{ game.id }}">
-                <div class="image">
-                    <img src="{{ game.data.picture }}">
-                </div>
-                <div class="content">
-                    <div class="header">{{ game.data.name }}</div>
-                    <div class="meta">
-                        <i class="calendar icon"></i> {{ game.date }}
+            {% if forloop.counter <= 4 %}
+                {% if forloop.counter <= 3 %}
+                    <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
+                {% else %}
+                    <div class="col-md-6 col-lg-4 col-xl-3 d-lg-none d-xl-flex mb-3">
+                {% endif %}
+                    <div {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>                    
+                        <a href="/web/game/{{ game.id }}">
+                            <img class="card-img-top" src="{{ game.data.picture }}">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ game.data.name }}</h5>
+                            <p class="card-subtitle text-muted mb-2">
+                                <i class="fa fa-calendar"></i> {{ game.date }}
+                            </p>
+                            <p class="card-text">
+                                Bij {{ game.host }}.
+                            </p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            {% if coordinates.geolocated %}
+                                <span class="float-right">
+                                    {{ game.distance }}km
+                                </span>
+                            {% endif %}
+                            <i class="fa fa-map-marker"></i> {{ game.city }}
+                        </div>
                     </div>
-                    <div class="description">
-                        Bij {{ game.host }}.<br>
-                    </div>
                 </div>
-                <div class="extra content">
-                    {% if coordinates.geolocated %}
-                        <span class="right floated">
-                            {{ game.distance }}km
-                        </span>
-                    {% endif %}
-                    <i class="marker icon"></i> {{ game.city }}
-                </div>
-            </a>
+            {% endif %}
         {% endfor %}
     </div>
-    <a class="ui right labeled basic icon button" href="/web/upcoming-games?page=0" style="margin-top: 1em">
-        <i class="right angle icon"></i> Meer
+    <a class="btn btn-outline-secondary mb-3" href="/web/upcoming-games?page=0">
+        Meer <i class="fa fa-angle-right"></i>
     </a>
 {% else %}
     <p>Geen spellen gepland.</p>
 {% endif %}
-
-<h1 class="ui dividing header">In mijn buurt</h1>
+<h2>In mijn buurt</h2>
 {% if not coordinates.geolocated %}
-    <div class="ui warning message">
+    <div class="alert alert-warning">
         Om deze functie te activeren moet u toestemming geven om uw locatie te gebruiken.
     </div>
 {% elif gamesNearMe %}
-    <div class="ui four doubling link cards">
+    <div class="row">
         {% for game in gamesNearMe %}
-            <a {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %} href="/web/game/{{ game.id }}">
-                <div class="image">
-                    <img src="{{ game.data.picture }}">
-                </div>
-                <div class="content">
-                    <div class="header">{{ game.data.name }}</div>
-                    <div class="meta">
-                        <i class="calendar icon"></i> {{ game.date }}
+            {% if forloop.counter <= 4 %}
+                {% if forloop.counter <= 3 %}
+                    <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
+                {% else %}
+                    <div class="col-md-6 col-lg-4 col-xl-3 d-lg-none d-xl-flex mb-3">
+                {% endif %}
+                    <div {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>                    
+                        <a href="/web/game/{{ game.id }}">
+                            <img class="card-img-top" src="{{ game.data.picture }}">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ game.data.name }}</h5>
+                            <p class="card-subtitle text-muted mb-2">
+                                <i class="fa fa-calendar"></i> {{ game.date }}
+                            </p>
+                            <p class="card-text">
+                                Bij {{ game.host }}.
+                            </p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            {% if coordinates.geolocated %}
+                                <span class="float-right">
+                                    {{ game.distance }}km
+                                </span>
+                            {% endif %}
+                            <i class="fa fa-map-marker"></i> {{ game.city }}
+                        </div>
                     </div>
-                    <div class="description">
-                        Bij {{ game.host }}.<br>
-                    </div>
                 </div>
-                <div class="extra content">
-                    {% if coordinates.geolocated %}
-                        <span class="right floated">
-                            {{ game.distance }}km
-                        </span>
-                    {% endif %}
-                    <i class="marker icon"></i> {{ game.city }}
-                </div>
-            </a>
+            {% endif %}
         {% endfor %}
     </div>
-    <a class="ui right labeled basic icon button" href="/web/games-near-me?page=0" style="margin-top: 1em">
-        <i class="right angle icon"></i> Meer
+    <a class="btn btn-outline-secondary mb-3" href="/web/games-near-me?page=0">
+        Meer <i class="fa fa-angle-right"></i>
     </a>
 {% else %}
     <p>Geen spellen gepland.</p>

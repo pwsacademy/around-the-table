@@ -3,42 +3,21 @@
 {% block title %}{{ block.super }}{% endblock %}
 
 {% block content %}
-<div class="ui negative message">
-    <div class="header">Beta waarschuwing</div>
-    <p>
-        Deze site is nog volop in ontwikkeling. Tijdens deze periode is het mogelijk dat de site af en toe onbereikbaar is.<br>
-        Het design van de site is nog maar voorlopig en is nog niet geschikt voor smartphones. Dit is een gekend probleem.<br>
-        Heb je zelf een probleem ontdekt, meld dit dan via onze <a href="https://www.facebook.com/ronddetafelsite">Facebook</a> pagina,
-        graag met een screenshot en met vermelding van de browser die je gebruikt.
-    </p>
-</div>
-
-<h1 class="ui dividing header">Welkom</h1>
+<h2>Welkom</h2>
 <p>
     Welkom bij Rond de tafel. Deze site heeft als doel mensen samen te brengen rond de speltafel.
     Zoek je medespelers voor een spel dat maar niet op tafel raakt? Wens je een bepaald spel uit te proberen?
     Of wil je gewoon wat nieuwe spellen en mensen leren kennen? Hier vind je zeker wat je zoekt!
 </p>
-
-<h2>Spellen</h2>
+<h3>Spellen</h3>
 <p>
     Op deze pagina vind je de spellen die aangeboden worden.
     Deze spellen zijn voornamelijk privé-initiatieven en gaan meestal door bij de organisator thuis.
     De organisator voorziet speluitleg. Je hoeft het spel dus niet te kennen om deel te nemen.
 </p>
-
-<h2>Activiteiten</h2>
+<h3>Organiseer</h3>
 <p>
-    Deze pagina toont alle andere spelgerelateerde activiteiten. Dit zijn zowel privé-initiatieven als clubactiviteiten.
-    Van maandelijkse spelavonden van spellenclubs tot barbecues en spellenbeurzen, alles is welkom!
-</p>
-<p class="ui warning message">
-    Deze functie is nog niet beschikbaar.
-</p>
-
-<h2>Organiseer</h2>
-<p>
-    Niet gevonden wat je zoekt? Organiseer dan gewoon zelf een spel of activiteit!
-    Het duurt maar een minuutje om een spel of activiteit aan te maken.
+    Niet gevonden wat je zoekt? Organiseer dan gewoon zelf een spel!
+    Het duurt maar een minuutje om een spel aan te maken.
 </p>
 {% endblock %}
