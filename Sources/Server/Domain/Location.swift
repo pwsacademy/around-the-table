@@ -5,7 +5,11 @@ struct Location {
     let latitude: Double
     let longitude: Double
     
-    var distance: Double? // Calculated when a user searches for games. Not persisted.
+    /*
+     Distance to the current user.
+     Calculated when a user searches for games. Not persisted.
+     */
+    var distance: Double?
     
     init(address: String = "", city: String = "", latitude: Double, longitude: Double, distance: Double? = nil) {
         self.address = address
