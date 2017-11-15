@@ -18,6 +18,8 @@ struct Location {
         self.longitude = longitude
         self.distance = distance
     }
+    
+    static let `default` = Location(latitude: Settings.defaultCoordinates.latitude, longitude: Settings.defaultCoordinates.longitude)
 }
 
 // MARK: - BSON

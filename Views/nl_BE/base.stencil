@@ -88,6 +88,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="/web/settings">Instellingen</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="/authentication/signout">Afmelden</a>
                     </li>
                 </ul>
@@ -121,6 +124,7 @@
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="/web/my-games">Mijn spellen</a>
                         <a class="dropdown-item" href="/web/messages">Berichten</a>
+                        <a class="dropdown-item" href="/web/settings">Instellingen</a>
                         <a class="dropdown-item" href="/authentication/signout">Afmelden</a>
                     </div>
                 </li>

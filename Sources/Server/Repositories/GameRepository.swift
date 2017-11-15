@@ -50,13 +50,13 @@ struct GameRepository {
         return try collection(.games).find(["host": host.id, "date": ["$gt": Date()], "cancelled": false], sortedBy: ["date": .ascending]).map { try Game(bson: $0) }
     }
     
-    func games(joinedBy player: User, withDistanceMeasuredFrom location: Location) throws -> [Game] {
+    func games(joinedBy player: User) throws -> [Game] {
         let gameIDs = try collection(.requests)
             .find(["player": player.id, "approved": true, "cancelled": false], projecting: ["_id": false, "game": true])
             .flatMap { String($0["game"]) }
             .map { try ObjectId($0) }
         return try games(matching: ["_id": ["$in": gameIDs], "date": ["$gt": Date()], "cancelled": false],
-                         withDistanceMeasuredFrom: location,
+                         withDistanceMeasuredFrom: player.location ?? .default,
                          sortedBy: ["date": .ascending],
                          startingFrom: 0, limitedTo: gameIDs.count)
     }

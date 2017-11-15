@@ -43,7 +43,7 @@
             {% else %}
                 {{ location.city }}
             {% endif %}
-            {% if not userIsHost and coordinates.geolocated %}
+            {% if not userIsHost and coordinates.actual %}
                 ({{ location.distance }}km)
             {% endif %}
         </p>

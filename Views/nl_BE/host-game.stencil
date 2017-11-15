@@ -130,15 +130,26 @@
         </p>
     </div>
     <h3>Adres</h3>
-    <div class="form-group">
-        <label>Geef je volledige adres in. Deze adresgegevens worden getoond aan de spelers wiens aanvraag jij hebt goedkeurd.</label>
+    <input id="address" name="address" type="hidden">
+    <input id="city" name="city" type="hidden">
+    <input id="latitude" name="latitude" type="hidden">
+    <input id="longitude" name="longitude" type="hidden">
+    <p>
+        Deze adresgegevens worden getoond aan de spelers wiens aanvraag jij hebt goedkeurd.
+    </p>
+    {% if coordinates.actual %}
+        <div class="form-group">
+            <label class="form-check-label">
+                <input id="use-saved-location" class="form-check-input" type="checkbox" checked>
+                Gebruik mijn opgeslagen adres: {{ location.address }}.
+            </label>
+        </div>
+    {% endif %}
+    <div id="address-picker" class="form-group">
         <div class="input-group">
             <i class="input-group-addon fa fa-map-marker"></i>
-            <input id="address" class="form-control" name="address" type="text" placeholder="Adres" required>
+            <input id="autocomplete" class="form-control" type="text" placeholder="Adres">
         </div>
-        <input id="city" name="city" type="hidden">
-        <input id="latitude" name="latitude" type="hidden">
-        <input id="longitude" name="longitude" type="hidden">
         <p class="form-text text-muted">
             Maak gebruik van de automatische aanvulling en kies een adres uit de voorgestelde opties.
             Er zal een aanduiding verschijnen op de kaart wanneer je adres correct is ingegeven.
@@ -232,7 +243,7 @@ function loadMap() {
 <script src="https://maps.googleapis.com/maps/api/js?key={{ googleAPIKey }}&libraries=places&callback=loadMap"></script>
 <script>
 // Set up the autocomplete address field.
-var autocomplete = new google.maps.places.Autocomplete(document.getElementById("address"), {
+var autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocomplete"), {
     componentRestrictions: {
         country: {{ countries }}
     }
@@ -246,10 +257,11 @@ autocomplete.addListener("place_changed", function() {
     });
     // Make sure the location contains a city (and it's not just a province or country).
     if (!cityComponent) {
-        $("#address").val("");
+        clearLocation();
         $("#submit").attr("disabled", "disabled");
         return
     }
+    $("#address").val($("#autocomplete").val());
     var city = cityComponent.long_name;
     var coordinates = place.geometry.location;
     $("#city").val(city);
@@ -266,5 +278,61 @@ autocomplete.addListener("place_changed", function() {
     map.setCenter(coordinates);
     $("#submit").removeAttr("disabled");
 });
+// Toggle the address picker.
+$("#use-saved-location").on("change", function() {
+    if (!this.checked) {
+        clearLocation();
+        $("#address-picker").show();
+        // These next two statements make sure the map renders properly.
+        // The map won't render properly when the address picker is hidden.
+        google.maps.event.trigger(map, "resize");
+        map.setCenter({
+            lat: {{ coordinates.latitude }},
+            lng: {{ coordinates.longitude }}
+        });
+        $("#submit").attr("disabled", "disabled");
+    } else {
+        setSavedLocation();
+        $("#address-picker").hide();
+        $("#submit").removeAttr("disabled");
+    }
+});
+{% if coordinates.actual %}
+    setSavedLocation();
+    $("#address-picker").hide();
+    $("#submit").removeAttr("disabled");
+{% endif %}
+// Helper functions.
+function clearLocation() {
+    $("#autocomplete").val("");
+    $("#address").val("");
+    $("#city").val("");
+    $("#latitude").val("");
+    $("#longitude").val("");
+    if (marker) {
+        marker.setMap(null);
+        marker = null;
+    }
+}
+function setSavedLocation() {
+    $("#autocomplete").val("{{ location.address }}");
+    $("#address").val("{{ location.address }}");
+    $("#city").val("{{ location.city }}");
+    $("#latitude").val("{{ coordinates.latitude }}");
+    $("#longitude").val("{{ coordinates.longitude }}");
+    var coordinates = {
+        lat: {{ coordinates.latitude }},
+        lng: {{ coordinates.longitude }}
+    };
+    if (!marker) {
+        marker = new google.maps.Marker({
+            position: coordinates,
+            map: map
+        });
+    } else {
+        marker.setPosition(coordinates);
+    }
+    map.setCenter(coordinates);
+}
 </script>
 {% endblock %}

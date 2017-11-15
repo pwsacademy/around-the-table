@@ -40,7 +40,7 @@
                         </p>
                     </div>
                     <div class="card-footer text-muted">
-                        {% if coordinates.geolocated %}
+                        {% if coordinates.actual %}
                             <span class="float-right">
                                 {{ game.distance }}km
                             </span>

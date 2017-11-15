@@ -30,7 +30,7 @@ private let session = Session(secret: Secrets.sessionSecret)
 router.all("/authentication", middleware: [session])
 private let credentials = configureAuthenticationRouter(using: router.route("/authentication"))
 
-router.all("/web", middleware: [session, credentials, AuthenticationMiddleware(), BaseContextMiddleware(), LocationMiddleware()])
+router.all("/web", middleware: [session, credentials, AuthenticationMiddleware(), BaseContextMiddleware()])
 configureWebRouter(using: router.route("/web"))
 
 router.get("/") {

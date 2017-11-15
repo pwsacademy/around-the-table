@@ -31,7 +31,7 @@
                             </p>
                         </div>
                         <div class="card-footer text-muted">
-                            {% if coordinates.geolocated %}
+                            {% if coordinates.actual %}
                                 <span class="float-right">
                                     {{ game.distance }}km
                                 </span>
@@ -73,7 +73,7 @@
                             </p>
                         </div>
                         <div class="card-footer text-muted">
-                            {% if coordinates.geolocated %}
+                            {% if coordinates.actual %}
                                 <span class="float-right">
                                     {{ game.distance }}km
                                 </span>
@@ -92,9 +92,9 @@
     <p>Geen spellen gepland.</p>
 {% endif %}
 <h2>In mijn buurt</h2>
-{% if not coordinates.geolocated %}
+{% if not coordinates.actual %}
     <div class="alert alert-warning">
-        Om deze functie te activeren moet u toestemming geven om uw locatie te gebruiken.
+        Om deze functie te activeren moet je een adres ingeven bij <a href="/web/settings">Instellingen</a>.
     </div>
 {% elif gamesNearMe %}
     <div class="row">
@@ -119,7 +119,7 @@
                             </p>
                         </div>
                         <div class="card-footer text-muted">
-                            {% if coordinates.geolocated %}
+                            {% if coordinates.actual %}
                                 <span class="float-right">
                                     {{ game.distance }}km
                                 </span>

@@ -8,11 +8,13 @@ final class User {
     let id: String // Facebook ID.
     var name: String
     var picture: URL?
+    var location: Location?
     
-    init(id: String, name: String, picture: URL? = nil) {
+    init(id: String, name: String, picture: URL? = nil, location: Location? = nil) {
         self.id = id
         self.name = name
         self.picture = picture
+        self.location = location
     }
 }
 
@@ -37,9 +39,11 @@ extension User {
             try logAndThrow(BSONError.missingField(name: "name"))
         }
         let picture = String(bson["picture"])
+        let location = Document(bson["location"])
         self.init(id: id,
                   name: name,
-                  picture: picture != nil ? URL(string: picture!) : nil)
+                  picture: picture != nil ? URL(string: picture!) : nil,
+                  location: location != nil ? try Location(bson: location!) : nil)
     }
     
     func toBSON() -> Document {
@@ -49,6 +53,9 @@ extension User {
         ]
         if let picture = picture {
             bson["picture"] = picture.absoluteString
+        }
+        if let location = location {
+            bson["location"] = location.toBSON()
         }
         return bson
     }

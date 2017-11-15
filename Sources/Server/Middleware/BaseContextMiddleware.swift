@@ -3,7 +3,8 @@ import Kitura
 
 /*
  Sets the rendering context necessary for the `base.stencil` template.
- This context is stored in the `request.userInfo` dictionary.
+ Loads location information from the user's settings.
+ Also loads related settings like the list of supported countries and the Google API key.
  Requires a preceding AuthenticationMiddleware.
  */
 struct BaseContextMiddleware: RouterMiddleware {
@@ -24,6 +25,21 @@ struct BaseContextMiddleware: RouterMiddleware {
             ],
             "unreadMessageCount": unreadMessageCount
         ])
+        if let location = user.location {
+            request.userInfo["coordinates"] = [
+                "latitude": location.latitude,
+                "longitude": location.longitude,
+                "actual": true
+            ]
+        } else {
+            request.userInfo["coordinates"] = [
+                "latitude": Settings.defaultCoordinates.latitude,
+                "longitude": Settings.defaultCoordinates.longitude,
+                "actual": false
+            ]
+        }
+        request.userInfo["countries"] = "[\(Settings.countries.map { "\"\($0)\"" }.joined(separator: ", "))]" // Builds a JSON array.
+        request.userInfo["googleAPIKey"] = Secrets.googleAPIKey
         next()
     }
 }

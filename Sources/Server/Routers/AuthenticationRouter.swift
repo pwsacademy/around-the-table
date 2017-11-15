@@ -51,7 +51,6 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
         next()
     }
     
-    router.get("/signin", allowPartialMatch: false, middleware: SaveLocationMiddleware())
     router.get("/signin", handler: credentials.authenticate(credentialsType: facebook.name))
     router.get("/signin/callback", handler: credentials.authenticate(credentialsType: facebook.name))
     
@@ -154,11 +153,6 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
 //            "id": dummy!.id,
 //            "displayName": dummy!.name,
 //            "provider": "dummy"
-//        ])
-//        session["coordinates"] = JSON([
-//            "latitude": Settings.defaultCoordinates.latitude,
-//            "longitude": Settings.defaultCoordinates.longitude,
-//            "geolocated": false
 //        ])
 //        try response.redirect("/web/home")
 //        next()

@@ -7,7 +7,7 @@ import LoggerAPI
 
 /*
  Handles the web front-end.
- Requires BaseContextMiddleware and LocationMiddleware.
+ Requires BaseContextMiddleware.
  */
 func configureWebRouter(using router: Router) {
 
@@ -22,18 +22,13 @@ func configureWebRouter(using router: Router) {
      */
     router.get("/games") {
         request, response, next in
-        guard let coordinates = request.userInfo["coordinates"] as? [String: Any],
-              let latitude = coordinates["latitude"] as? Double,
-              let longitude = coordinates["longitude"] as? Double else {
-            try logAndThrow(ServerError.missingMiddleware(type: LocationMiddleware.self))
-        }
         guard let userID = request.userProfile?.id else {
             try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
         }
         guard let user = try UserRepository().user(withID: userID) else {
             try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
-        let location = Location(latitude: latitude, longitude: longitude)
+        let location = user.location ?? .default
         let newestGames = try GameRepository().newestGames(withDistanceMeasuredFrom: location, limitedTo: 4, excludingGamesHostedBy: user)
         let upcomingGames = try GameRepository().upcomingGames(withDistanceMeasuredFrom: location, limitedTo: 4, excludingGamesHostedBy: user)
         let gamesNearMe = try GameRepository().gamesNearMe(withDistanceMeasuredFrom: location, limitedTo: 4, excludingGamesHostedBy: user)
@@ -55,18 +50,13 @@ func configureWebRouter(using router: Router) {
               let page = Int(pageString) else {
             try logAndThrow(ServerError.invalidRequest)
         }
-        guard let coordinates = request.userInfo["coordinates"] as? [String: Any],
-              let latitude = coordinates["latitude"] as? Double,
-              let longitude = coordinates["longitude"] as? Double else {
-            try logAndThrow(ServerError.missingMiddleware(type: LocationMiddleware.self))
-        }
         guard let userID = request.userProfile?.id else {
             try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
         }
         guard let user = try UserRepository().user(withID: userID) else {
             try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
-        let location = Location(latitude: latitude, longitude: longitude)
+        let location = user.location ?? .default
         let pageSize = 8
         let games = try GameRepository().newestGames(withDistanceMeasuredFrom: location, startingFrom: page * pageSize, limitedTo: pageSize, excludingGamesHostedBy: user)
         let remainingGames = try GameRepository().availableGamesCount(excludingGamesHostedBy: user) - (page + 1) * pageSize
@@ -89,18 +79,13 @@ func configureWebRouter(using router: Router) {
               let page = Int(pageString) else {
             try logAndThrow(ServerError.invalidRequest)
         }
-        guard let coordinates = request.userInfo["coordinates"] as? [String: Any],
-              let latitude = coordinates["latitude"] as? Double,
-              let longitude = coordinates["longitude"] as? Double else {
-            try logAndThrow(ServerError.missingMiddleware(type: LocationMiddleware.self))
-        }
         guard let userID = request.userProfile?.id else {
             try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
         }
         guard let user = try UserRepository().user(withID: userID) else {
             try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
-        let location = Location(latitude: latitude, longitude: longitude)
+        let location = user.location ?? .default
         let pageSize = 8
         let games = try GameRepository().upcomingGames(withDistanceMeasuredFrom: location, startingFrom: page * pageSize, limitedTo: pageSize, excludingGamesHostedBy: user)
         let remainingGames = try GameRepository().availableGamesCount(excludingGamesHostedBy: user) - (page + 1) * pageSize
@@ -123,18 +108,13 @@ func configureWebRouter(using router: Router) {
               let page = Int(pageString) else {
             try logAndThrow(ServerError.invalidRequest)
         }
-        guard let coordinates = request.userInfo["coordinates"] as? [String: Any],
-              let latitude = coordinates["latitude"] as? Double,
-              let longitude = coordinates["longitude"] as? Double else {
-            try logAndThrow(ServerError.missingMiddleware(type: LocationMiddleware.self))
-        }
         guard let userID = request.userProfile?.id else {
             try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
         }
         guard let user = try UserRepository().user(withID: userID) else {
             try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
-        let location = Location(latitude: latitude, longitude: longitude)
+        let location = user.location ?? .default
         let pageSize = 8
         let games = try GameRepository().gamesNearMe(withDistanceMeasuredFrom: location, startingFrom: page * pageSize, limitedTo: pageSize, excludingGamesHostedBy: user)
         let remainingGames = try GameRepository().availableGamesCount(excludingGamesHostedBy: user) - (page + 1) * pageSize
@@ -192,8 +172,15 @@ func configureWebRouter(using router: Router) {
               let gameData = try GameDataRepository().gameData(forID: id) else {
             try logAndThrow(ServerError.invalidRequest)
         }
+        guard let userID = request.userProfile?.id else {
+            try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard let user = try UserRepository().user(withID: userID) else {
+            try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
         try response.render("\(Settings.locale)/host-game", context: HostGameViewContext(
             base: request.userInfo,
+            user: user,
             game: gameData
         ))
         next()
@@ -319,12 +306,7 @@ func configureWebRouter(using router: Router) {
         guard let user = try UserRepository().user(withID: userID) else {
             try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
-        guard let coordinates = request.userInfo["coordinates"] as? [String: Any],
-              let latitude = coordinates["latitude"] as? Double,
-              let longitude = coordinates["longitude"] as? Double else {
-            try logAndThrow(ServerError.missingMiddleware(type: LocationMiddleware.self))
-        }
-        let location = Location(latitude: latitude, longitude: longitude)
+        let location = user.location ?? .default
         guard let id = request.parameters["id"],
               let game = try GameRepository().game(withID: id, withDistanceMeasuredFrom: location),
               game.date.compare(Date()) == .orderedDescending,
@@ -450,14 +432,8 @@ func configureWebRouter(using router: Router) {
         guard let user = try UserRepository().user(withID: userID) else {
             try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
-        guard let coordinates = request.userInfo["coordinates"] as? [String: Any],
-              let latitude = coordinates["latitude"] as? Double,
-              let longitude = coordinates["longitude"] as? Double else {
-            try logAndThrow(ServerError.missingMiddleware(type: LocationMiddleware.self))
-        }
-        let location = Location(latitude: latitude, longitude: longitude)
         let hostedGames = try GameRepository().games(hostedBy: user)
-        let playingGames = try GameRepository().games(joinedBy: user, withDistanceMeasuredFrom: location)
+        let playingGames = try GameRepository().games(joinedBy: user)
         try response.render("\(Settings.locale)/my-games", context: try MyGamesViewContext(
             base: request.userInfo,
             hosted: hostedGames,
@@ -480,6 +456,68 @@ func configureWebRouter(using router: Router) {
             messages: messages
         ))
         try MessageRepository().markAsRead(messages)
+        next()
+    }
+    
+    router.get("settings") {
+        request, response, next in
+        guard let userID = request.userProfile?.id else {
+            try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard let user = try UserRepository().user(withID: userID) else {
+            try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
+        try response.render("\(Settings.locale)/settings", context: SettingsViewContext(
+            base: request.userInfo,
+            user: user,
+            saved: false
+        ))
+        next()
+    }
+    
+    router.post("settings", middleware: BodyParser())
+    router.post("settings") {
+        request, response, next in
+        guard let userID = request.userProfile?.id else {
+            try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard let user = try UserRepository().user(withID: userID) else {
+            try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
+        guard let body = request.body?.asURLEncoded,
+              let address = body["address"] else {
+            try logAndThrow(ServerError.invalidRequest)
+        }
+        if !address.isEmpty {
+            guard let city = body["city"], !city.isEmpty,
+                  let latitudeString = body["latitude"], let latitude = Double(latitudeString),
+                  let longitudeString = body["longitude"], let longitude = Double(longitudeString) else {
+                try logAndThrow(ServerError.invalidRequest)
+            }
+            user.location = Location(address: address, city: city, latitude: latitude, longitude: longitude)
+        } else {
+            user.location = nil
+        }
+        try UserRepository().update(user)
+        // Update the location in `request.userInfo` so the base context picks up the change.
+        if let location = user.location {
+            request.userInfo["coordinates"] = [
+                "latitude": location.latitude,
+                "longitude": location.longitude,
+                "actual": true
+            ]
+        } else {
+            request.userInfo["coordinates"] = [
+                "latitude": Settings.defaultCoordinates.latitude,
+                "longitude": Settings.defaultCoordinates.longitude,
+                "actual": false
+            ]
+        }
+        try response.render("\(Settings.locale)/settings", context: SettingsViewContext(
+            base: request.userInfo,
+            user: user,
+            saved: true
+        ))
         next()
     }
 }
