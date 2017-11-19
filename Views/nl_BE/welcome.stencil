@@ -1,6 +1,6 @@
 {% extends "nl_BE/base.stencil" %}
 
-{% block title %}{{ block.super }} - Welkom{% endblock %}
+{% block title %}{{ block.super }} - Aanmelden{% endblock %}
 
 {% block additional-head %}
 <style>
@@ -13,11 +13,6 @@
 
 {% block content %}
 <h2>Welkom</h2>
-<p>
-    Welkom bij Rond de tafel, de site die mensen samen brengt rond de speltafel.
-    Zoek je medespelers voor een spel dat maar niet op tafel raakt? Wens je een bepaald spel uit te proberen?
-    Of wil je gewoon wat nieuwe spellen en mensen leren kennen? Hier vind je zeker wat je zoekt!
-</p>
 <p>
     Deze site maakt gebruik van Facebook om je aan te melden.
     Wanneer je voor het eerst aanmeldt zal er een account worden aangemaakt.

@@ -8,7 +8,7 @@ struct GameViewContext: ViewContext {
     let base: [String: Any]
     var contents: [String: Any] = [:]
     
-    init(base: [String: Any], user: User, game: Game, requests: [Request]) throws {
+    init(base: [String: Any], user: User?, game: Game, requests: [Request]) throws {
         guard let id = game.id,
               let distance = game.location.distance else {
             try logAndThrow(ServerError.invalidState)

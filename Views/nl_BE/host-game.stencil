@@ -137,7 +137,7 @@
     <p>
         Deze adresgegevens worden getoond aan de spelers wiens aanvraag jij hebt goedkeurd.
     </p>
-    {% if coordinates.actual %}
+    {% if global.coordinates.actual %}
         <div class="form-group">
             <label class="form-check-label">
                 <input id="use-saved-location" class="form-check-input" type="checkbox" checked>
@@ -233,19 +233,19 @@ var map;
 function loadMap() {
     map = new google.maps.Map(document.getElementById("map"), {
         center: {
-            lat: {{ coordinates.latitude }},
-            lng: {{ coordinates.longitude }}
+            lat: {{ global.coordinates.latitude }},
+            lng: {{ global.coordinates.longitude }}
         },
         zoom: 15
     });
 }
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ googleAPIKey }}&libraries=places&callback=loadMap"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ global.googleAPIKey }}&libraries=places&callback=loadMap"></script>
 <script>
 // Set up the autocomplete address field.
 var autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocomplete"), {
     componentRestrictions: {
-        country: {{ countries }}
+        country: {{ global.countries }}
     }
 });
 // Adjust the map and set a marker when the user enters an address.
@@ -287,8 +287,8 @@ $("#use-saved-location").on("change", function() {
         // The map won't render properly when the address picker is hidden.
         google.maps.event.trigger(map, "resize");
         map.setCenter({
-            lat: {{ coordinates.latitude }},
-            lng: {{ coordinates.longitude }}
+            lat: {{ global.coordinates.latitude }},
+            lng: {{ global.coordinates.longitude }}
         });
         $("#submit").attr("disabled", "disabled");
     } else {
@@ -297,7 +297,7 @@ $("#use-saved-location").on("change", function() {
         $("#submit").removeAttr("disabled");
     }
 });
-{% if coordinates.actual %}
+{% if global.coordinates.actual %}
     setSavedLocation();
     $("#address-picker").hide();
     $("#submit").removeAttr("disabled");
@@ -318,11 +318,11 @@ function setSavedLocation() {
     $("#autocomplete").val("{{ location.address }}");
     $("#address").val("{{ location.address }}");
     $("#city").val("{{ location.city }}");
-    $("#latitude").val("{{ coordinates.latitude }}");
-    $("#longitude").val("{{ coordinates.longitude }}");
+    $("#latitude").val("{{ global.coordinates.latitude }}");
+    $("#longitude").val("{{ global.coordinates.longitude }}");
     var coordinates = {
-        lat: {{ coordinates.latitude }},
-        lng: {{ coordinates.longitude }}
+        lat: {{ global.coordinates.latitude }},
+        lng: {{ global.coordinates.longitude }}
     };
     if (!marker) {
         marker = new google.maps.Marker({

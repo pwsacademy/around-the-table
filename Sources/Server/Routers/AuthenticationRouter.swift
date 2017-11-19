@@ -38,7 +38,11 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
         guard let session = request.session else {
             try logAndThrow(ServerError.missingMiddleware(type: Session.self))
         }
-        if var returnAddress = Credentials.getRedirectingReturnTo(for: request) {
+        if let redirect = request.queryParameters["redirect"] {
+            // The user clicked on a link to sign in.
+            session["originalReturnTo"] = JSON(redirect)
+        } else if var returnAddress = Credentials.getRedirectingReturnTo(for: request) {
+            // The user was redirected by the Credentials middleware.
             if let proto = request.headers["X-Forwarded-Proto"], proto == "https", !returnAddress.hasPrefix("https://") {
                 // Bluemix terminates SSL at the proxy level.
                 // This means we have to change the URL to https if the original request used https.
@@ -129,7 +133,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
                 Log.error(error.description)
             }
         }
-        try response.redirect("/authentication/welcome")
+        try response.redirect("/web/home")
         next()
     }
     

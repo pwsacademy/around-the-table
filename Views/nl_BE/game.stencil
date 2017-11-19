@@ -37,13 +37,13 @@
         <p>
             <i class="fa fa-map-marker"></i>
             {% if userIsPlayer or userIsHost %}
-                <a id="address" class="d-none d-md-inline" target="_blank">{{ location.address }}</a>
-                <!-- The href is set in code as this requires URI encoding -->
+                <!-- The href will be set in code -->
+                <a id="address" class="d-none d-md-inline" href="#" target="_blank">{{ location.address }}</a>
                 <span class="d-md-none">{{ location.address }}</span>
             {% else %}
                 {{ location.city }}
             {% endif %}
-            {% if not userIsHost and coordinates.actual %}
+            {% if not userIsHost and global.coordinates.actual %}
                 ({{ location.distance }}km)
             {% endif %}
         </p>
@@ -73,7 +73,7 @@
     </p>
     {% if approvedRequests %}
         {% for request in approvedRequests %}
-            {% if user.id == request.player.id %}
+            {% if global.user and global.user.id == request.player.id %}
                 <form method="post" action="/web/request/{{ request.id }}" style="float: right">
                     <input type="hidden" name="cancelled" value="on">
                     <button class="btn btn-danger responsive" type="submit">
@@ -97,7 +97,7 @@
         <p>Dit spel is volzet.</p>
     {% elif userHasRequested and not userIsPlayer %}
         <p><i class="fa fa-hourglass-o fa-lg"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
-    {% else %}
+    {% elif global.user %}
         {% if availableSeats == 1 %}
             <p>Er is nog 1 plaats beschikbaar.</p>
         {% else %}
@@ -120,6 +120,10 @@
                 </form>
             {% endif %}
         {% endif %}
+    {% else %}
+        <div class="alert alert-warning">
+            Om in te schrijven moet je eerst <a href="/authentication/welcome?redirect=%2Fweb%2Fgame%2F{{ id }}">aanmelden</a>.
+        </div>
     {% endif %}
 {% endif %}
 <!-- Player management (for host) -->
@@ -188,13 +192,13 @@
 {% endif %}
 <!-- Administration tasks -->
 {% if userIsHost %}
-<h2>Beheer</h2>
-<form method="post" action="/web/game/{{ id }}">
-    <input type="hidden" name="cancelled" value="on">
-    <button class="btn btn-danger" type="submit">
-        <i class="fa fa-times"></i> Spel annuleren</span>
-    </button>
-</form>
+    <h2>Beheer</h2>
+    <form method="post" action="/web/game/{{ id }}">
+        <input type="hidden" name="cancelled" value="on">
+        <button class="btn btn-danger" type="submit">
+            <i class="fa fa-times"></i> Spel annuleren</span>
+        </button>
+    </form>
 {% endif %}
 {% endblock %}
 
@@ -242,5 +246,5 @@ function loadMap() {
     }
 }
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ googleAPIKey }}&callback=loadMap"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ global.googleAPIKey }}&callback=loadMap"></script>
 {% endblock %}

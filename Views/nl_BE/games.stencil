@@ -3,10 +3,12 @@
 {% block title %}{{ block.super }} - Spellen{% endblock %}
 
 {% block content %}
-<div class="alert alert-info">
-    Spellen die je zelf organiseert worden niet getoond op deze pagina.
-    Deze spellen zijn te vinden in je persoonlijk menu, onder "Mijn spellen".
-</div>
+{% if global.user %}
+    <div class="alert alert-info">
+        Spellen die je zelf organiseert worden niet getoond op deze pagina.
+        Deze spellen zijn te vinden in je persoonlijk menu, onder "Mijn spellen".
+    </div>
+{% endif %}
 <h2>Nieuwste spellen</h2>
 {% if newestGames %}
     <div class="row">
@@ -31,7 +33,7 @@
                             </p>
                         </div>
                         <div class="card-footer text-muted">
-                            {% if coordinates.actual %}
+                            {% if global.coordinates.actual %}
                                 <span class="float-right">
                                     {{ game.distance }}km
                                 </span>
@@ -73,7 +75,7 @@
                             </p>
                         </div>
                         <div class="card-footer text-muted">
-                            {% if coordinates.actual %}
+                            {% if global.coordinates.actual %}
                                 <span class="float-right">
                                     {{ game.distance }}km
                                 </span>
@@ -92,9 +94,14 @@
     <p>Geen spellen gepland.</p>
 {% endif %}
 <h2>In mijn buurt</h2>
-{% if not coordinates.actual %}
+{% if not global.coordinates.actual %}
     <div class="alert alert-warning">
-        Om deze functie te activeren moet je een adres ingeven bij <a href="/web/settings">Instellingen</a>.
+        {% if global.user %}
+            Om deze functie te activeren moet je een adres ingeven bij <a href="/web/settings">Instellingen</a>.
+        {% else %}
+            Om deze functie te activeren moet je eerst aanmelden.
+            Daarna kan je een andres ingeven bij <a href="/web/settings">Instellingen</a>.
+        {% endif %}
     </div>
 {% elif gamesNearMe %}
     <div class="row">
@@ -119,7 +126,7 @@
                             </p>
                         </div>
                         <div class="card-footer text-muted">
-                            {% if coordinates.actual %}
+                            {% if global.coordinates.actual %}
                                 <span class="float-right">
                                     {{ game.distance }}km
                                 </span>

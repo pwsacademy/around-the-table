@@ -78,7 +78,7 @@
                         </div>
                     </div>
                     <div class="card-footer text-muted">
-                        {% if coordinates.actual %}
+                        {% if global.coordinates.actual %}
                             <span class="float-right">
                                 {{ game.distance }}km
                             </span>

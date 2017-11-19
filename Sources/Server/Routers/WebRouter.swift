@@ -7,10 +7,22 @@ import LoggerAPI
 
 /*
  Handles the web front-end.
- Requires BaseContextMiddleware.
  */
-func configureWebRouter(using router: Router) {
+func configureWebRouter(using router: Router, _ credentials: Credentials) {
 
+    /*
+     Set up middlewares first.
+     */
+    let authentication = AuthenticationMiddleware()
+    router.all("/host-game", middleware: [credentials, authentication])
+    router.post("/game/:id", middleware: [credentials, authentication])
+    router.post("/requests", middleware: [credentials, authentication])
+    router.post("/request/:id", middleware: [credentials, authentication])
+    router.get("/my-games", middleware: [credentials, authentication])
+    router.get("/messages", middleware: [credentials, authentication])
+    router.all("/settings", middleware: [credentials, authentication])
+    router.all(middleware: BaseContextMiddleware())
+    
     router.get("/home") {
         request, response, next in
         try response.render("\(Settings.locale)/home", context: request.userInfo)
@@ -22,13 +34,16 @@ func configureWebRouter(using router: Router) {
      */
     router.get("/games") {
         request, response, next in
-        guard let userID = request.userProfile?.id else {
-            try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
+        let user: User?
+        if let userID = request.userProfile?.id {
+            guard let existingUser = try UserRepository().user(withID: userID) else {
+                try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+            }
+            user = existingUser
+        } else {
+            user = nil
         }
-        guard let user = try UserRepository().user(withID: userID) else {
-            try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
-        }
-        let location = user.location ?? .default
+        let location = user?.location ?? .default
         let newestGames = try GameRepository().newestGames(withDistanceMeasuredFrom: location, limitedTo: 4, excludingGamesHostedBy: user)
         let upcomingGames = try GameRepository().upcomingGames(withDistanceMeasuredFrom: location, limitedTo: 4, excludingGamesHostedBy: user)
         let gamesNearMe = try GameRepository().gamesNearMe(withDistanceMeasuredFrom: location, limitedTo: 4, excludingGamesHostedBy: user)
@@ -50,13 +65,16 @@ func configureWebRouter(using router: Router) {
               let page = Int(pageString) else {
             try logAndThrow(ServerError.invalidRequest)
         }
-        guard let userID = request.userProfile?.id else {
-            try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
+        let user: User?
+        if let userID = request.userProfile?.id {
+            guard let existingUser = try UserRepository().user(withID: userID) else {
+                try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+            }
+            user = existingUser
+        } else {
+            user = nil
         }
-        guard let user = try UserRepository().user(withID: userID) else {
-            try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
-        }
-        let location = user.location ?? .default
+        let location = user?.location ?? .default
         let pageSize = 8
         let games = try GameRepository().newestGames(withDistanceMeasuredFrom: location, startingFrom: page * pageSize, limitedTo: pageSize, excludingGamesHostedBy: user)
         let remainingGames = try GameRepository().availableGamesCount(excludingGamesHostedBy: user) - (page + 1) * pageSize
@@ -79,13 +97,16 @@ func configureWebRouter(using router: Router) {
               let page = Int(pageString) else {
             try logAndThrow(ServerError.invalidRequest)
         }
-        guard let userID = request.userProfile?.id else {
-            try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
+        let user: User?
+        if let userID = request.userProfile?.id {
+            guard let existingUser = try UserRepository().user(withID: userID) else {
+                try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+            }
+            user = existingUser
+        } else {
+            user = nil
         }
-        guard let user = try UserRepository().user(withID: userID) else {
-            try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
-        }
-        let location = user.location ?? .default
+        let location = user?.location ?? .default
         let pageSize = 8
         let games = try GameRepository().upcomingGames(withDistanceMeasuredFrom: location, startingFrom: page * pageSize, limitedTo: pageSize, excludingGamesHostedBy: user)
         let remainingGames = try GameRepository().availableGamesCount(excludingGamesHostedBy: user) - (page + 1) * pageSize
@@ -108,13 +129,16 @@ func configureWebRouter(using router: Router) {
               let page = Int(pageString) else {
             try logAndThrow(ServerError.invalidRequest)
         }
-        guard let userID = request.userProfile?.id else {
-            try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
+        let user: User?
+        if let userID = request.userProfile?.id {
+            guard let existingUser = try UserRepository().user(withID: userID) else {
+                try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+            }
+            user = existingUser
+        } else {
+            user = nil
         }
-        guard let user = try UserRepository().user(withID: userID) else {
-            try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
-        }
-        let location = user.location ?? .default
+        let location = user?.location ?? .default
         let pageSize = 8
         let games = try GameRepository().gamesNearMe(withDistanceMeasuredFrom: location, startingFrom: page * pageSize, limitedTo: pageSize, excludingGamesHostedBy: user)
         let remainingGames = try GameRepository().availableGamesCount(excludingGamesHostedBy: user) - (page + 1) * pageSize
@@ -300,13 +324,16 @@ func configureWebRouter(using router: Router) {
      */
     router.get("/game/:id") {
         request, response, next in
-        guard let userID = request.userProfile?.id else {
-            try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
+        let user: User?
+        if let userID = request.userProfile?.id {
+            guard let existingUser = try UserRepository().user(withID: userID) else {
+                try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+            }
+            user = existingUser
+        } else {
+            user = nil
         }
-        guard let user = try UserRepository().user(withID: userID) else {
-            try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
-        }
-        let location = user.location ?? .default
+        let location = user?.location ?? .default
         guard let id = request.parameters["id"],
               let game = try GameRepository().game(withID: id, withDistanceMeasuredFrom: location),
               game.date.compare(Date()) == .orderedDescending,

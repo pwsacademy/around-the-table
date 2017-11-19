@@ -3,39 +3,45 @@
 {% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
 
 {% block content %}
-<h2>Organiseer een spel</h2>
-<form method="get" action="/web/host-game-select">
-    <p>
-        Geef de naam van een spel in.
-        Op basis van deze naam zal de bijhorende spelinformatie opgezocht worden bij <a href="https://boardgamegeek.com" target="_blank">BoardGameGeek</a>.
-    </p>
-    <div class="form-group">
-        <div class="input-group">
-            <i class="input-group-addon fa fa-search"></i>
-            <input class="form-control" name="query" type="text" placeholder="Spel" {% if query %} value="{{ query }}" {% endif %} required>
+{% if not global.user %}
+    <div class="alert alert-warning">
+        Om spellen aan te maken moet je eerst <a href="/authentication/welcome?redirect=%2Fweb%2Fhost">aanmelden</a>.
+    </div>
+{% else %}
+    <h2>Organiseer een spel</h2>
+    <form method="get" action="/web/host-game-select">
+        <p>
+            Geef de naam van een spel in.
+            Op basis van deze naam zal de bijhorende spelinformatie opgezocht worden bij <a href="https://boardgamegeek.com" target="_blank">BoardGameGeek</a>.
+        </p>
+        <div class="form-group">
+            <div class="input-group">
+                <i class="input-group-addon fa fa-search"></i>
+                <input class="form-control" name="query" type="text" placeholder="Spel" {% if query %} value="{{ query }}" {% endif %} required>
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="form-check">
-            <label class="form-check-label">
-                <input id="exact" class="form-check-input" name="exact" type="checkbox" checked>
-                Enkel exacte resultaten
-            </label>
+        <div class="form-group">
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input id="exact" class="form-check-input" name="exact" type="checkbox" checked>
+                    Enkel exacte resultaten
+                </label>
+            </div>
         </div>
-    </div>
-    <div id="warning" class="alert alert-warning">
-        Het uitschakelen van "Enkel exacte resultaten" kan ervoor zorgen dat je zoekopdracht erg lang duurt.
-    </div>
-    <div class="form-group">
-        <button class="btn btn-primary" type="submit">Zoeken</button>
-    </div>
-    {% if error %}
-        <div class="alert alert-danger">
-            Je zoekopdracht gaf geen resultaten terug.
-            Voor meer resultaten kan je proberen de optie "Enkel exacte resultaten" uit te schakelen.
+        <div id="warning" class="alert alert-warning">
+            Het uitschakelen van "Enkel exacte resultaten" kan ervoor zorgen dat je zoekopdracht erg lang duurt.
         </div>
-    {% endif %}
-</form>
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit">Zoeken</button>
+        </div>
+        {% if error %}
+            <div class="alert alert-danger">
+                Je zoekopdracht gaf geen resultaten terug.
+                Voor meer resultaten kan je proberen de optie "Enkel exacte resultaten" uit te schakelen.
+            </div>
+        {% endif %}
+    </form>
+{% endif %}
 {% endblock %}
 
 {% block additional-body %}

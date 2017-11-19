@@ -68,22 +68,22 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
-            {% if user %}
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/web/games">Spellen</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/web/host">Organiseer</a>
-                    </li>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/web/games">Spellen</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/web/host">Organiseer</a>
+                </li>
+                {% if global.user %}
                     <li class="nav-item">
                         <a class="nav-link" href="/web/my-games">Mijn spellen</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/web/messages">
                             Berichten
-                            {% if unreadMessageCount > 0 %}
-                                ({{ unreadMessageCount }})
+                            {% if global.user.unreadMessageCount > 0 %}
+                                ({{ global.user.unreadMessageCount }})
                             {% endif %}
                         </a>
                     </li>
@@ -93,24 +93,29 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/authentication/signout">Afmelden</a>
                     </li>
-                </ul>
-            {% endif %}
+                {% else %}
+                    <li class="nav-item">
+                        <!-- The href will be set in code -->
+                        <a class="global-signin nav-link" href="#">Aanmelden</a>
+                    </li>
+                {% endif %}
+            </ul>
         </div>
     </nav>
     <!-- Full navbar -->
     <nav class="d-none d-md-flex navbar navbar-expand navbar-dark">
         <a class="navbar-brand" href="/web/home">Rond de tafel</a>
-        {% if user %}
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/web/games">Spellen</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/web/host">Organiseer</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav">
-                {% if unreadMessageCount > 0 %}
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/web/games">Spellen</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/web/host">Organiseer</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav">
+            {% if global.user %}
+                {% if global.user.unreadMessageCount > 0 %}
                     <li class="nav-item">
                         <a class="nav-link" href="/web/messages">
                             <i class="fa fa-envelope"></i>
@@ -119,7 +124,7 @@
                 {% endif %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
-                        {{ user.name }}
+                        {{ global.user.name }}
                     </a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="/web/my-games">Mijn spellen</a>
@@ -128,8 +133,13 @@
                         <a class="dropdown-item" href="/authentication/signout">Afmelden</a>
                     </div>
                 </li>
-            </ul>
-        {% endif %}
+            {% else %}
+                <li class="nav-item">
+                    <!-- The href will be set in code -->
+                    <a class="global-signin nav-link" href="#">Aanmelden</a>
+                </li>
+            {% endif %}
+        </ul>
     </nav>
     <!-- Main content -->
     <div class="container mt-3">
@@ -145,6 +155,11 @@
     <script src="/public/js/jquery.min.js"></script>
     <script src="/public/js/popper.min.js"></script>
     <script src="/public/js/bootstrap.min.js"></script>
+    <script>
+        // Set the href for the sign in link.
+        var redirect = window.location.pathname;
+        $(".global-signin").attr("href", "/authentication/welcome?redirect=" + encodeURIComponent(redirect));
+    </script>
     {% block additional-body %}{% endblock %}
 </body>
 </html>
