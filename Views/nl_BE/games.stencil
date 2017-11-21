@@ -6,7 +6,7 @@
 {% if global.user %}
     <div class="alert alert-info">
         Spellen die je zelf organiseert worden niet getoond op deze pagina.
-        Deze spellen zijn te vinden in je persoonlijk menu, onder "Mijn spellen".
+        Deze spellen zijn te vinden in je persoonlijk menu, onder <a class="alert-link" href="/web/my-games">Mijn spellen</a>.
     </div>
 {% endif %}
 <h2>Nieuwste spellen</h2>
