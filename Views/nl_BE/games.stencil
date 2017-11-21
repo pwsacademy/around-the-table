@@ -97,10 +97,10 @@
 {% if not global.coordinates.actual %}
     <div class="alert alert-warning">
         {% if global.user %}
-            Om deze functie te activeren moet je een adres ingeven bij <a href="/web/settings">Instellingen</a>.
+            Om deze functie te activeren moet je een adres ingeven bij <a class="alert-link" href="/web/settings">Instellingen</a>.
         {% else %}
             Om deze functie te activeren moet je eerst aanmelden.
-            Daarna kan je een andres ingeven bij <a href="/web/settings">Instellingen</a>.
+            Daarna kan je een andres ingeven bij <a class="alert-link" href="/web/settings">Instellingen</a>.
         {% endif %}
     </div>
 {% elif gamesNearMe %}

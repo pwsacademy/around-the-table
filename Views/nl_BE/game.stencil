@@ -128,7 +128,7 @@
         {% endif %}
     {% else %}
         <div class="alert alert-warning">
-            Om in te schrijven moet je eerst <a href="/authentication/welcome?redirect=%2Fweb%2Fgame%2F{{ id }}">aanmelden</a>.
+            Om in te schrijven moet je eerst <a class="alert-link" href="/authentication/welcome?redirect=%2Fweb%2Fgame%2F{{ id }}">aanmelden</a>.
         </div>
     {% endif %}
 {% endif %}
