@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Steven Van Impe">
     <meta name="description" content="Rond de Tafel brengt mensen en spellen samen. Vind spellen, zoek medespelers en maak nieuwe vrienden.">
+    <meta property="og:site_name" content="Rond de tafel">
+    <meta property="og:type" content="website">
+    <meta property="fb:app_id" content="{{ global.opengraph.facebookAppID }}">
+    <meta property="og:description" content="Rond de Tafel brengt mensen en spellen samen. Vind spellen, zoek medespelers en maak nieuwe vrienden.">
+    <meta property="og:url" content="{{ global.opengraph.url }}">
+    {% block opengraph %}
+        <meta property="og:title" content="Rond de tafel">   
+        <meta property="og:image" content="{{ global.opengraph.image }}">
+    {% endblock %}
     <link href="/public/css/bootstrap.min.css" rel="stylesheet">
     <link href="/public/css/font-awesome.min.css" rel="stylesheet">
     <style>

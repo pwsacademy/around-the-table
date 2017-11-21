@@ -1,6 +1,12 @@
 {% extends "nl_BE/base.stencil" %}
 
 {% block title %}{{ block.super }} - {{ data.name }}{% endblock %}
+
+{% block opengraph %}
+<meta property="og:title" content="{{ data.name }}">
+<meta property="og:image" content="{{ data.picture }}">
+{% endblock %}
+
 {% block additional-head %}
 <style>
 #image {

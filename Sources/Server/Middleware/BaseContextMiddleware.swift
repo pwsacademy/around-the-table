@@ -34,8 +34,19 @@ struct BaseContextMiddleware: RouterMiddleware {
                 ]
             }
         }
+        let url: String
+        if let customDomainName = Settings.customDomainName, !configuration.isLocal {
+            url = "https://\(customDomainName)"
+        } else {
+            url = configuration.url
+        }
         request.userInfo.append([
             "global": [
+                "opengraph": [
+                    "facebookAppID": Secrets.facebookAppID,
+                    "url": request.originalURL,
+                    "image": "\(url)/public/img/opengraph.jpg"
+                ],
                 "user": userInfo,
                 "coordinates": coordinatesInfo,
                 "countries": "[\(Settings.countries.map { "\"\($0)\"" }.joined(separator: ", "))]", // Builds a JSON array.
