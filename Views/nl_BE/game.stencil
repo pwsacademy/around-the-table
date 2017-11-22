@@ -109,22 +109,17 @@
         {% else %}
             <p>Er zijn nog {{ availableSeats }} plaatsen beschikbaar.</p>
         {% endif %}
-        {% if deadlineHasPassed %}
-            <p>Inschrijven voor dit spel is niet meer mogelijk.</p>
-        {% else %}
-            <p>Inschrijven is mogelijk tot {{ deadlineDate }} om {{ deadlineTime }}.</p>
-            {% if not userIsPlayer %}
-                <form class="form-inline mb-3" method="post" action="/web/requests">
-                    <input name="game" type="hidden" value="{{ id }}">
-                    <select id="seats" class="custom-select mr-3" name="seats">
-                        {% for seat in seatOptions %}
-                            <option value="{{ seat }}">{{ seat }}</option>
-                        {% endfor %}
-                    </select>
-                    <span id="seatsText" class="mr-3">plaats</span>
-                    <button class="btn btn-primary" type="submit">aanvragen</button>
-                </form>
-            {% endif %}
+        {% if not deadlineHasPassed and not userIsPlayer %}
+            <form class="form-inline mb-3" method="post" action="/web/requests">
+                <input name="game" type="hidden" value="{{ id }}">
+                <select id="seats" class="custom-select mr-3" name="seats">
+                    {% for seat in seatOptions %}
+                        <option value="{{ seat }}">{{ seat }}</option>
+                    {% endfor %}
+                </select>
+                <span id="seatsText" class="mr-3">plaats</span>
+                <button class="btn btn-primary" type="submit">aanvragen</button>
+            </form>
         {% endif %}
     {% else %}
         <div class="alert alert-warning">
@@ -195,6 +190,11 @@
     {% else %}
         <p>Dit spel gaat door vanaf {{ data.minPlayerCount }} spelers.</p>
     {% endif %}
+{% endif %}
+{% if deadlineHasPassed %}
+    <p>Inschrijven voor dit spel is niet meer mogelijk.</p>
+{% else %}
+    <p>Inschrijven is mogelijk tot {{ deadlineDate }} om {{ deadlineTime }}.</p>
 {% endif %}
 <!-- Administration tasks -->
 {% if userIsHost %}

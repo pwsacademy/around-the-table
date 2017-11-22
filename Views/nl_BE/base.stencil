@@ -156,7 +156,7 @@
     </div>
     <!-- Footer -->
     <footer class="container py-3 text-center">
-        © 2017 - Steven Van Impe<br>
+        © 2017 - Rond de tafel<br>
         Volg ons op <a href="https://www.facebook.com/groups/ronddetafel/">Facebook</a> <i class="fa fa-facebook-official"></i><br>
         Broncode beschikbaar op <a href="https://github.com/svanimpe/around-the-table.git">GitHub</a> <i class="fa fa-github"></i>
     </footer>
