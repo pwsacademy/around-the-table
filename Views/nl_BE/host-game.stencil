@@ -30,7 +30,7 @@
     </div>
     <div class="form-group">
         <label>Aantal spelers</label>
-        {% if game.playerCountOptions %}
+        {% if game.playerCountOptions|count > 1 %}
             <select id="playerCount" class="form-control custom-select" name="playerCount">
                 {% for playerCount in game.playerCountOptions %}
                     {% if playerCount == game.playerCountOptions|max %}
@@ -41,7 +41,7 @@
                 {% endfor %}
             </select>
         {% else %}
-            <input class="form-control" name="playerCount" type="text" value="{{ game.playerCount }}" readonly>
+            <input class="form-control" name="playerCount" type="text" value="{{ game.playerCountOptions|first }}" readonly>
         {% endif %}
         <p class="form-text text-muted">
             Dit is het totaal aantal spelers, organisatoren meegerekend.
@@ -49,14 +49,14 @@
     </div>
     <div class="form-group">
         <label>Minimum aantal spelers</label>
-        {% if game.playerCountOptions %}
+        {% if game.playerCountOptions|count > 1 %}
             <select id="minPlayerCount" class="form-control custom-select" name="minPlayerCount">
                 {% for playerCount in game.playerCountOptions %}
                     <option value="{{ playerCount }}">{{ playerCount }}</option>
                 {% endfor %}
             </select>
         {% else %}
-            <input class="form-control" name="minPlayerCount" type="text" value="{{ game.playerCount }}" readonly>
+            <input class="form-control" name="minPlayerCount" type="text" value="{{ game.playerCountOptions|first }}" readonly>
         {% endif %}        
         <p class="form-text text-muted">
             Het minimum aantal spelers dat nodig is om het spel te laten doorgaan.
@@ -64,19 +64,25 @@
     </div>
     <div class="form-group">
         <label>Aantal plaatsen te reserveren voor organisatoren</label>
-        <select id="prereservedSeats" class="form-control custom-select" name="prereservedSeats">
-            {% for seatCount in prereservedSeatsOptions %}
-                {% if seatCount == 0 %}
-                    <option value="{{ seatCount }}">Geen (ik neem niet deel)</option>
-                {% else %}
-                    <option value="{{ seatCount }}">{{ seatCount }}</option>
-                {% endif %}
-            {% endfor %}
-            <!-- The default value will be selected in code later on. -->
-        </select>
-        <p class="form-text text-muted">
-            Dit aantal wordt afgetrokken van het totaal aantal spelers bij het berekenen van het aantal vrije plaatsen.
-        </p>
+        {% if prereservedSeatsOptions|count > 1 %}
+            <select id="prereservedSeats" class="form-control custom-select" name="prereservedSeats">
+                {% for seatCount in prereservedSeatsOptions %}
+                    {% if seatCount == 0 %}
+                        <option value="{{ seatCount }}">Geen (ik neem niet deel)</option>
+                    {% elif seatCount == 1 %}
+                        <option value="{{ seatCount }}" selected>{{ seatCount }}</option>
+                    {% else %}
+                        <option value="{{ seatCount }}">{{ seatCount }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <p class="form-text text-muted">
+                Dit aantal wordt afgetrokken van het totaal aantal spelers bij het berekenen van het aantal vrije plaatsen.
+            </p>
+        {% else %}
+            <input class="form-control" type="text" value="Geen (ik neem niet deel)" readonly>
+            <input name="prereservedSeats" type="hidden" value="0">
+        {% endif %}
     </div>
     <h3>Datum en tijdstip</h3>
     <div class="form-row">
@@ -192,12 +198,6 @@ var picker = new Pikaday({
         weekdaysShort : ["Zon","Ma","Di","Woe","Do","Vrij","Zat"]
     }
 });
-// Set prereservedSeats to 1 by default, or 0 for a single player game.
-if ($("#prereservedSeats option").length > 1) {
-    $("#prereservedSeats").val("1");
-} else {
-    $("#prereservedSeats").val("0");
-}
 // Adjust minPlayerCount and prereservedSeats when a new playerCount is selected.
 $("#playerCount").on("change", function() {
     var playerCount = $(this).val();

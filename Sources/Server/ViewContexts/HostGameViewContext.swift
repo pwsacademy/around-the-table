@@ -17,15 +17,19 @@ struct HostGameViewContext: ViewContext {
         dateComponents.hour = 19
         dateComponents.minute = 0
         contents = [
-            "game": gameDataMapper(game),
+            "game": [
+                "id": game.id,
+                "nameOptions": game.names ?? [game.name],
+                "playerCountOptions": Array(game.playerCount)
+            ],
+            "prereservedSeatsOptions": Array(0..<game.playerCount.upperBound), // Make sure at least one seat is left.
             "date": [
                 "day": dateComponents.day!,
                 "month": dateComponents.month!,
                 "year": dateComponents.year!,
                 "hour": dateComponents.hour!,
                 "minute": dateComponents.minute!
-            ],
-            "prereservedSeatsOptions": Array(0..<game.playerCount.upperBound) // Make sure at least one seat is left.
+            ]
         ]
         if let location = user.location {
             contents["location"] = [
@@ -33,22 +37,5 @@ struct HostGameViewContext: ViewContext {
                 "city": location.city
             ]
         }
-    }
-    
-    private func gameDataMapper(_ game: GameData) -> [String: Any] {
-        var output: [String: Any] = [
-            "id": game.id
-        ]
-        if let names = game.names, names.count > 1 {
-            output["nameOptions"] = names
-        } else {
-            output["name"] = game.name
-        }
-        if game.playerCount.count == 1 {
-            output["playerCount"] = game.playerCount.lowerBound
-        } else {
-            output["playerCountOptions"] = Array(game.playerCount)
-        }
-        return output
     }
 }
