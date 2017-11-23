@@ -376,7 +376,7 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
         } else {
             try logAndThrow(ServerError.invalidRequest)
         }
-        try response.redirect("/web/home")
+        try response.redirect("/web/my-games")
         next()
     }
     
