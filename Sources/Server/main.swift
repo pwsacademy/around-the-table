@@ -16,9 +16,7 @@ let configuration = ConfigurationManager().load(.environmentVariables)
 private let router = Router()
 
 private let stencil = Extension()
-stencil.registerFilter("max", filter: StencilFilters.max)
-stencil.registerFilter("previous", filter: StencilFilters.previous)
-stencil.registerFilter("next", filter: StencilFilters.next)
+StencilFilters.register(on: stencil)
 router.setDefault(templateEngine: StencilTemplateEngine(extension: stencil))
 
 router.all(middleware: ForwardingMiddleware())
