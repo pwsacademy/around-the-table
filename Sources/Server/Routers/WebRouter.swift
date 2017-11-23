@@ -176,8 +176,7 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
                 "query": query,
                 "error": true
             ]))
-            next()
-            return
+            return next()
         }
         try response.render("\(Settings.locale)/host-game-select", context: HostGameSelectViewContext(
             base: request.userInfo,

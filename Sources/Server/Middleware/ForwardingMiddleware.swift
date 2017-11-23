@@ -9,8 +9,7 @@ struct ForwardingMiddleware: RouterMiddleware {
     
     func handle(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws {
         guard request.hostname != "localhost" else {
-            next()
-            return
+            return next()
         }
         if let customDomainName = Settings.customDomainName, request.hostname != customDomainName {
             try response.redirect("https://\(customDomainName)/")
