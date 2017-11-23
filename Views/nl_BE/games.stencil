@@ -13,36 +13,34 @@
 {% if newestGames %}
     <div class="row">
         {% for game in newestGames %}
-            {% if forloop.counter <= 4 %}
-                {% if forloop.counter <= 3 %}
-                    <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
-                {% else %}
-                    <div class="col-md-6 col-lg-4 col-xl-3 d-lg-none d-xl-flex mb-3">
-                {% endif %}
-                    <div {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>                    
-                        <a href="/web/game/{{ game.id }}">
-                            <img class="card-img-top" src="{{ game.data.picture }}">
-                        </a>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ game.data.name }}</h5>
-                            <p class="card-subtitle text-muted mb-2">
-                                <i class="fa fa-calendar"></i> {{ game.date }}
-                            </p>
-                            <p class="card-text">
-                                Bij {{ game.host }}.
-                            </p>
-                        </div>
-                        <div class="card-footer text-muted">
-                            {% if global.coordinates.actual %}
-                                <span class="float-right">
-                                    {{ game.distance }}km
-                                </span>
-                            {% endif %}
-                            <i class="fa fa-map-marker"></i> {{ game.city }}
-                        </div>
+            {% if forloop.counter <= 3 %}
+                <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
+            {% else %}
+                <div class="col-md-6 col-lg-4 col-xl-3 d-flex d-lg-none d-xl-flex mb-3">
+            {% endif %}
+                <div {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>                    
+                    <a href="/web/game/{{ game.id }}">
+                        <img class="card-img-top" src="{{ game.data.picture }}">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ game.data.name }}</h5>
+                        <p class="card-subtitle text-muted mb-2">
+                            <i class="fa fa-calendar"></i> {{ game.date }}
+                        </p>
+                        <p class="card-text">
+                            Bij {{ game.host }}.
+                        </p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        {% if global.coordinates.actual %}
+                            <span class="float-right">
+                                {{ game.distance }}km
+                            </span>
+                        {% endif %}
+                        <i class="fa fa-map-marker"></i> {{ game.city }}
                     </div>
                 </div>
-            {% endif %}
+            </div>
         {% endfor %}
     </div>
     <a class="btn btn-outline-secondary mb-3" href="/web/newest-games?page=0">
@@ -55,36 +53,34 @@
 {% if upcomingGames %}
     <div class="row">
         {% for game in upcomingGames %}
-            {% if forloop.counter <= 4 %}
-                {% if forloop.counter <= 3 %}
-                    <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
-                {% else %}
-                    <div class="col-md-6 col-lg-4 col-xl-3 d-lg-none d-xl-flex mb-3">
-                {% endif %}
-                    <div {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>                    
-                        <a href="/web/game/{{ game.id }}">
-                            <img class="card-img-top" src="{{ game.data.picture }}">
-                        </a>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ game.data.name }}</h5>
-                            <p class="card-subtitle text-muted mb-2">
-                                <i class="fa fa-calendar"></i> {{ game.date }}
-                            </p>
-                            <p class="card-text">
-                                Bij {{ game.host }}.
-                            </p>
-                        </div>
-                        <div class="card-footer text-muted">
-                            {% if global.coordinates.actual %}
-                                <span class="float-right">
-                                    {{ game.distance }}km
-                                </span>
-                            {% endif %}
-                            <i class="fa fa-map-marker"></i> {{ game.city }}
-                        </div>
+            {% if forloop.counter <= 3 %}
+                <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
+            {% else %}
+                <div class="col-md-6 col-lg-4 col-xl-3 d-flex d-lg-none d-xl-flex mb-3">
+            {% endif %}
+                <div {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>                    
+                    <a href="/web/game/{{ game.id }}">
+                        <img class="card-img-top" src="{{ game.data.picture }}">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ game.data.name }}</h5>
+                        <p class="card-subtitle text-muted mb-2">
+                            <i class="fa fa-calendar"></i> {{ game.date }}
+                        </p>
+                        <p class="card-text">
+                            Bij {{ game.host }}.
+                        </p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        {% if global.coordinates.actual %}
+                            <span class="float-right">
+                                {{ game.distance }}km
+                            </span>
+                        {% endif %}
+                        <i class="fa fa-map-marker"></i> {{ game.city }}
                     </div>
                 </div>
-            {% endif %}
+            </div>
         {% endfor %}
     </div>
     <a class="btn btn-outline-secondary mb-3" href="/web/upcoming-games?page=0">
@@ -106,36 +102,34 @@
 {% elif gamesNearMe %}
     <div class="row">
         {% for game in gamesNearMe %}
-            {% if forloop.counter <= 4 %}
-                {% if forloop.counter <= 3 %}
-                    <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
-                {% else %}
-                    <div class="col-md-6 col-lg-4 col-xl-3 d-lg-none d-xl-flex mb-3">
-                {% endif %}
-                    <div {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>                    
-                        <a href="/web/game/{{ game.id }}">
-                            <img class="card-img-top" src="{{ game.data.picture }}">
-                        </a>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ game.data.name }}</h5>
-                            <p class="card-subtitle text-muted mb-2">
-                                <i class="fa fa-calendar"></i> {{ game.date }}
-                            </p>
-                            <p class="card-text">
-                                Bij {{ game.host }}.
-                            </p>
-                        </div>
-                        <div class="card-footer text-muted">
-                            {% if global.coordinates.actual %}
-                                <span class="float-right">
-                                    {{ game.distance }}km
-                                </span>
-                            {% endif %}
-                            <i class="fa fa-map-marker"></i> {{ game.city }}
-                        </div>
+            {% if forloop.counter <= 3 %}
+                <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
+            {% else %}
+                <div class="col-md-6 col-lg-4 col-xl-3 d-flex d-lg-none d-xl-flex mb-3">
+            {% endif %}
+                <div {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>                    
+                    <a href="/web/game/{{ game.id }}">
+                        <img class="card-img-top" src="{{ game.data.picture }}">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ game.data.name }}</h5>
+                        <p class="card-subtitle text-muted mb-2">
+                            <i class="fa fa-calendar"></i> {{ game.date }}
+                        </p>
+                        <p class="card-text">
+                            Bij {{ game.host }}.
+                        </p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        {% if global.coordinates.actual %}
+                            <span class="float-right">
+                                {{ game.distance }}km
+                            </span>
+                        {% endif %}
+                        <i class="fa fa-map-marker"></i> {{ game.city }}
                     </div>
                 </div>
-            {% endif %}
+            </div>
         {% endfor %}
     </div>
     <a class="btn btn-outline-secondary mb-3" href="/web/games-near-me?page=0">
