@@ -546,4 +546,10 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
         ))
         next()
     }
+    
+    router.get("/faq") {
+        request, response, next in
+        try response.render("\(Settings.locale)/faq", context: request.userInfo)
+        next()
+    }
 }

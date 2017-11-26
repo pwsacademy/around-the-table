@@ -108,6 +108,9 @@
                         <a class="global-signin nav-link" href="#">Aanmelden</a>
                     </li>
                 {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/web/faq">Help</a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -148,6 +151,11 @@
                     <a class="global-signin nav-link" href="#">Aanmelden</a>
                 </li>
             {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="/web/faq">
+                    <i class="fa fa-question-circle fa-lg"></i>
+                </a>
+            </li>
         </ul>
     </nav>
     <!-- Main content -->

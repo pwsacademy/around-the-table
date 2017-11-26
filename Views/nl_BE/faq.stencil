@@ -1,0 +1,90 @@
+{% extends "nl_BE/base.stencil" %}
+
+{% block title %}{{ block.super }}{% endblock %}
+
+{% block content %}
+<h2>Veelgestelde vragen</h2>
+<p>
+    Op deze pagina vind je een antwoord op enkele veelgestelde vragen.
+    Heb je een andere vraag, dan kan je die altijd stellen in onze <a href="https://www.facebook.com/groups/ronddetafel/">Facebookgroep</a>.
+</p>
+<h3 class="mb-3">Inhoudstafel</h3>
+<ul>
+    <li>
+        Gekende problemen
+        <ul>
+            <li><a href="#no-image">Ik heb een spel aangemaakt maar er verschijnt geen afbeelding.</a></li>
+        </ul>
+    </li>
+    <li>
+        Organiseren
+        <ul>
+            <li><a href="#extensions">Hoe kan ik aangeven met welke uitbreidingen we spelen?</a></li>
+            <li><a href="#facebook-group-post">Ik heb een spel aangemaakt. Waarom verschijnt dit niet in de Facebookgroep?</a></li>
+        </ul>
+    </li>
+    <li>
+        Facebook
+        <ul>
+            <li><a href="#facebook-required">Ik heb geen Facebook. Wat nu?</a></li>
+            <li><a href="#facebook-data">Welke gegevens worden opgevraagd bij Facebook?</a></li>
+            <li><a href="#facebook-privacy">Worden er gegevens gedeeld met Facebook of andere partijen?</a></li>
+            <li><a href="#facebook-permission">Waarom vraagt Facebook toestemming om berichten te plaatsen op mijn tijdlijn?</a></li>
+            <li><a href="#facebook-configure">Ik heb deze toestemming geweigerd. Hoe kan ik dit alsnog toestaan?</a></li>
+        </ul>
+    </li>
+</ul>
+<h3 class="mb-3">Gekende problemen</h3>
+<a name="no-image"><h5>Ik heb een spel aangemaakt maar er verschijnt geen afbeelding.</h5></a>
+<p>
+    Jammer genoeg levert BoardGameGeek niet voor elk spel een afbeelding in het formaat dat de site nodig heeft.
+    Als er voor jouw spel geen afbeelding verschijnt, meld dit dan even in de Facebookgroep.
+    Op termijn zal de site dit probleem zelf kunnen detecteren en oplossen waardoor er geen manuele tussenkomst meer is vereist. 
+</p>
+<h3 class="mb-3">Organiseren</h3>
+<a name="extensions"><h5>Hoe kan ik aangeven met welke uitbreidingen we spelen?</h5></a>
+<p>
+    Je kan hiervoor het veld "Extra info" gebruiken.
+    Omdat een uitbreiding extra spelers kan toevoegen, is het mogelijk dat het maximum spelersaantal niet klopt.
+    Je hoeft hier geen rekening mee te houden omdat je sowieso extra spelers kan inschrijven. De site ondersteunt namelijk overboekingen.
+    Extra features om uitbreidingen beter te ondersteunen zijn reeds gepland!
+</p>
+<a name="facebook-group-post"><h5>Ik heb een spel aangemaakt. Waarom verschijnt dit niet in de Facebookgroep?</h5></a>
+<p>
+    Om de automatische berichten bij het aanmaken van een spel te activeren moet je lid zijn van de Facebookgroep.
+    Bij het aanmelden moet je ook toestemming geven om berichten te plaatsen in jouw naam.
+    Lees <a href="#facebook-permission">hier</a> meer over deze toestemming en hoe je deze alsnog kan toestaan.
+</p>
+<h3 class="mb-3">Facebook</h3>
+<a name="facebook-required"><h5>Ik heb geen Facebook. Wat nu?</h5></a>
+<p>
+    Voorlopig is Facebook vereist om je aan te melden.
+    Het gebruik van Facebook zorgt er voor dat je geen account hoeft aan te maken, wachtwoord hoeft te kiezen of profielfoto hoeft up te loaden.
+    Op termijn zal deze verplichting wegvallen en zal je ook kunnen aanmelden zonder Facebook.
+    In tussentijd kan je altijd vragen aan de organisator van het spel om voor jou een plaatsje te reserveren.
+    Je kan ook samen met een vriend of vriendin inschrijven. Deze persoon kan dan aangeven dat hij of zij een extra speler meebrengt.
+</p>
+<a name="facebook-data"><h5>Welke gegevens worden opgevraagd bij Facebook?</h5></a>
+<p>
+    Om je aan te melden worden enkel de volgende basisgegevens opgevraagd:
+</p>
+<ul>
+    <li>Je identificatienummer bij Facebook.</li>
+    <li>De naam die hoort bij je profiel.</li>
+    <li>Je publieke profielfoto.</li>
+</ul>
+<a name="facebook-privacy"><h5>Worden er gegevens gedeeld met Facebook of andere partijen?</h5></a>
+<p>
+    Neen.
+</p>
+<a name="facebook-permission"><h5>Waarom vraagt Facebook toestemming om berichten te plaatsen op mijn tijdlijn?</h5></a>
+<p>
+    Wanneer je een spel aanmaakt, dan kan dit automatisch aangekondigd worden in onze Facebookgroep.
+    Om dit mogelijk te maken heeft de site toestemming nodig om berichten te plaatsen in jouw naam.
+    In tegenstelling tot wat het berichtje van Facebook doet vermoeden worden er dus nooit berichten geplaatst op je tijdlijn.
+</p>
+<a name="facebook-configure"><h5>Ik heb deze toestemming geweigerd. Hoe kan ik dit alsnog toestaan?</h5></a>
+<p>
+    Dit moet via Facebook zelf. Je vindt de instellingen van Rond de tafel via <strong>Instellingen</strong> &gt; <strong>Apps</strong> &gt; <strong>Rond de tafel</strong>.
+</p>
+{% endblock %}
