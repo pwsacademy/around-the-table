@@ -481,7 +481,7 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
             base: request.userInfo,
             messages: messages
         ))
-        try MessageRepository().markAsRead(messages)
+        try MessageRepository().markAllAsRead(for: user)
         next()
     }
     

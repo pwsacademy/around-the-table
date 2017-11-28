@@ -13,11 +13,11 @@ struct MessageRepository {
         message.id = newID.hexString
     }
     
-    func unreadMessageCount(`for` user: User) throws -> Int {
+    func unreadMessageCount(for user: User) throws -> Int {
         return try collection(.messages).count(["recipient": user.id, "read": false])
     }
     
-    func messages(`for` user: User) throws -> [Message] {
+    func messages(for user: User) throws -> [Message] {
         let results = try collection(.messages).find(["recipient": user.id], sortedBy: ["creationDate": .descending])
         return try results.map { try Message(bson: $0) }.filter {
             switch $0.category {
@@ -32,14 +32,7 @@ struct MessageRepository {
         }
     }
     
-    func markAsRead(_ messages: [Message]) throws {
-        let ids = try messages.map {
-            (message: Message) -> ObjectId in
-            guard let id = message.id else {
-                try logAndThrow(ServerError.unpersistedEntity)
-            }
-            return try ObjectId(id)
-        }
-        try collection(.messages).update(["_id": ["$in": ids]], to: ["$set": ["read": true]], multiple: true)
+    func markAllAsRead(for user: User) throws {
+        try collection(.messages).update(["recipient": user.id], to: ["$set": ["read": true]], multiple: true)
     }
 }
