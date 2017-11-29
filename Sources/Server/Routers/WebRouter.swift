@@ -334,9 +334,7 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
         }
         let location = user?.location ?? .default
         guard let id = request.parameters["id"],
-              let game = try GameRepository().game(withID: id, withDistanceMeasuredFrom: location),
-              game.date.compare(Date()) == .orderedDescending,
-              !game.cancelled else {
+              let game = try GameRepository().game(withID: id, withDistanceMeasuredFrom: location) else {
             try logAndThrow(ServerError.invalidRequest)
         }
         let requests = try RequestRepository().requests(for: game)

@@ -62,8 +62,11 @@
     <h2>Extra informatie</h2>
     <p>{{ info }}</p>
 {% endif %}
-<!-- Host and player information (for visitors and players) -->
-{% if not userIsHost %}
+<!--
+    Host and player information, shown to visitors and players.
+    Also shown to the host when the game is over or cancelled.
+-->
+{% if not userIsHost or isCancelled or isOver %}
     <h2>Spelers</h2>
     <p>
         <img class="avatar rounded-circle mr-2" src="{{ host.picture }}">
@@ -79,7 +82,7 @@
     </p>
     {% if approvedRequests %}
         {% for request in approvedRequests %}
-            {% if global.user and global.user.id == request.player.id %}
+            {% if not isCancelled and not isOver and global.user and global.user.id == request.player.id %}
                 <form method="post" action="/web/request/{{ request.id }}" style="float: right">
                     <input type="hidden" name="cancelled" value="on">
                     <button class="btn btn-danger responsive" type="submit">
@@ -98,12 +101,20 @@
             </p>
         {% endfor %}
     {% endif %}
-    <!-- Request seats -->
-    {% if availableSeats < 1 %}
+    {% if isCancelled %}
+        <div class="alert alert-danger">
+            Dit spel is geannuleerd.
+        </div>
+    {% elif isOver %}
+        <div class="alert alert-warning">
+            Dit spel is afgelopen.
+        </div>
+    {% elif availableSeats < 1 %}
         <p>Dit spel is volzet.</p>
     {% elif userHasRequested and not userIsPlayer %}
         <p><i class="fa fa-hourglass-o fa-lg"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
     {% elif global.user %}
+        <!-- Request seats -->
         {% if availableSeats == 1 %}
             <p>Er is nog 1 plaats beschikbaar.</p>
         {% else %}
@@ -127,84 +138,87 @@
         </div>
     {% endif %}
 {% endif %}
-<!-- Player management (for host) -->
-{% if userIsHost %}
-    <h2>Aanvragen</h2>
-    <h4 class="mb-3">Goedgekeurd</h4>
-    {% if approvedRequests %}
-        {% for request in approvedRequests %}
-            <form method="post" action="/web/request/{{ request.id }}" style="float: right">
-                <input name="cancelled" type="hidden" value="on">
-                <button class="btn btn-danger responsive" type="submit">
-                    <i class="fa fa-times"></i><span class="d-none d-md-inline"> Annuleren</span>
-                </button>
-            </form>
-            <p>
-                <img class="avatar rounded-circle mr-2" src="{{ request.player.picture }}">
-                <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a>
-                {% if request.seats == 2 %}
-                    en 1 extra speler
-                {% elif request.seats > 2 %}
-                    en {{ request.seats|previous }} extra spelers
-                {% endif %}
-            </p>
-        {% endfor %}
-    {% else %}
-        <p>Je hebt nog geen aanvragen goedgekeurd.</p>
-    {% endif %}
-    <h4 class="mb-3">Ontvangen</h4>
-    {% if requests %}
-        {% for request in requests %}
-            <form method="post" action="/web/request/{{ request.id }}" style="float: right">
-                <input name="approved" type="hidden" value="on">
+{% if not isCancelled and not isOver %}
+    <!-- Player management (for host) -->
+    {% if userIsHost %}
+        <h2>Aanvragen</h2>
+        <h4 class="mb-3">Goedgekeurd</h4>
+        {% if approvedRequests %}
+            {% for request in approvedRequests %}
+                <form method="post" action="/web/request/{{ request.id }}" style="float: right">
+                    <input name="cancelled" type="hidden" value="on">
+                    <button class="btn btn-danger responsive" type="submit">
+                        <i class="fa fa-times"></i><span class="d-none d-md-inline"> Annuleren</span>
+                    </button>
+                </form>
+                <p>
+                    <img class="avatar rounded-circle mr-2" src="{{ request.player.picture }}">
+                    <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a>
+                    {% if request.seats == 2 %}
+                        en 1 extra speler
+                    {% elif request.seats > 2 %}
+                        en {{ request.seats|previous }} extra spelers
+                    {% endif %}
+                </p>
+            {% endfor %}
+        {% else %}
+            <p>Je hebt nog geen aanvragen goedgekeurd.</p>
+        {% endif %}
+        <h4 class="mb-3">Ontvangen</h4>
+        {% if requests %}
+            {% for request in requests %}
+                <form method="post" action="/web/request/{{ request.id }}" style="float: right">
+                    <input name="approved" type="hidden" value="on">
+                    {% if request.willCauseOverbooking %}
+                        <button class="btn btn-warning" type="submit">
+                            <i class="fa fa-check"></i><span class="d-none d-md-inline"> Goedkeuren</span>
+                        </button>
+                    {% else %}
+                        <button class="btn btn-success" type="submit">
+                            <i class="fa fa-check"></i><span class="d-none d-md-inline"> Goedkeuren</span>
+                        </button>
+                    {% endif %}
+                </form>
+                <p>
+                    <img class="avatar rounded-circle mr-2" src="{{ request.player.picture }}">
+                    <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a>
+                    {% if request.seats == 2 %}
+                        en 1 extra speler
+                    {% elif request.seats > 2 %}
+                        en {{ request.seats|previous }} extra spelers
+                    {% endif %}
+                </p>
                 {% if request.willCauseOverbooking %}
-                    <button class="btn btn-warning" type="submit">
-                        <i class="fa fa-check"></i><span class="d-none d-md-inline"> Goedkeuren</span>
-                    </button>
-                {% else %}
-                    <button class="btn btn-success" type="submit">
-                        <i class="fa fa-check"></i><span class="d-none d-md-inline"> Goedkeuren</span>
-                    </button>
+                    <p>Opgelet: deze aanvraag goedkeuren leidt tot overboeking!</p>
                 {% endif %}
-            </form>
-            <p>
-                <img class="avatar rounded-circle mr-2" src="{{ request.player.picture }}">
-                <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a>
-                {% if request.seats == 2 %}
-                    en 1 extra speler
-                {% elif request.seats > 2 %}
-                    en {{ request.seats|previous }} extra spelers
-                {% endif %}
-            </p>
-            {% if request.willCauseOverbooking %}
-                <p>Opgelet: deze aanvraag goedkeuren leidt tot overboeking!</p>
-            {% endif %}
-        {% endfor %}
-    {% else %}
-        <p>Je hebt nog geen aanvragen ontvangen.</p>
+            {% endfor %}
+        {% else %}
+            <p>Je hebt nog geen aanvragen ontvangen.</p>
+        {% endif %}
     {% endif %}
-{% endif %}
-{% if not minPlayerCountIsReached %}
-    {% if data.minPlayerCount == 1 %}
-        <p>Dit spel gaat door vanaf 1 speler.</p>
-    {% else %}
-        <p>Dit spel gaat door vanaf {{ data.minPlayerCount }} spelers.</p>
+    <!-- Some more general information -->
+    {% if not minPlayerCountIsReached %}
+        {% if data.minPlayerCount == 1 %}
+            <p>Dit spel gaat door vanaf 1 speler.</p>
+        {% else %}
+            <p>Dit spel gaat door vanaf {{ data.minPlayerCount }} spelers.</p>
+        {% endif %}
     {% endif %}
-{% endif %}
-{% if deadlineHasPassed %}
-    <p>Inschrijven voor dit spel is niet meer mogelijk.</p>
-{% else %}
-    <p>Inschrijven is mogelijk tot {{ deadlineDate }} om {{ deadlineTime }}.</p>
-{% endif %}
-<!-- Administration tasks -->
-{% if userIsHost %}
-    <h2>Beheer</h2>
-    <form method="post" action="/web/game/{{ id }}">
-        <input type="hidden" name="cancelled" value="on">
-        <button class="btn btn-danger" type="submit">
-            <i class="fa fa-times"></i> Spel annuleren</span>
-        </button>
-    </form>
+    {% if deadlineHasPassed %}
+        <p>Inschrijven voor dit spel is niet meer mogelijk.</p>
+    {% else %}
+        <p>Inschrijven is mogelijk tot {{ deadlineDate }} om {{ deadlineTime }}.</p>
+    {% endif %}
+    <!-- Administration tasks -->
+    {% if userIsHost %}
+        <h2>Beheer</h2>
+        <form method="post" action="/web/game/{{ id }}">
+            <input type="hidden" name="cancelled" value="on">
+            <button class="btn btn-danger" type="submit">
+                <i class="fa fa-times"></i> Spel annuleren</span>
+            </button>
+        </form>
+    {% endif %}
 {% endif %}
 {% endblock %}
 

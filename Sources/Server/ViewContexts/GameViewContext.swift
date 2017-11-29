@@ -32,6 +32,7 @@ struct GameViewContext: ViewContext {
             "info": game.info,
             "date": game.date.formatted(dateStyle: .full),
             "time": game.date.formatted(timeStyle: .short),
+            "isOver": game.date.compare(Date()) == .orderedAscending,
             "deadlineDate": game.deadline.formatted(dateStyle: .full),
             "deadlineTime": game.deadline.formatted(timeStyle: .short),
             "deadlineHasPassed": game.deadline.compare(Date()) == .orderedAscending,
@@ -42,7 +43,8 @@ struct GameViewContext: ViewContext {
             "requests": try requests.filter { !$0.approved }.map { try requestMapper($0).appending(["willCauseOverbooking": $0.seats > game.availableSeats]) },
             "userIsPlayer": requests.filter { $0.approved }.contains { $0.player == user },
             "userIsHost": game.host == user,
-            "userHasRequested": requests.contains { $0.player == user }
+            "userHasRequested": requests.contains { $0.player == user },
+            "isCancelled": game.cancelled
         ]
         if game.availableSeats > 0 {
             contents["seatOptions"] = Array(1...game.availableSeats)
