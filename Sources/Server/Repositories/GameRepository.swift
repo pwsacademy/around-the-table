@@ -65,7 +65,8 @@ struct GameRepository {
     }
     
     func games(hostedBy host: User) throws -> [Game] {
-        return try collection(.games).find(["host": host.id, "date": ["$gt": Date()], "cancelled": false], sortedBy: ["date": .ascending]).map { try Game(bson: $0) }
+        let yesterday = Calendar(identifier: .gregorian).date(byAdding: .day, value: -1, to: Date())
+        return try collection(.games).find(["host": host.id, "date": ["$gt": yesterday], "cancelled": false], sortedBy: ["date": .ascending]).map { try Game(bson: $0) }
     }
     
     func games(joinedBy player: User) throws -> [Game] {
@@ -73,7 +74,8 @@ struct GameRepository {
             .find(["player": player.id, "approved": true, "cancelled": false], projecting: ["_id": false, "game": true])
             .flatMap { String($0["game"]) }
             .map { try ObjectId($0) }
-        return try games(matching: ["_id": ["$in": gameIDs], "date": ["$gt": Date()], "cancelled": false],
+        let yesterday = Calendar(identifier: .gregorian).date(byAdding: .day, value: -1, to: Date())
+        return try games(matching: ["_id": ["$in": gameIDs], "date": ["$gt": yesterday], "cancelled": false],
                          withDistanceMeasuredFrom: player.location ?? .default,
                          sortedBy: ["date": .ascending],
                          startingFrom: 0, limitedTo: gameIDs.count)
