@@ -4,6 +4,8 @@ final class Message {
     
     enum Category {
         
+        case hostChangedAddress(Game)
+        case hostChangedDate(Game)
         case hostCancelledGame(Game)
         case hostCancelledRequest(Request)
         case playerCancelledRequest(Request)
@@ -12,6 +14,10 @@ final class Message {
         
         var description: String {
             switch self {
+            case .hostChangedAddress:
+                return "hostChangedAddress"
+            case .hostChangedDate:
+                return "hostChangedDate"
             case .hostCancelledGame:
                 return "hostCancelledGame"
             case .hostCancelledRequest:
@@ -66,6 +72,22 @@ extension Message {
                 try logAndThrow(BSONError.missingField(name: "category"))
             }
             switch category {
+            case "hostChangedAddress":
+                guard let gameID = String(bson["game"]) else {
+                    try logAndThrow(BSONError.missingField(name: "game"))
+                }
+                guard let game = try GameRepository().game(withID: gameID) else {
+                    try logAndThrow(BSONError.invalidField(name: "game"))
+                }
+                return Category.hostChangedAddress(game)
+            case "hostChangedDate":
+                guard let gameID = String(bson["game"]) else {
+                    try logAndThrow(BSONError.missingField(name: "game"))
+                }
+                guard let game = try GameRepository().game(withID: gameID) else {
+                    try logAndThrow(BSONError.invalidField(name: "game"))
+                }
+                return Category.hostChangedDate(game)
             case "hostCancelledGame":
                 guard let gameID = String(bson["game"]) else {
                     try logAndThrow(BSONError.missingField(name: "game"))
@@ -138,7 +160,9 @@ extension Message {
         }
         bson["category"] = category.description
         switch category {
-        case .hostCancelledGame(let game):
+        case .hostChangedAddress(let game),
+             .hostChangedDate(let game),
+             .hostCancelledGame(let game):
             guard let id = game.id else {
                 try logAndThrow(ServerError.unpersistedEntity)
             }

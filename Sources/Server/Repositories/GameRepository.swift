@@ -110,11 +110,10 @@ struct GameRepository {
         return try results.map { try Game(bson: $0) }
     }
     
-    func cancel(_ game: Game) throws {
+    func update(_ game: Game) throws {
         guard let id = game.id else {
             try logAndThrow(ServerError.unpersistedEntity)
         }
-        game.cancelled = true
-        try collection(.games).update(["_id": try ObjectId(id)], to: ["$set": ["cancelled": true]])
+        try collection(.games).update(["_id": try ObjectId(id)], to: game.toBSON())
     }
 }

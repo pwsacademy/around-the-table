@@ -16,6 +16,7 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
     let authentication = AuthenticationMiddleware()
     router.all("/host-game", middleware: [credentials, authentication])
     router.post("/game/:id", middleware: [credentials, authentication])
+    router.get("/game/:id/edit", middleware: [credentials, authentication])
     router.post("/requests", middleware: [credentials, authentication])
     router.post("/request/:id", middleware: [credentials, authentication])
     router.get("/my-games", middleware: [credentials, authentication])
@@ -347,8 +348,31 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
         next()
     }
     
+    router.get("/game/:id/edit") {
+        request, response, next in
+        guard let userID = request.userProfile?.id else {
+            try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard let user = try UserRepository().user(withID: userID) else {
+            try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
+        guard let gameID = request.parameters["id"],
+              let game = try GameRepository().game(withID: gameID),
+              game.date.compare(Date()) == .orderedDescending,
+              user == game.host,
+              let type = request.queryParameters["type"] else {
+            try logAndThrow(ServerError.invalidRequest)
+        }
+        try response.render("\(Settings.locale)/host-game", context: EditGameViewContext(
+            base: request.userInfo,
+            game: game,
+            type: type
+        ))
+        next()
+    }
+    
     /*
-     Cancel a game.
+     Edit or cancel a game.
      */
     router.post("/game/:id", middleware: BodyParser())
     router.post("/game/:id") {
@@ -362,18 +386,104 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
         guard let gameID = request.parameters["id"],
               let game = try GameRepository().game(withID: gameID),
               game.date.compare(Date()) == .orderedDescending,
+              user == game.host,
               let body = request.body?.asURLEncoded else {
             try logAndThrow(ServerError.invalidRequest)
         }
-        if let cancelled = body["cancelled"], cancelled == "on", user == game.host {
-            try GameRepository().cancel(game)
+        switch body["type"] {
+        case "edit-players"?:
+            guard let playerCountString = body["playerCount"], let playerCount = Int(playerCountString),
+                  let minPlayerCountString = body["minPlayerCount"], let minPlayerCount = Int(minPlayerCountString),
+                  let prereservedSeatsString = body["prereservedSeats"], let prereservedSeats = Int(prereservedSeatsString),
+                  minPlayerCount <= playerCount, prereservedSeats <= playerCount else {
+                try logAndThrow(ServerError.invalidRequest)
+            }
+            game.data.playerCount = minPlayerCount...playerCount
+            game.prereservedSeats = prereservedSeats
+            game.availableSeats = try max(playerCount - prereservedSeats - RequestRepository().approvedSeats(for: game), 0)
+            try GameRepository().update(game)
+            try response.redirect("/web/game/\(gameID)")
+        case "edit-datetime"?:
+            guard let dayString = body["day"], let day = Int(dayString),
+                  let monthString = body["month"], let month = Int(monthString),
+                  let yearString = body["year"], let year = Int(yearString),
+                  let hourString = body["hour"], let hour = Int(hourString),
+                  let minuteString = body["minute"], let minute = Int(minuteString) else {
+                try logAndThrow(ServerError.invalidRequest)
+            }
+            // Make sure the date is valid and in the future.
+            let calendar = Calendar(identifier: .gregorian)
+            var dateComponents = DateComponents()
+            dateComponents.calendar = calendar
+            dateComponents.day = day
+            dateComponents.month = month
+            dateComponents.year = year
+            dateComponents.hour = hour
+            dateComponents.minute = minute
+            dateComponents.timeZone = Settings.timeZone
+            guard dateComponents.isValidDate,
+                  let date = dateComponents.date,
+                  date.compare(Date()) == .orderedDescending else {
+                try logAndThrow(ServerError.invalidRequest)
+            }
+            // Not only adjust the date, also adjust the deadline accordingly.
+            let deadlineInterval = date.timeIntervalSince(game.date)
+            game.date = date
+            game.deadline.addTimeInterval(deadlineInterval)
+            try GameRepository().update(game)
+            for player in try UserRepository().players(for: game) {
+                try MessageRepository().add(Message(category: .hostChangedDate(game), recipient: player))
+            }
+            try response.redirect("/web/game/\(gameID)")
+        case "edit-deadline"?:
+            guard let deadlineType = body["deadline"] else {
+                try logAndThrow(ServerError.invalidRequest)
+            }
+            let calendar = Calendar(identifier: .gregorian)
+            switch deadlineType {
+            case "one hour":
+                game.deadline = calendar.date(byAdding: .hour, value: -1, to: game.date)!
+            case "one day":
+                game.deadline = calendar.date(byAdding: .day, value: -1, to: game.date)!
+            case "two days":
+                game.deadline = calendar.date(byAdding: .day, value: -2, to: game.date)!
+            case "one week":
+                game.deadline = calendar.date(byAdding: .weekOfYear, value: -1, to: game.date)!
+            default:
+                try logAndThrow(ServerError.invalidRequest)
+            }
+            try GameRepository().update(game)
+            try response.redirect("/web/game/\(gameID)")
+        case "edit-address"?:
+            guard let address = body["address"], address.characters.count > 0,
+                  let city = body["city"], city.characters.count > 0,
+                  let latitudeString = body["latitude"], let latitude = Double(latitudeString),
+                  let longitudeString = body["longitude"], let longitude = Double(longitudeString)else {
+                try logAndThrow(ServerError.invalidRequest)
+            }
+            game.location = Location(address: address, city: city, latitude: latitude, longitude: longitude)
+            try GameRepository().update(game)
+            for player in try UserRepository().players(for: game) {
+                try MessageRepository().add(Message(category: .hostChangedAddress(game), recipient: player))
+            }
+            try response.redirect("/web/game/\(gameID)")
+        case "edit-info"?:
+            guard let info = body["info"] else {
+                try logAndThrow(ServerError.invalidRequest)
+            }
+            game.info = info
+            try GameRepository().update(game)
+            try response.redirect("/web/game/\(gameID)")
+        case "cancel"?:
+            game.cancelled = true
+            try GameRepository().update(game)
             for player in try UserRepository().players(for: game) {
                 try MessageRepository().add(Message(category: .hostCancelledGame(game), recipient: player))
             }
-        } else {
+            try response.redirect("/web/my-games")
+        default:
             try logAndThrow(ServerError.invalidRequest)
         }
-        try response.redirect("/web/my-games")
         next()
     }
     

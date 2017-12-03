@@ -1,6 +1,11 @@
 {% extends "nl_BE/base.stencil" %}
 
-{% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
+{% if type == "create" %}
+    {% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
+{% else %}
+    {% block title %}{{ block.super }} - Spel aanpassen{% endblock %}
+{% endif %}
+
 {% block additional-head %}
 <link rel="stylesheet" href="/public/css/pikaday.min.css">
 <style>
@@ -11,9 +16,16 @@
 {% endblock %}
 
 {% block content %}
-<h2>Organiseer een spel</h2>
-<p>Vul het onderstaande formulier in om je spel aan te maken.</p>
-<form method="post" action="/web/host-game">
+{% if type == "create" %}
+    <h2>Organiseer een spel</h2>
+    <p>Vul het onderstaande formulier in om je spel aan te maken.</p>
+    <form method="post" action="/web/host-game">
+{% else %}
+    <h2>Spel aanpassen</h2>
+    <form method="post" action="/web/game/{{ id }}">
+        <input name="type" type="hidden" value="{{ type }}">
+{% endif %}
+{% if type == "create" %}
     <h3>Spel</h3>
     <input name="id" type="hidden" value="{{ game.id }}">
     <div class="form-group">
@@ -28,6 +40,9 @@
             <input class="form-control" name="name" type="text" value="{{ game.name }}" readonly>
         {% endif %}
     </div>
+{% endif %}
+{% if type == "create" or type == "edit-players" %}
+    <!-- For "edit-players", the correct default values will be set in code. -->
     <div class="form-group">
         <label>Aantal spelers</label>
         {% if game.playerCountOptions|count > 1 %}
@@ -84,12 +99,17 @@
             <input name="prereservedSeats" type="hidden" value="0">
         {% endif %}
     </div>
+{% endif %}
+{% if type == "create" %}
     <h3>Datum en tijdstip</h3>
+{% endif %}
+{% if type == "create" or type == "edit-datetime" %}
     <div class="form-row">
         <div class="form-group col-md-6">
             <label>Datum</label>
             <div class="input-group">
                 <i class="input-group-addon fa fa-calendar"></i>
+                <!-- The date picker's default value will be set in code. -->
                 <input id="datepicker" class="form-control" type="text" readonly required>
             </div>
             <input id="day" name="day" type="hidden" value="{{ date.day }}">
@@ -105,6 +125,8 @@
             <input class="form-control" name="minute" type="number" value="{{ date.minute }}" min="0" max="59" required>
         </div>
     </div>
+{% endif %}
+{% if type == "create" or type == "edit-deadline" %}
     <div class="form-group">
         <label>Deadline voor inschrijving</label>
         <div class="form-check">
@@ -135,7 +157,12 @@
             Na het verstrijken van de deadline kan je als organisator nog steeds aanvragen goedkeuren of het spel annuleren.
         </p>
     </div>
+{% endif %}
+{% if type == "create" %}
     <h3>Adres</h3>
+{% endif %}
+{% if type == "create" or type == "edit-address" %}
+    <!-- The correct default values will be set in code. -->
     <input id="address" name="address" type="hidden">
     <input id="city" name="city" type="hidden">
     <input id="latitude" name="latitude" type="hidden">
@@ -162,12 +189,24 @@
         </p>
         <div id="map"></div>
     </div>
+{% endif %}
+{% if type == "create" %}
     <h3>Extra informatie</h3>
+{% endif %}
+{% if type == "create" or type == "edit-info" %}
     <div class="form-group">
-        <textarea class="form-control" name="info" rows="8"></textarea>
+        <textarea class="form-control" name="info" rows="8">{{ info }}</textarea>
     </div>
+{% endif %}
     <div class="form-group">
-        <button id="submit" class="btn btn-primary" type="submit" disabled>Spel aanmaken</button>
+        <!-- The submit button will be disabled when the user needs to enter an address. -->
+        <button id="submit" class="btn btn-primary" type="submit">
+            {% if type == "create" %}
+                Spel aanmaken
+            {% else %}
+                Aanpassingen opslaan
+            {% endif %}
+        </button>
     </div>
 </form>
 {% endblock %}
@@ -175,164 +214,181 @@
 {% block additional-body %}
 <script src="/public/js/pikaday.min.js"></script>
 <script>
-// Set up the date picker.
-var picker = new Pikaday({
-    field: document.getElementById("datepicker"),
-    firstDay: 1,
-    minDate: new Date(),
-    defaultDate: new Date({{ date.year }}, {{ date.month }} - 1, {{ date.day }}),
-    setDefaultDate: true,
-    toString(date, format) {
-        return date.toLocaleDateString("nl", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
-    },
-    onSelect: function(date) {
-        $("#day").val(date.getDate());
-        $("#month").val(date.getMonth() + 1);
-        $("#year").val(date.getFullYear());
-    },
-    i18n: {
-        previousMonth : "Vorige maand",
-        nextMonth     : "Volgende maand",
-        months        : ["Januari","Februari","Maart","April","Mei","Juni","Juli","Augustus","September","Oktober","November","December"],
-        weekdays      : ["Zondag","Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag"],
-        weekdaysShort : ["Zon","Ma","Di","Woe","Do","Vrij","Zat"]
-    }
-});
-// Adjust minPlayerCount and prereservedSeats when a new playerCount is selected.
-$("#playerCount").on("change", function() {
-    var playerCount = $(this).val();
-    // If minPlayerCount is now invalid, set it to the new playerCount.
-    if ($("#minPlayerCount").val() > playerCount) {
-		$("#minPlayerCount").val(playerCount);
-    }
-    // Adjust the minPlayerCount options based on the new playerCount.
-    $("#minPlayerCount option").each(function() {
-        var minPlayerCount = $(this).attr("value");
-        if (minPlayerCount <= playerCount) {
-            $(this).removeAttr("disabled");
-        } else {
-            $(this).attr("disabled", "disabled");
-        }
-    });
-    // If prereservedSeats is now invalid, set it to the highest valid option.
-    if ($("#prereservedSeats").val() >= playerCount) {
-        $("#prereservedSeats").val(playerCount - 1);
-    }
-    // Adjust the prereservedSeats options based on the new playerCount.
-    $("#prereservedSeats option").each(function() {
-        var seatCount = $(this).attr("value");
-        if (seatCount < playerCount) {
-            $(this).removeAttr("disabled");
-        } else {
-            $(this).attr("disabled", "disabled");
-        }
-    });
-});
-// Set up the map.
-var map;
-function loadMap() {
-    map = new google.maps.Map(document.getElementById("map"), {
-        center: {
-            lat: {{ global.coordinates.latitude }},
-            lng: {{ global.coordinates.longitude }}
+{% if type == "create" or type == "edit-datetime" %}
+    // Set up the date picker.
+    var picker = new Pikaday({
+        field: document.getElementById("datepicker"),
+        firstDay: 1,
+        minDate: new Date(),
+        defaultDate: new Date({{ date.year }}, {{ date.month }} - 1, {{ date.day }}),
+        setDefaultDate: true,
+        toString(date, format) {
+            return date.toLocaleDateString("nl", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
         },
-        zoom: 15
+        onSelect: function(date) {
+            $("#day").val(date.getDate());
+            $("#month").val(date.getMonth() + 1);
+            $("#year").val(date.getFullYear());
+        },
+        i18n: {
+            previousMonth : "Vorige maand",
+            nextMonth     : "Volgende maand",
+            months        : ["Januari","Februari","Maart","April","Mei","Juni","Juli","Augustus","September","Oktober","November","December"],
+            weekdays      : ["Zondag","Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag"],
+            weekdaysShort : ["Zon","Ma","Di","Woe","Do","Vrij","Zat"]
+        }
     });
-}
-</script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ global.googleAPIKey }}&libraries=places&callback=loadMap"></script>
-<script>
-// Set up the autocomplete address field.
-var autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocomplete"), {
-    componentRestrictions: {
-        country: {{ global.countries }}
+{% endif %}
+{% if type == "create" or type == "edit-players" %}
+    // Adjusts minPlayerCount and prereservedSeats when a new playerCount is selected.
+    function checkPlayerCounts() {
+        var playerCount = parseInt($("#playerCount").val());
+        var minPlayerCount = parseInt($("#minPlayerCount").val());
+        // If minPlayerCount is now invalid, set it to the new playerCount.
+        if (minPlayerCount > playerCount) {
+            $("#minPlayerCount").val(playerCount);
+        }
+        // Adjust the minPlayerCount options based on the new playerCount.
+        $("#minPlayerCount option").each(function() {
+            var option = parseInt($(this).attr("value"));
+            if (option <= playerCount) {
+                $(this).removeAttr("disabled");
+            } else {
+                $(this).attr("disabled", "disabled");
+            }
+        });
+        // If prereservedSeats is now invalid, set it to the highest valid option.
+        var prereservedSeats = parseInt($("#prereservedSeats").val());
+        if (prereservedSeats >= playerCount) {
+            $("#prereservedSeats").val(playerCount - 1);
+        }
+        // Adjust the prereservedSeats options based on the new playerCount.
+        $("#prereservedSeats option").each(function() {
+            var option = parseInt($(this).attr("value"));
+            if (option < playerCount) {
+                $(this).removeAttr("disabled");
+            } else {
+                $(this).attr("disabled", "disabled");
+            }
+        });
     }
-});
-// Adjust the map and set a marker when the user enters an address.
-var marker;
-autocomplete.addListener("place_changed", function() {
-    var place = autocomplete.getPlace();
-    var cityComponent = place.address_components.find(function(component) {
-        return component.types.indexOf("locality") != -1;
+    $("#playerCount").on("change", checkPlayerCounts);
+{% endif %}
+{% if type == "edit-players" %}
+    // Set the correct default values when editing a game.
+    $("#playerCount").val("{{ game.playerCount }}");
+    $("#minPlayerCount").val("{{ game.minPlayerCount }}");
+    $("#prereservedSeats").val("{{ prereservedSeats }}");
+    checkPlayerCounts();
+{% endif %}
+{% if type == "create" or type == "edit-address" %}
+    $("#submit").attr("disabled", "disabled");
+    // Set up the map.
+    var map;
+    function loadMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: {
+                lat: {{ global.coordinates.latitude }},
+                lng: {{ global.coordinates.longitude }}
+            },
+            zoom: 15
+        });
+    }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ global.googleAPIKey }}&libraries=places&callback=loadMap"></script>
+    <script>
+    // Set up the autocomplete address field.
+    var autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocomplete"), {
+        componentRestrictions: {
+            country: {{ global.countries }}
+        }
     });
-    // Make sure the location contains a city (and it's not just a province or country).
-    if (!cityComponent) {
-        clearLocation();
-        $("#submit").attr("disabled", "disabled");
-        return
-    }
-    $("#address").val($("#autocomplete").val());
-    var city = cityComponent.long_name;
-    var coordinates = place.geometry.location;
-    $("#city").val(city);
-    $("#latitude").val(coordinates.lat);
-    $("#longitude").val(coordinates.lng);
-    if (!marker) {
-        marker = new google.maps.Marker({
-            position: coordinates,
-            map: map
+    // Adjust the map and set a marker when the user enters an address.
+    var marker;
+    autocomplete.addListener("place_changed", function() {
+        var place = autocomplete.getPlace();
+        var cityComponent = place.address_components.find(function(component) {
+            return component.types.indexOf("locality") != -1;
         });
-    } else {
-        marker.setPosition(coordinates);
-    }
-    map.setCenter(coordinates);
-    $("#submit").removeAttr("disabled");
-});
-// Toggle the address picker.
-$("#use-saved-location").on("change", function() {
-    if (!this.checked) {
-        clearLocation();
-        $("#address-picker").show();
-        // These next two statements make sure the map renders properly.
-        // The map won't render properly when the address picker is hidden.
-        google.maps.event.trigger(map, "resize");
-        map.setCenter({
-            lat: {{ global.coordinates.latitude }},
-            lng: {{ global.coordinates.longitude }}
-        });
-        $("#submit").attr("disabled", "disabled");
-    } else {
+        // Make sure the location contains a city (and it's not just a province or country).
+        if (!cityComponent) {
+            clearLocation();
+            $("#submit").attr("disabled", "disabled");
+            return
+        }
+        $("#address").val($("#autocomplete").val());
+        var city = cityComponent.long_name;
+        var coordinates = place.geometry.location;
+        $("#city").val(city);
+        $("#latitude").val(coordinates.lat);
+        $("#longitude").val(coordinates.lng);
+        if (!marker) {
+            marker = new google.maps.Marker({
+                position: coordinates,
+                map: map
+            });
+        } else {
+            marker.setPosition(coordinates);
+        }
+        map.setCenter(coordinates);
+        $("#submit").removeAttr("disabled");
+    });
+    // Toggle the address picker.
+    $("#use-saved-location").on("change", function() {
+        if (!this.checked) {
+            clearLocation();
+            $("#address-picker").show();
+            // These next two statements make sure the map renders properly.
+            // The map won't render properly when the address picker is hidden.
+            google.maps.event.trigger(map, "resize");
+            map.setCenter({
+                lat: {{ global.coordinates.latitude }},
+                lng: {{ global.coordinates.longitude }}
+            });
+            $("#submit").attr("disabled", "disabled");
+        } else {
+            setSavedLocation();
+            $("#address-picker").hide();
+            $("#submit").removeAttr("disabled");
+        }
+    });
+    {% if global.coordinates.actual %}
         setSavedLocation();
         $("#address-picker").hide();
         $("#submit").removeAttr("disabled");
+    {% endif %}
+    // Helper functions.
+    function clearLocation() {
+        $("#autocomplete").val("");
+        $("#address").val("");
+        $("#city").val("");
+        $("#latitude").val("");
+        $("#longitude").val("");
+        if (marker) {
+            marker.setMap(null);
+            marker = null;
+        }
     }
-});
-{% if global.coordinates.actual %}
-    setSavedLocation();
-    $("#address-picker").hide();
-    $("#submit").removeAttr("disabled");
+    function setSavedLocation() {
+        $("#autocomplete").val("{{ location.address }}");
+        $("#address").val("{{ location.address }}");
+        $("#city").val("{{ location.city }}");
+        $("#latitude").val("{{ global.coordinates.latitude }}");
+        $("#longitude").val("{{ global.coordinates.longitude }}");
+        var coordinates = {
+            lat: {{ global.coordinates.latitude }},
+            lng: {{ global.coordinates.longitude }}
+        };
+        if (!marker) {
+            marker = new google.maps.Marker({
+                position: coordinates,
+                map: map
+            });
+        } else {
+            marker.setPosition(coordinates);
+        }
+        map.setCenter(coordinates);
+    }
 {% endif %}
-// Helper functions.
-function clearLocation() {
-    $("#autocomplete").val("");
-    $("#address").val("");
-    $("#city").val("");
-    $("#latitude").val("");
-    $("#longitude").val("");
-    if (marker) {
-        marker.setMap(null);
-        marker = null;
-    }
-}
-function setSavedLocation() {
-    $("#autocomplete").val("{{ location.address }}");
-    $("#address").val("{{ location.address }}");
-    $("#city").val("{{ location.city }}");
-    $("#latitude").val("{{ global.coordinates.latitude }}");
-    $("#longitude").val("{{ global.coordinates.longitude }}");
-    var coordinates = {
-        lat: {{ global.coordinates.latitude }},
-        lng: {{ global.coordinates.longitude }}
-    };
-    if (!marker) {
-        marker = new google.maps.Marker({
-            position: coordinates,
-            map: map
-        });
-    } else {
-        marker.setPosition(coordinates);
-    }
-    map.setCenter(coordinates);
-}
 </script>
 {% endblock %}

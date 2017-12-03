@@ -212,8 +212,13 @@
     <!-- Administration tasks -->
     {% if userIsHost %}
         <h2>Beheer</h2>
+        <p><a href="/web/game/{{ id }}/edit?type=players">Spelersaantal en reservaties aanpassen</a></p>
+        <p><a href="/web/game/{{ id }}/edit?type=datetime">Datum en tijdstip aanpassen</a></p>
+        <p><a href="/web/game/{{ id }}/edit?type=deadline">Deadline aanpassen</a></p>
+        <p><a href="/web/game/{{ id }}/edit?type=address">Adres aanpassen</a></p>
+        <p><a href="/web/game/{{ id }}/edit?type=info">Extra informatie aanpassen</a></p>
         <form method="post" action="/web/game/{{ id }}">
-            <input type="hidden" name="cancelled" value="on">
+            <input type="hidden" name="type" value="cancel">
             <button class="btn btn-danger" type="submit">
                 <i class="fa fa-times"></i> Spel annuleren</span>
             </button>

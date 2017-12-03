@@ -21,7 +21,9 @@ struct MessageRepository {
         let results = try collection(.messages).find(["recipient": user.id], sortedBy: ["creationDate": .descending])
         return try results.map { try Message(bson: $0) }.filter {
             switch $0.category {
-            case .hostCancelledGame(let game):
+            case .hostChangedAddress(let game),
+                 .hostChangedDate(let game),
+                 .hostCancelledGame(let game):
                 return game.date.compare(Date()) == .orderedDescending
             case .hostCancelledRequest(let request),
                  .playerCancelledRequest(let request),

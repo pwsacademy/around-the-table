@@ -23,6 +23,10 @@
                     {{ message.sender.name }} heeft je deelname aan {{ message.game.name }} op {{ message.game.date }} geannuleerd.
                 {% elif message.category == "playerCancelledRequest" %}
                     {{ message.sender.name }} zal niet deelnemen aan {{ message.game.name }} op {{ message.game.date }}.
+                {% elif message.category == "hostChangedAddress" %}
+                    {{ message.sender.name }} heeft het adres van {{ message.game.name }} op {{ message.game.date }} aangepast.
+                {% elif message.category == "hostChangedDate" %}
+                    {{ message.sender.name }} heeft het tijdstip van {{ message.game.name }} aangepast.
                 {% elif message.category == "hostCancelledGame" %}
                     {{ message.sender.name }} heeft het spel {{ message.game.name }} op {{ message.game.date }} geannuleerd.
                 {% endif %}
@@ -47,6 +51,14 @@ $(".media.alert").each(function() {
         case "requestApproved":
             $(this).addClass("alert-success");
             $(this).find("> i.fa").addClass("fa-check");
+            break;
+        case "hostChangedAddress":
+            $(this).addClass("alert-warning");
+            $(this).find("> i.fa").addClass("fa-map-marker");
+            break;
+        case "hostChangedDate":
+            $(this).addClass("alert-warning");
+            $(this).find("> i.fa").addClass("fa-calendar");
             break;
         case "hostCancelledRequest":
         case "playerCancelledRequest":

@@ -17,6 +17,7 @@ struct HostGameViewContext: ViewContext {
         dateComponents.hour = 19
         dateComponents.minute = 0
         contents = [
+            "type": "create",
             "game": [
                 "id": game.id,
                 "nameOptions": game.names ?? [game.name],

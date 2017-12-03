@@ -5,13 +5,13 @@ final class Game {
     var id: String? // Will be filled in when the instance is persisted. Never set this yourself!
     let creationDate: Date
     let host: User
-    let prereservedSeats: Int // Used when the hosts wants to reserve seats.
+    var prereservedSeats: Int // Used when the hosts wants to reserve seats.
     var availableSeats: Int // Denormalized, required to filter out games that are fully booked.
-    let data: GameData
-    let date: Date
-    let deadline: Date // Deadline for submitting requests.
-    let location: Location
-    let info: String
+    var data: GameData
+    var date: Date
+    var deadline: Date // Deadline for submitting requests.
+    var location: Location
+    var info: String
     var cancelled: Bool
     
     init(host: User, prereservedSeats: Int = 1, data: GameData, date: Date, deadline: Date, location: Location, info: String = "") {

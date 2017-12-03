@@ -22,6 +22,19 @@ struct MessagesViewContext: ViewContext {
             "read": message.read
         ]
         switch message.category {
+        case .hostChangedAddress(let game), .hostChangedDate(let game):
+            guard let gameID = game.id else {
+                try logAndThrow(ServerError.invalidState)
+            }
+            output["link"] = "/web/game/\(gameID)"
+            output["sender"] = [
+                "name": game.host.name,
+                "picture": game.host.picture?.absoluteString ?? Settings.defaultProfilePicture
+            ]
+            output["game"] = [
+                "name": game.data.name,
+                "date": game.date.formatted(dateStyle: .full)
+            ]
         case .hostCancelledGame(let game):
             output["sender"] = [
                 "name": game.host.name,
