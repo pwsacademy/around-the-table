@@ -48,9 +48,13 @@ enum Settings {
             settings["database:test"] as! String
     }
     
-    /*
-     Facebook group for the site.
-     If set, games created on the site will be announced in this group.
-     */
-    static let facebookGroupID = settings["facebookGroupID"] as? String
+    enum facebook {
+        
+        // Used to authenticate with Facebook for Web Login.
+        static let appID = settings["facebook:appID"] as! String
+        // Facebook group for the site.
+        static let groupID = settings["facebook:groupID"] as? String
+        // If set to true, games created on the site will be announced in the Facebook group.
+        static let announceInGroup = settings["facebook:announceInGroup"] as? Bool
+    }
 }

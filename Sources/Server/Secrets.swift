@@ -11,7 +11,6 @@ enum Secrets {
     static let sessionSecret = secrets["sessionSecret"] as! String
     
     // Used to authenticate with Facebook for Web Login.
-    static let facebookAppID = secrets["facebookAppID"] as! String
     static let facebookAppSecret = secrets["facebookAppSecret"] as! String
     
     // Used to authenticate with Google for Maps and Places.

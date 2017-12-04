@@ -8,7 +8,7 @@
     <meta name="description" content="Rond de Tafel brengt mensen en spellen samen. Vind spellen, zoek medespelers en maak nieuwe vrienden.">
     <meta property="og:site_name" content="Rond de tafel">
     <meta property="og:type" content="website">
-    <meta property="fb:app_id" content="{{ global.opengraph.facebookAppID }}">
+    <meta property="fb:app_id" content="{{ global.facebook.appID }}">
     <meta property="og:description" content="Rond de Tafel brengt mensen en spellen samen. Vind spellen, zoek medespelers en maak nieuwe vrienden.">
     <meta property="og:url" content="{{ global.opengraph.url }}">
     {% block opengraph %}
@@ -165,8 +165,8 @@
     <!-- Footer -->
     <footer class="container py-3 text-center">
         © 2017 - Rond de tafel<br>
-        Volg ons op <a href="https://www.facebook.com/groups/ronddetafel/">Facebook</a> <i class="fa fa-facebook-official"></i><br>
-        Broncode beschikbaar op <a href="https://github.com/svanimpe/around-the-table.git">GitHub</a> <i class="fa fa-github"></i>
+        Volg ons op <a href="https://www.facebook.com/groups/{{ global.facebook.groupID }}" target="_blank">Facebook</a> <i class="fa fa-facebook-official"></i><br>
+        Broncode beschikbaar op <a href="https://github.com/svanimpe/around-the-table.git" target="_blank">GitHub</a> <i class="fa fa-github"></i>
     </footer>
     <!-- Scripts -->
     <script src="/public/js/jquery.min.js"></script>

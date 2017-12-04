@@ -6,7 +6,7 @@
 <h2>Veelgestelde vragen</h2>
 <p>
     Op deze pagina vind je een antwoord op enkele veelgestelde vragen.
-    Heb je een andere vraag, dan kan je die altijd stellen in onze <a href="https://www.facebook.com/groups/ronddetafel/">Facebookgroep</a>.
+    Heb je een andere vraag, dan kan je die altijd stellen in onze <a href="https://www.facebook.com/groups/{{ global.facebook.groupID }}" target="_blank">Facebookgroep</a>.
 </p>
 <h3 class="mb-3">Inhoudstafel</h3>
 <ul>

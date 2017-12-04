@@ -14,7 +14,11 @@
     "defaultGamePicture": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
     "defaultGameThumbnail": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
     "defaultProfilePicture": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
-    "facebookGroupID": "134748127078703",
+    "facebook": {
+        "appID": "1154313148030114",
+        "groupID": "134748127078703",
+        "announceInGroup": true,
+    },
     "locale": "nl_BE",
     "timeZone": "Europe/Brussels"
 }

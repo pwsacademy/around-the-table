@@ -11,8 +11,10 @@ struct FacebookService {
     }
     
     func accounce(_ game: Game) throws {
-        // Skip this all together if no Facebook group is configured or if running on localhost.
-        guard let groupID = Settings.facebookGroupID, !configuration.isLocal else {
+        // Skip this all together if no Facebook group is configured, announceInGroup is off or if running on localhost.
+        guard let groupID = Settings.facebook.groupID,
+              let announceInGroup = Settings.facebook.announceInGroup, announceInGroup,
+              !configuration.isLocal else {
             return
         }
         guard let id = game.id else {

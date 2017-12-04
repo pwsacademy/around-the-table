@@ -21,7 +21,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
     } else {
         callbackURL = "\(configuration.url)/authentication/signin/callback"
     }
-    let facebook = CredentialsFacebook(clientId: Secrets.facebookAppID,
+    let facebook = CredentialsFacebook(clientId: Settings.facebook.appID,
                                        clientSecret: Secrets.facebookAppSecret,
                                        callbackUrl: callbackURL,
                                        options: ["fields": "name,picture.type(large)", "scope": ["public_profile", "publish_actions"]])
@@ -33,6 +33,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
      This page records the `returnTo` address so the user can be redirected back to where he was.
      A new `returnTo` address is then set up to redirect the user to the sign-up page after authenticating with Facebook.
      */
+    router.get("/welcome", middleware: BaseContextMiddleware())
     router.get("/welcome") {
         request, response, next in
         guard let session = request.session else {
@@ -51,7 +52,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
             session["originalReturnTo"] = JSON(returnAddress)
         }
         Credentials.setRedirectingReturnTo("/authentication/signup", for: request)
-        try response.render("\(Settings.locale)/welcome", context: [:])
+        try response.render("\(Settings.locale)/welcome", context: request.userInfo)
         next()
     }
     
@@ -61,7 +62,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
     /*
      Presents the user with a sign-up page.
      */
-    router.all("/signup", middleware: credentials)
+    router.get("/signup", middleware: [credentials, BaseContextMiddleware()])
     router.get("/signup") {
         request, response, next in
         guard let session = request.session else {
@@ -85,7 +86,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
                 try response.redirect("/web/home")
             }
         } else {
-            try response.render("\(Settings.locale)/signup", context: [:])
+            try response.render("\(Settings.locale)/signup", context: request.userInfo)
         }
         next()
     }
@@ -93,7 +94,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
     /*
      Adds the user to the database.
      */
-    router.post("/signup", middleware: BodyParser())
+    router.post("/signup", middleware: [credentials, BodyParser()])
     router.post("/signup") {
         request, response, next in
         guard let body = request.body?.asURLEncoded,

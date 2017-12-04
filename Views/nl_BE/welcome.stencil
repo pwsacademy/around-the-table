@@ -22,7 +22,7 @@
 <div class="alert alert-secondary">
     Bij het aanmelden zal gevraagd worden om toestemming om berichten te plaatsen in jouw naam.
     Deze toestemming wordt enkel gebruikt om de spellen die je aanmaakt op de site,
-    ook in de <a class="alert-link" href="https://www.facebook.com/groups/ronddetafel/" target="_blank">Facebookgroep</a> aan te kondigen (als je lid bent van deze groep).
+    ook in de <a class="alert-link" href="https://www.facebook.com/groups/{{ global.facebook.groupID }}" target="_blank">Facebookgroep</a> aan te kondigen (als je lid bent van deze groep).
     Er worden geen berichten op je tijdlijn geplaatst, alleen in de Facebookgroep.
     Je kan deze toestemming uiteraard ook weigeren en de site gebruiken zonder deze functionaliteit.
 </div>

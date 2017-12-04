@@ -42,8 +42,11 @@ struct BaseContextMiddleware: RouterMiddleware {
         }
         request.userInfo.append([
             "global": [
+                "facebook": [
+                    "appID": Settings.facebook.appID,
+                    "groupID": Settings.facebook.groupID,
+                ],
                 "opengraph": [
-                    "facebookAppID": Secrets.facebookAppID,
                     "url": request.originalURL,
                     "image": "\(url)/public/img/opengraph.jpg"
                 ],
