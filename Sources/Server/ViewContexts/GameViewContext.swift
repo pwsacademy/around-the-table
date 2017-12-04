@@ -48,6 +48,8 @@ struct GameViewContext: ViewContext {
         ]
         if game.availableSeats > 0 {
             contents["seatOptions"] = Array(1...game.availableSeats)
+        } else {
+            contents["seatOptions"] = Array(1...game.data.playerCount.upperBound)
         }
     }
     

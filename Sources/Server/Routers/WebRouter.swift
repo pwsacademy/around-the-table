@@ -498,9 +498,7 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
               let game = try GameRepository().game(withID: gameID),
               game.deadline.compare(Date()) == .orderedDescending,
               !game.cancelled,
-              let seatsString = body["seats"],
-              let seats = Int(seatsString),
-              seats >= 1 && seats <= game.availableSeats else {
+              let seatsString = body["seats"], let seats = Int(seatsString), seats >= 1 else {
             try logAndThrow(ServerError.invalidRequest)
         }
         guard let userID = routerRequest.userProfile?.id else {
