@@ -20,4 +20,5 @@
     Niet gevonden wat je zoekt? Organiseer dan gewoon zelf een spel!
     Het duurt maar een minuutje om een spel aan te maken.
 </p>
+<img class="d-block mx-auto" src="/public/img/logo.png" alt="logo">
 {% endblock %}
