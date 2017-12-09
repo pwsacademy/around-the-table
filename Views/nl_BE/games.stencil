@@ -96,7 +96,7 @@
             Om deze functie te activeren moet je een adres ingeven bij <a class="alert-link" href="/web/settings">Instellingen</a>.
         {% else %}
             Om deze functie te activeren moet je eerst aanmelden.
-            Daarna kan je een andres ingeven bij <a class="alert-link" href="/web/settings">Instellingen</a>.
+            Daarna kan je een adres ingeven bij <a class="alert-link" href="/web/settings">Instellingen</a>.
         {% endif %}
     </div>
 {% elif gamesNearMe %}
