@@ -13,15 +13,7 @@ struct GameData {
     var playerCount: CountableClosedRange<Int> // Possible player counts. Replaced by the player count selected by the user when hosting a game.
     let playingTime: CountableClosedRange<Int>
     let picture: URL?
-    
-    var thumbnail: URL? {
-        guard let picture = picture,
-              let url = URL(string: picture.absoluteString.replacingOccurrences(of: "_md", with: "_t")) else {
-            Log.warning("Failed to generate thumbnail URL for #\(id)")
-            return nil
-        }
-        return url
-    }
+    let thumbnail: URL?
 }
 
 // MARK: - XML
@@ -89,17 +81,23 @@ extension GameData {
             guard let urlString = try xml.nodes(forXPath: "image").first?.stringValue else {
                 return nil
             }
-            let urlComponents = urlString.components(separatedBy: ".")
-            guard urlComponents.count > 1, let fileExtension = urlComponents.last else {
+            let urlComponents = urlString.components(separatedBy: "/")
+            guard urlComponents.count > 1,
+                  let file = urlComponents.last,
+                  let period = file.characters.index(of: ".") else {
                 Log.warning("Failed to generate picture URL for #\(id)")
                 return nil
             }
-            let newURLString = urlComponents.dropLast().joined(separator: ".").appending("_md.").appending(fileExtension)
-            guard let url = URL(string: newURLString.hasPrefix("//") ? "https:" + newURLString : newURLString) else {
-                Log.warning("Failed to generate picture URL for #\(id)")
+            let fileName = file.substring(to: period)
+            let fileExtension = file.substring(from: period)
+            let newURLString = "https://cf.geekdo-images.com/images/\(fileName)_md\(fileExtension)"
+            return URL(string: newURLString)
+        }()
+        let thumbnail: URL? = try {
+            guard let urlString = try xml.nodes(forXPath: "thumbnail").first?.stringValue else {
                 return nil
             }
-            return url
+            return URL(string: urlString.hasPrefix("//") ? "https:" + urlString : urlString)
         }()
         self.init(id: id,
                   name: name,
@@ -107,7 +105,8 @@ extension GameData {
                   yearPublished: yearPublished,
                   playerCount: playerCount,
                   playingTime: playingTime,
-                  picture: picture)
+                  picture: picture,
+                  thumbnail: thumbnail)
     }
 }
 
@@ -160,13 +159,21 @@ extension GameData {
                 return nil
             }
         }()
+        let thumbnail: URL? = {
+            if let urlString = String(bson["thumbnail"]) {
+                return URL(string: urlString)
+            } else {
+                return nil
+            }
+        }()
         self.init(id: id,
                   name: name,
                   names: names,
                   yearPublished: yearPublished,
                   playerCount: playerCount,
                   playingTime: playingTime,
-                  picture: picture)
+                  picture: picture,
+                  thumbnail: thumbnail)
     }
     
     func toBSON() -> Document {
@@ -184,6 +191,9 @@ extension GameData {
         }
         if let picture = picture {
             bson["picture"] = picture.absoluteString
+        }
+        if let thumbnail = thumbnail {
+            bson["thumbnail"] = thumbnail.absoluteString
         }
         return bson
     }
