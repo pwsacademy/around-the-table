@@ -15,6 +15,7 @@
         <meta property="og:title" content="Rond de tafel">   
         <meta property="og:image" content="{{ global.opengraph.image }}">
     {% endblock %}
+    <link href="/public/img/favicon.png" rel="icon" type="image/png">
     <link href="/public/css/bootstrap.min.css" rel="stylesheet">
     <link href="/public/css/font-awesome.min.css" rel="stylesheet">
     <style>
