@@ -95,7 +95,7 @@
         {% if global.user %}
             Om deze functie te activeren moet je een adres ingeven bij <a class="alert-link" href="/web/settings">Instellingen</a>.
         {% else %}
-            Om deze functie te activeren moet je eerst aanmelden.
+            Om deze functie te activeren moet je eerst <a class="alert-link" href="/authentication/welcome?redirect=%2Fweb%2Fgames">aanmelden</a>.
             Daarna kan je een adres ingeven bij <a class="alert-link" href="/web/settings">Instellingen</a>.
         {% endif %}
     </div>
