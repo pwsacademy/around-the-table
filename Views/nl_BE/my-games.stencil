@@ -21,7 +21,7 @@
                             {% if game.players %}
                                 <p>
                                     {% for player in game.players %}
-                                        <img class="avatar rounded-circle" src="{{ player.picture }}">
+                                        <img class="avatar rounded-circle mb-1" src="{{ player.picture }}">
                                     {% endfor %}
                                 </p>
                             {% endif %}
@@ -63,9 +63,9 @@
                         <div class="card-text">
                             <p>Bij {{ game.host.name }}.</p>
                             <p>
-                                <img class="avatar rounded-circle" src="{{ game.host.picture }}">
+                                <img class="avatar rounded-circle mb-1" src="{{ game.host.picture }}">
                                 {% for player in game.players %}
-                                    <img class="avatar rounded-circle" src="{{ player.picture }}">
+                                    <img class="avatar rounded-circle mb-1" src="{{ player.picture }}">
                                 {% endfor %}
                             </p>
                             {% if game.availableSeats < 1 %}
