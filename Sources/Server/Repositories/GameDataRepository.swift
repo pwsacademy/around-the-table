@@ -1,5 +1,5 @@
 import Foundation
-import KituraRequest
+import KituraNet
 import LoggerAPI
 import MongoKitten
 
@@ -15,24 +15,27 @@ struct GameDataRepository {
             return try GameData(bson: game)
         }
         var result: GameData?
-        var error: Error?
-        KituraRequest.request(.get, "https://boardgamegeek.com/xmlapi2/thing?id=\(id)").response {
-            request, response, data, bggError in
-            guard bggError == nil else {
-                error = bggError
+        var error: Swift.Error?
+        let request = HTTP.request("https://boardgamegeek.com/xmlapi2/thing?id=\(id)") {
+            response in
+            guard let response = response, response.statusCode == .OK else {
+                error = log(BoardGameGeekError.missingOrInvalidData)
+                return
+            }
+            var data = Data()
+            do {
+                try response.readAllData(into: &data)
+            } catch let dataError {
+                error = dataError
                 return
             }
             #if os(Linux)
-            guard response?.statusCode == .OK,
-                  let data = data,
-                  let xml = try? XMLDocument(data: data, options: []) else {
+            guard let xml = try? XMLDocument(data: data, options: []) else {
                 error = log(BoardGameGeekError.missingOrInvalidData)
                 return
             }
             #else
-            guard response?.statusCode == .OK,
-                  let data = data,
-                  let xml = try? XMLDocument(data: data, options: 0) else {
+            guard let xml = try? XMLDocument(data: data, options: 0) else {
                 error = log(BoardGameGeekError.missingOrInvalidData)
                 return
             }
@@ -45,8 +48,10 @@ struct GameDataRepository {
                 result = try GameData(xml: gameXML)
             } catch let xmlError {
                 error = xmlError
+                return
             }
         }
+        request.end()
         guard error == nil else {
             throw error!
         }
@@ -71,24 +76,27 @@ struct GameDataRepository {
         let newIDs = ids.filter { !cachedIDs.contains($0) }
         let joinedIDs = newIDs.map { String($0) }.joined(separator: ",")
         var results: [GameData]?
-        var error: Error?
-        KituraRequest.request(.get, "https://boardgamegeek.com/xmlapi2/thing?id=\(joinedIDs)").response {
-            request, response, data, bggError in
-            guard bggError == nil else {
-                error = bggError
+        var error: Swift.Error?
+        let request = HTTP.request("https://boardgamegeek.com/xmlapi2/thing?id=\(joinedIDs)") {
+            response in
+            guard let response = response, response.statusCode == .OK else {
+                error = log(BoardGameGeekError.missingOrInvalidData)
+                return
+            }
+            var data = Data()
+            do {
+                try response.readAllData(into: &data)
+            } catch let dataError {
+                error = dataError
                 return
             }
             #if os(Linux)
-            guard response?.statusCode == .OK,
-                  let data = data,
-                  let xml = try? XMLDocument(data: data, options: []) else {
+            guard let xml = try? XMLDocument(data: data, options: []) else {
                 error = log(BoardGameGeekError.missingOrInvalidData)
                 return
             }
             #else
-            guard response?.statusCode == .OK,
-                  let data = data,
-                  let xml = try? XMLDocument(data: data, options: 0) else {
+            guard let xml = try? XMLDocument(data: data, options: 0) else {
                 error = log(BoardGameGeekError.missingOrInvalidData)
                 return
             }
@@ -97,8 +105,10 @@ struct GameDataRepository {
                 results = try xml.nodes(forXPath: "/items/item").flatMap { try? GameData(xml: $0) }
             } catch let xmlError {
                 error = xmlError
+                return
             }
         }
+        request.end()
         guard error == nil else {
             throw error!
         }
@@ -115,32 +125,34 @@ struct GameDataRepository {
         }
         let url = "https://boardgamegeek.com/xmlapi2/search?type=boardgame\(exact ? "&exact=1" : "")&query=\(encodedQuery)"
         var results: [Int]?
-        var error: Error?
-        KituraRequest.request(.get, url).response {
-            request, response, data, bggError in
-            guard bggError == nil else {
-                error = bggError
+        var error: Swift.Error?
+        let request = HTTP.request(url) {
+            response in
+            guard let response = response, response.statusCode == .OK else {
+                error = log(BoardGameGeekError.missingOrInvalidData)
+                return
+            }
+            var data = Data()
+            do {
+                try response.readAllData(into: &data)
+            } catch let dataError {
+                error = dataError
                 return
             }
             #if os(Linux)
-            guard response?.statusCode == .OK,
-                  let data = data,
-                  let xml = try? XMLDocument(data: data, options: []) else {
+            guard let xml = try? XMLDocument(data: data, options: []) else {
                 error = log(BoardGameGeekError.missingOrInvalidData)
                 return
             }
             #else
-            guard response?.statusCode == .OK,
-                  let data = data,
-                  let xml = try? XMLDocument(data: data, options: 0) else {
+            guard let xml = try? XMLDocument(data: data, options: 0) else {
                 error = log(BoardGameGeekError.missingOrInvalidData)
                 return
             }
             #endif
             do {
                 guard let totalString = try xml.nodes(forXPath: "/items/@total").first?.stringValue,
-                      let total = Int(totalString),
-                      total > 0 else {
+                      let total = Int(totalString), total > 0 else {
                     results = []
                     return
                 }
@@ -153,8 +165,10 @@ struct GameDataRepository {
                 }
             } catch let xmlError {
                 error = xmlError
+                return
             }
         }
+        request.end()
         guard error == nil else {
             throw error!
         }
