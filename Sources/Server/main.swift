@@ -23,7 +23,7 @@ router.all(middleware: ForwardingMiddleware())
 
 router.all("/public", middleware: StaticFileServer())
 
-private let session = Session(secret: Secrets.sessionSecret)
+private let session = Session(secret: Secrets.sessionSecret, cookie: [.maxAge(14 * 24 * 3600.0)])
 
 router.all("/authentication", middleware: [session])
 private let credentials = configureAuthenticationRouter(using: router.route("/authentication"))
