@@ -115,6 +115,13 @@
     Request seats (for visitors and players).
 -->
 {% elif not userIsHost %}
+    {% if not minPlayerCountIsReached %}
+        {% if data.minPlayerCount == 1 %}
+            <p>Dit spel gaat door vanaf 1 speler.</p>
+        {% else %}
+            <p>Dit spel gaat door vanaf {{ data.minPlayerCount }} spelers.</p>
+        {% endif %}
+    {% endif %}
     {% if availableSeats < 1 %}
         <p>Dit spel is <strong>volzet</strong>.</p>
     {% elif availableSeats == 1 %}
