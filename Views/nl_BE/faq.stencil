@@ -22,6 +22,7 @@
         Organiseren
         <ul>
             <li><a href="#extensions">Hoe kan ik aangeven met welke uitbreidingen we spelen?</a></li>
+            <li><a href="#unknownaddress">Google Maps kent mijn adres niet.</a></li>
             <li><a href="#facebook-group-post">Ik heb een spel aangemaakt. Waarom verschijnt dit niet in de Facebookgroep?</a></li>
         </ul>
     </li>
@@ -76,6 +77,13 @@
     Omdat een uitbreiding extra spelers kan toevoegen, is het mogelijk dat het maximum spelersaantal niet klopt.
     Je hoeft hier geen rekening mee te houden omdat je sowieso extra spelers kan inschrijven. De site ondersteunt namelijk overboekingen.
     Extra features om uitbreidingen beter te ondersteunen zijn reeds gepland!
+</p>
+<a name="unknownaddress"><h5>Google Maps kent mijn adres niet.</h5></a>
+<p>
+    Voor kleine problemen zoals busnummers kan je het veld "Extra info" gebruiken.
+    Wanneer je straat niet gekend is en je je adres niet publiek wil maken,
+    kies dan ofwel een straat in je buurt ofwel de naam van je gemeente.
+    Het volledige adres kan je altijd bezorgen via privébericht op Facebook.
 </p>
 <a name="facebook-group-post"><h5>Ik heb een spel aangemaakt. Waarom verschijnt dit niet in de Facebookgroep?</h5></a>
 <p>
