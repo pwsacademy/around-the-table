@@ -24,7 +24,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
     let facebook = CredentialsFacebook(clientId: Settings.facebook.appID,
                                        clientSecret: Secrets.facebookAppSecret,
                                        callbackUrl: callbackURL,
-                                       options: ["fields": "name,picture.type(large)", "scope": ["public_profile", "publish_actions"]])
+                                       options: ["fields": "name,picture.type(large)", "scope": ["public_profile"]])
     credentials.register(plugin: facebook)
     credentials.options["failureRedirect"] = "/authentication/welcome"
     

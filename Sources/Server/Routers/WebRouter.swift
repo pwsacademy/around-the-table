@@ -308,13 +308,6 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
         guard let gameID = game.id else {
             try logAndThrow(ServerError.invalidState)
         }
-        guard let session = request.session else {
-            try logAndThrow(ServerError.missingMiddleware(type: Session.self))
-        }
-        guard let token = session["facebookAccessToken"].string else {
-            try logAndThrow(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
-        }
-        try FacebookService(accessToken: token).accounce(game)
         try response.redirect("/web/game/\(gameID)")
         next()
     }

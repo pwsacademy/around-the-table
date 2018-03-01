@@ -17,7 +17,7 @@
     "facebook": {
         "appID": "1154313148030114",
         "groupID": "256710991159762",
-        "announceInGroup": true,
+        "announceInGroup": false,
     },
     "locale": "nl_BE",
     "timeZone": "Europe/Brussels"

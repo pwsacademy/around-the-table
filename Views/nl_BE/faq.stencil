@@ -31,8 +31,6 @@
             <li><a href="#facebook-required">Ik heb geen Facebook. Wat nu?</a></li>
             <li><a href="#facebook-data">Welke gegevens worden opgevraagd bij Facebook?</a></li>
             <li><a href="#facebook-privacy">Worden er gegevens gedeeld met Facebook of andere partijen?</a></li>
-            <li><a href="#facebook-permission">Waarom vraagt Facebook toestemming om berichten te plaatsen op mijn tijdlijn?</a></li>
-            <li><a href="#facebook-configure">Ik heb deze toestemming geweigerd. Hoe kan ik dit alsnog toestaan?</a></li>
         </ul>
     </li>
 </ul>
@@ -81,9 +79,8 @@
 </p>
 <a name="facebook-group-post"><h5>Ik heb een spel aangemaakt. Waarom verschijnt dit niet in de Facebookgroep?</h5></a>
 <p>
-    Om de automatische berichten bij het aanmaken van een spel te activeren moet je lid zijn van de Facebookgroep.
-    Bij het aanmelden moet je ook toestemming geven om berichten te plaatsen in jouw naam.
-    Lees <a href="#facebook-permission">hier</a> meer over deze toestemming en hoe je deze alsnog kan toestaan.
+    Deze automatische berichten zijn tijdelijk uitschakeld en worden voorlopig geplaatst door een beheerder van de Facebookgroep.
+    Dit kan dus even duren.
 </p>
 <h3 class="mb-3">Facebook</h3>
 <a name="facebook-required"><h5>Ik heb geen Facebook. Wat nu?</h5></a>
@@ -106,15 +103,5 @@
 <a name="facebook-privacy"><h5>Worden er gegevens gedeeld met Facebook of andere partijen?</h5></a>
 <p>
     Neen.
-</p>
-<a name="facebook-permission"><h5>Waarom vraagt Facebook toestemming om berichten te plaatsen op mijn tijdlijn?</h5></a>
-<p>
-    Wanneer je een spel aanmaakt, dan kan dit automatisch aangekondigd worden in onze Facebookgroep.
-    Om dit mogelijk te maken heeft de site toestemming nodig om berichten te plaatsen in jouw naam.
-    In tegenstelling tot wat het berichtje van Facebook doet vermoeden worden er dus nooit berichten geplaatst op je tijdlijn.
-</p>
-<a name="facebook-configure"><h5>Ik heb deze toestemming geweigerd. Hoe kan ik dit alsnog toestaan?</h5></a>
-<p>
-    Dit moet via Facebook zelf. Je vindt de instellingen van Rond de tafel via <strong>Instellingen</strong> &gt; <strong>Apps</strong> &gt; <strong>Rond de tafel</strong>.
 </p>
 {% endblock %}
