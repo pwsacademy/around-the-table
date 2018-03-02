@@ -153,4 +153,49 @@ struct GameDataRepository {
         }
         return try gameData(forIDs: results!.withoutDuplicates())
     }
+    
+    private let session = URLSession(configuration: .default)
+    
+    /*
+     Checks if BGG has a medium size (_md) version of this picture.
+     If so, replaces the picture with it.
+     */
+    func checkMediumPicture(forID id: Int) throws {
+        guard let gameData = try gameData(forID: id) else {
+            try logAndThrow(ServerError.invalidState)
+        }
+        guard let url = gameData.picture?.absoluteString,
+              !url.contains("_md") else {
+            return
+        }
+        let urlComponents = url.components(separatedBy: "/")
+        guard urlComponents.count > 1,
+              let file = urlComponents.last,
+              let period = file.index(of: ".") else {
+            Log.warning("Invalid medium size picture URL for #\(id)")
+            return
+        }
+        let fileName = file[..<period]
+        let fileExtension = file[period...]
+        guard let newURL = URL(string: "https://cf.geekdo-images.com/images/\(fileName)_md\(fileExtension)") else {
+            Log.warning("Invalid medium size picture URL for #\(id)")
+            return
+        }
+        var request = URLRequest(url: newURL)
+        request.httpMethod = "HEAD"
+        let task = session.dataTask(with: request) {
+            (data, response, error) in
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200 else {
+                Log.info("No medium size picture available for #\(id)")
+                return
+            }
+            do {
+                try collection(.gameData).update(["_id": id], to: ["$set": ["picture": newURL.absoluteString]])
+            } catch {
+                Log.warning("Failed to update picture URL for #\(id)")
+            }
+        }
+        task.resume()
+    }
 }

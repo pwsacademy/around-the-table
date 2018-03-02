@@ -195,6 +195,7 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
               let gameData = try GameDataRepository().gameData(forID: id) else {
             try logAndThrow(ServerError.invalidRequest)
         }
+        try GameDataRepository().checkMediumPicture(forID: id)
         guard let userID = request.userProfile?.id else {
             try logAndThrow(ServerError.missingMiddleware(type: Credentials.self))
         }

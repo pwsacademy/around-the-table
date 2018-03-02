@@ -78,26 +78,16 @@ extension GameData {
             }
         }()
         let picture: URL? = try {
-            guard let urlString = try xml.nodes(forXPath: "image").first?.stringValue else {
+            guard let url = try xml.nodes(forXPath: "image").first?.stringValue else {
                 return nil
             }
-            let urlComponents = urlString.components(separatedBy: "/")
-            guard urlComponents.count > 1,
-                  let file = urlComponents.last,
-                  let period = file.index(of: ".") else {
-                Log.warning("Failed to generate picture URL for #\(id)")
-                return nil
-            }
-            let fileName = file[..<period]
-            let fileExtension = file[period...]
-            let newURLString = "https://cf.geekdo-images.com/images/\(fileName)_md\(fileExtension)"
-            return URL(string: newURLString)
+            return URL(string: url.hasPrefix("//") ? "https:" + url : url)
         }()
         let thumbnail: URL? = try {
-            guard let urlString = try xml.nodes(forXPath: "thumbnail").first?.stringValue else {
+            guard let url = try xml.nodes(forXPath: "thumbnail").first?.stringValue else {
                 return nil
             }
-            return URL(string: urlString.hasPrefix("//") ? "https:" + urlString : urlString)
+            return URL(string: url.hasPrefix("//") ? "https:" + url : url)
         }()
         self.init(id: id,
                   name: name,
