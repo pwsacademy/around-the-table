@@ -84,12 +84,12 @@ extension GameData {
             let urlComponents = urlString.components(separatedBy: "/")
             guard urlComponents.count > 1,
                   let file = urlComponents.last,
-                  let period = file.characters.index(of: ".") else {
+                  let period = file.index(of: ".") else {
                 Log.warning("Failed to generate picture URL for #\(id)")
                 return nil
             }
-            let fileName = file.substring(to: period)
-            let fileExtension = file.substring(from: period)
+            let fileName = file[..<period]
+            let fileExtension = file[period...]
             let newURLString = "https://cf.geekdo-images.com/images/\(fileName)_md\(fileExtension)"
             return URL(string: newURLString)
         }()

@@ -29,17 +29,10 @@ struct GameDataRepository {
                 error = dataError
                 return
             }
-            #if os(Linux)
             guard let xml = try? XMLDocument(data: data, options: []) else {
                 error = log(BoardGameGeekError.missingOrInvalidData)
                 return
             }
-            #else
-            guard let xml = try? XMLDocument(data: data, options: 0) else {
-                error = log(BoardGameGeekError.missingOrInvalidData)
-                return
-            }
-            #endif
             do {
                 guard let gameXML = try xml.nodes(forXPath: "/items/item[@id='\(id)']").first else {
                     error = log(BoardGameGeekError.missingOrInvalidData)
@@ -90,17 +83,10 @@ struct GameDataRepository {
                 error = dataError
                 return
             }
-            #if os(Linux)
             guard let xml = try? XMLDocument(data: data, options: []) else {
                 error = log(BoardGameGeekError.missingOrInvalidData)
                 return
             }
-            #else
-            guard let xml = try? XMLDocument(data: data, options: 0) else {
-                error = log(BoardGameGeekError.missingOrInvalidData)
-                return
-            }
-            #endif
             do {
                 results = try xml.nodes(forXPath: "/items/item").flatMap { try? GameData(xml: $0) }
             } catch let xmlError {
@@ -139,17 +125,10 @@ struct GameDataRepository {
                 error = dataError
                 return
             }
-            #if os(Linux)
             guard let xml = try? XMLDocument(data: data, options: []) else {
                 error = log(BoardGameGeekError.missingOrInvalidData)
                 return
             }
-            #else
-            guard let xml = try? XMLDocument(data: data, options: 0) else {
-                error = log(BoardGameGeekError.missingOrInvalidData)
-                return
-            }
-            #endif
             do {
                 guard let totalString = try xml.nodes(forXPath: "/items/@total").first?.stringValue,
                       let total = Int(totalString), total > 0 else {

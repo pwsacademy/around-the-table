@@ -25,6 +25,6 @@ extension RouterResponse {
      */
     @discardableResult
     func render(_ resource: String, context: ViewContext) throws -> RouterResponse {
-        return try self.render(resource, context: context.base.appending(context.contents))
+        return try self.render(resource, context: context.base.merging(context.contents))
     }
 }

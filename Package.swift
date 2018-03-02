@@ -1,17 +1,25 @@
+// swift-tools-version:4.0
 import PackageDescription
 
 let package = Package(
     name: "AroundTheTable",
-    targets: [
-        Target(name: "Server", dependencies: [])
-    ],
     dependencies: [
-        .Package(url: "https://github.com/IBM-Swift/HeliumLogger.git", majorVersion: 1),
-        .Package(url: "https://github.com/IBM-Swift/Kitura.git", majorVersion: 1),
-        .Package(url: "https://github.com/svanimpe/Kitura-CredentialsFacebook.git", majorVersion: 1),
-        .Package(url: "https://github.com/IBM-Swift/Kitura-Session.git", majorVersion: 1),
-        .Package(url: "https://github.com/IBM-Swift/Kitura-StencilTemplateEngine.git", majorVersion: 1),
-        .Package(url: "https://github.com/IBM-Swift/Swift-cfenv.git", majorVersion: 4),
-        .Package(url: "https://github.com/OpenKitten/MongoKitten.git", majorVersion: 4)
+        .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", .upToNextMinor(from: "1.7.0")),
+        .package(url: "https://github.com/IBM-Swift/Kitura.git", .upToNextMinor(from: "2.2.0")),
+        .package(url: "https://github.com/IBM-Swift/Kitura-CredentialsFacebook.git", .upToNextMinor(from: "2.1.0")),
+        .package(url: "https://github.com/IBM-Swift/Kitura-Session.git", .upToNextMinor(from: "3.0.0")),
+        .package(url: "https://github.com/IBM-Swift/Kitura-StencilTemplateEngine.git", .upToNextMinor(from: "1.8.0")),
+        .package(url: "https://github.com/IBM-Swift/Swift-cfenv.git", .upToNextMinor(from: "6.0.0")),
+        .package(url: "https://github.com/OpenKitten/MongoKitten.git", .upToNextMinor(from: "4.1.0")),
+    ],
+    targets: [
+        .target(name: "Server", dependencies: [
+            "HeliumLogger",
+            "Kitura",
+            "CredentialsFacebook",
+            "KituraStencil",
+            "CloudFoundryEnv",
+            "MongoKitten",
+        ])
     ]
 )

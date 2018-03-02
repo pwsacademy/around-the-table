@@ -6,7 +6,6 @@ import CredentialsFacebook
 import Kitura
 import KituraSession
 import LoggerAPI
-import SwiftyJSON
 
 /*
  Handles the authentication flow based on Facebook Web Login.
@@ -41,7 +40,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
         }
         if let redirect = request.queryParameters["redirect"] {
             // The user clicked on a link to sign in.
-            session["originalReturnTo"] = JSON(redirect)
+            session["originalReturnTo"] = redirect
         } else if var returnAddress = Credentials.getRedirectingReturnTo(for: request) {
             // The user was redirected by the Credentials middleware.
             if let proto = request.headers["X-Forwarded-Proto"], proto == "https", !returnAddress.hasPrefix("https://") {
@@ -49,7 +48,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
                 // This means we have to change the URL to https if the original request used https.
                 returnAddress = returnAddress.replacingOccurrences(of: "http://", with: "https://")
             }
-            session["originalReturnTo"] = JSON(returnAddress)
+            session["originalReturnTo"] = returnAddress
         }
         Credentials.setRedirectingReturnTo("/authentication/signup", for: request)
         try response.render("\(Settings.locale)/welcome", context: request.userInfo)
@@ -79,7 +78,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
             }
             try UserRepository().update(user)
             // Skip sign-up if the user has already signed up.
-            if let returnAddress = session["originalReturnTo"].string, !returnAddress.contains("authentication") {
+            if let returnAddress = session["originalReturnTo"] as? String, !returnAddress.contains("authentication") {
                 session.remove(key: "originalReturnTo")
                 try response.redirect(returnAddress)
             } else {
@@ -113,7 +112,7 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
                         picture: picture != nil ? URL(string: picture!) : nil)
         try UserRepository().add(user)
         // Redirect the user back to where he/she was (or to the home page).
-        if let returnAddress = session["originalReturnTo"].string, !returnAddress.contains("authentication") {
+        if let returnAddress = session["originalReturnTo"] as? String, !returnAddress.contains("authentication") {
             session.remove(key: "originalReturnTo")
             try response.redirect(returnAddress)
         } else {
@@ -154,11 +153,11 @@ func configureAuthenticationRouter(using router: Router) -> Credentials {
 //            dummy = User(id: id, name: id, picture: nil)
 //            try UserRepository().add(dummy!)
 //        }
-//        session["userProfile"] = JSON([
+//        session["userProfile"] = [
 //            "id": dummy!.id,
 //            "displayName": dummy!.name,
 //            "provider": "dummy"
-//        ])
+//        ]
 //        try response.redirect("/web/home")
 //        next()
 //    }

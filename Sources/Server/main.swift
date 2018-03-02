@@ -60,7 +60,7 @@ router.error {
             response.statusCode = .internalServerError
             response.send(message)
         } else {
-            try response.render("\(Settings.locale)/error", context: request.userInfo.appending([
+            try response.render("\(Settings.locale)/error", context: request.userInfo.merging([
                 "message": message
             ]))
         }

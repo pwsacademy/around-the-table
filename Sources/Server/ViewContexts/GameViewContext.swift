@@ -40,7 +40,7 @@ struct GameViewContext: ViewContext {
             "availableSeats": game.availableSeats,
             "minPlayerCountIsReached": game.data.playerCount.upperBound - game.availableSeats >= game.data.playerCount.lowerBound,
             "approvedRequests": try requests.filter { $0.approved }.map { try requestMapper($0) },
-            "requests": try requests.filter { !$0.approved }.map { try requestMapper($0).appending(["willCauseOverbooking": $0.seats > game.availableSeats]) },
+            "requests": try requests.filter { !$0.approved }.map { try requestMapper($0).merging(["willCauseOverbooking": $0.seats > game.availableSeats]) },
             "userIsPlayer": requests.filter { $0.approved }.contains { $0.player == user },
             "userIsHost": game.host == user,
             "userHasRequested": requests.contains { $0.player == user },

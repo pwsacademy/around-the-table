@@ -40,7 +40,7 @@ struct BaseContextMiddleware: RouterMiddleware {
         } else {
             url = configuration.url
         }
-        request.userInfo.append([
+        request.userInfo.merge([
             "global": [
                 "facebook": [
                     "appID": Settings.facebook.appID,
@@ -55,7 +55,7 @@ struct BaseContextMiddleware: RouterMiddleware {
                 "countries": "[\(Settings.countries.map { "\"\($0)\"" }.joined(separator: ", "))]", // Builds a JSON array.
                 "googleAPIKey": Secrets.googleAPIKey
             ]
-        ])
+        ]) { $1 }
         next()
     }
 }

@@ -167,13 +167,12 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
      */
     router.get("/host-game-select") {
         request, response, next in
-        guard let query = request.queryParameters["query"],
-              query.characters.count > 0 else {
+        guard let query = request.queryParameters["query"], query.count > 0 else {
             try logAndThrow(ServerError.invalidRequest)
         }
         let results = try GameDataRepository().searchResults(forQuery: query, exactMatchesOnly: request.queryParameters["exact"] == "on")
         guard results.count > 0 else {
-            try response.render("\(Settings.locale)/host", context: request.userInfo.appending([
+            try response.render("\(Settings.locale)/host", context: request.userInfo.merging([
                 "query": query,
                 "error": true
             ]))
@@ -228,8 +227,8 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
               let hourString = body["hour"], let hour = Int(hourString),
               let minuteString = body["minute"], let minute = Int(minuteString),
               let deadlineType = body["deadline"],
-              let address = body["address"], address.characters.count > 0,
-              let city = body["city"], city.characters.count > 0,
+              let address = body["address"], address.count > 0,
+              let city = body["city"], city.count > 0,
               let latitudeString = body["latitude"], let latitude = Double(latitudeString),
               let longitudeString = body["longitude"], let longitude = Double(longitudeString),
               let info = body["info"] else {
@@ -448,8 +447,8 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
             try GameRepository().update(game)
             try response.redirect("/web/game/\(gameID)")
         case "edit-address"?:
-            guard let address = body["address"], address.characters.count > 0,
-                  let city = body["city"], city.characters.count > 0,
+            guard let address = body["address"], address.count > 0,
+                  let city = body["city"], city.count > 0,
                   let latitudeString = body["latitude"], let latitude = Double(latitudeString),
                   let longitudeString = body["longitude"], let longitude = Double(longitudeString)else {
                 try logAndThrow(ServerError.invalidRequest)
