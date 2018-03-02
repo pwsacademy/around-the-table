@@ -16,16 +16,18 @@
         </p>
         <div class="form-group">
             <div class="input-group">
-                <i class="input-group-addon fa fa-search"></i>
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fa fa-search"></i> 
+                    </span>
+                </div>
                 <input class="form-control" name="query" type="text" placeholder="Spel" {% if query %} value="{{ query }}" {% endif %} required>
             </div>
         </div>
         <div class="form-group">
             <div class="form-check">
-                <label class="form-check-label">
-                    <input id="exact" class="form-check-input" name="exact" type="checkbox" checked>
-                    Enkel exacte resultaten
-                </label>
+                <input id="exact" class="form-check-input" name="exact" type="checkbox" checked>
+                <label class="form-check-label">Enkel exacte resultaten</label>
             </div>
         </div>
         <div id="warning" class="alert alert-warning">

@@ -108,7 +108,11 @@
         <div class="form-group col-md-6">
             <label>Datum</label>
             <div class="input-group">
-                <i class="input-group-addon fa fa-calendar"></i>
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fa fa-calendar"></i> 
+                    </span>
+                </div>
                 <!-- The date picker's default value will be set in code. -->
                 <input id="datepicker" class="form-control" type="text" readonly required>
             </div>
@@ -130,28 +134,20 @@
     <div class="form-group">
         <label>Deadline voor inschrijving</label>
         <div class="form-check">
-            <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="deadline" value="one hour" checked>
-                een uur op voorhand
-            </label>
+            <input class="form-check-input" type="radio" name="deadline" value="one hour" checked>
+            <label class="form-check-label">een uur op voorhand</label>
         </div>
         <div class="form-check">
-            <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="deadline" value="one day">
-                een dag op voorhand
-            </label>
+            <input class="form-check-input" type="radio" name="deadline" value="one day">
+            <label class="form-check-label">een dag op voorhand</label>
         </div>
         <div class="form-check">
-            <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="deadline" value="two days">
-                twee dagen op voorhand
-            </label>
+            <input class="form-check-input" type="radio" name="deadline" value="two days">
+            <label class="form-check-label">twee dagen op voorhand</label>
         </div>
         <div class="form-check">
-            <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="deadline" value="one week">
-                een week op voorhand
-            </label>
+            <input class="form-check-input" type="radio" name="deadline" value="one week">
+            <label class="form-check-label">een week op voorhand</label>
         </div>
         <p class="form-text text-muted">
             Na het verstrijken van de deadline kan je als organisator nog steeds aanvragen goedkeuren of het spel annuleren.
@@ -172,15 +168,21 @@
     </p>
     {% if global.coordinates.actual %}
         <div class="form-group">
-            <label class="form-check-label">
+            <div class="form-check">
                 <input id="use-saved-location" class="form-check-input" type="checkbox" checked>
-                Gebruik mijn opgeslagen adres: {{ location.address }}.
-            </label>
+                <label class="form-check-label">
+                    Gebruik mijn opgeslagen adres: {{ location.address }}.
+                </label>
+            </div>
         </div>
     {% endif %}
     <div id="address-picker" class="form-group">
         <div class="input-group">
-            <i class="input-group-addon fa fa-map-marker"></i>
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <i class="fa fa-map-marker"></i> 
+                </span>
+            </div>
             <input id="autocomplete" class="form-control" type="text" placeholder="Adres">
         </div>
         <p class="form-text text-muted">

@@ -36,11 +36,15 @@
             Bij het organiseren van spellen hoef je dit dan niet meer te doen.
         </label>
         <div class="input-group">
-            <i class="input-group-addon fa fa-map-marker"></i>
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <i class="fa fa-map-marker"></i> 
+                </span>
+            </div>
             <input id="autocomplete" class="form-control" type="text" placeholder="Adres">
-            <span class="input-group-btn">
+            <div class="input-group-append">
                 <button id="clear" class="btn btn-danger" type="button"><i class="fa fa-times"></i></button>
-            </span>
+            </div>
         </div>
         <p class="form-text text-muted">
             Maak gebruik van de automatische aanvulling en kies een adres uit de voorgestelde opties.

@@ -135,7 +135,7 @@
         {% elif not deadlineHasPassed and not userIsPlayer %}
             <form class="form-inline mb-3" method="post" action="/web/requests">
                 <input name="game" type="hidden" value="{{ id }}">
-                <select id="seats" class="custom-select mr-3" name="seats">
+                <select id="seats" class="custom-select mr-3" name="seats" style="width: auto">
                     {% for seat in seatOptions %}
                         <option value="{{ seat }}">{{ seat }}</option>
                     {% endfor %}
