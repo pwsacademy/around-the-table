@@ -15,7 +15,6 @@
         <ul>
             <li><a href="#no-results">Ik wil een spel organiseren maar krijg geen zoekresultaten.</a></li>
             <li><a href="#missing-results">Ik wil een spel organiseren maar vind mijn spel niet terug bij de zoekresultaten.</a></li>
-            <li><a href="#no-image">Ik heb een spel aangemaakt maar er verschijnt geen afbeelding.</a></li>
         </ul>
     </li>
     <li>
@@ -63,12 +62,6 @@
 <a name="missing-results"><h5>Ik wil een spel organiseren maar vind mijn spel niet terug bij de zoekresultaten.</h5></a>
 <p>
     Zie het voorgaande probleem.
-</p>
-<a name="no-image"><h5>Ik heb een spel aangemaakt maar er verschijnt geen afbeelding.</h5></a>
-<p>
-    Jammer genoeg levert BoardGameGeek niet voor elk spel een afbeelding in het formaat dat de site nodig heeft.
-    Als er voor jouw spel geen afbeelding verschijnt, meld dit dan even in de Facebookgroep.
-    Op termijn zal de site dit probleem zelf kunnen detecteren en oplossen waardoor er geen manuele tussenkomst meer is vereist. 
 </p>
 <h3 class="mb-3">Organiseren</h3>
 <a name="extensions"><h5>Hoe kan ik aangeven met welke uitbreidingen we spelen?</h5></a>
