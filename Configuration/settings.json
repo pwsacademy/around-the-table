@@ -11,9 +11,9 @@
         "latitude": 51.047546,
         "longitude": 3.753204
     },
-    "defaultGamePicture": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
-    "defaultGameThumbnail": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
-    "defaultProfilePicture": "https://pbs.twimg.com/media/CLIz5A9VAAAcbNe.png",
+    "defaultGamePicture": "/public/img/game-placeholder.png",
+    "defaultGameThumbnail": "/public/img/game-placeholder-t.png",
+    "defaultProfilePicture": "/public/img/user-placeholder.png",
     "facebook": {
         "appID": "1154313148030114",
         "groupID": "256710991159762",
