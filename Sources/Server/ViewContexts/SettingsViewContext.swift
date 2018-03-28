@@ -9,6 +9,7 @@ struct SettingsViewContext: ViewContext {
         if let location = user.location {
             contents["address"] = location.address
             contents["city"] = location.city
+            contents["country"] = location.country
         }
     }
 }

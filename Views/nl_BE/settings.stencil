@@ -28,6 +28,7 @@
     <h3>Adres</h3>
     <input id="address" name="address" type="hidden">
     <input id="city" name="city" type="hidden">
+    <input id="country" name="country" type="hidden">
     <input id="latitude" name="latitude" type="hidden">
     <input id="longitude" name="longitude" type="hidden">
     <div class="form-group">
@@ -91,15 +92,20 @@ autocomplete.addListener("place_changed", function() {
     var cityComponent = place.address_components.find(function(component) {
         return component.types.indexOf("locality") != -1;
     });
-    // Make sure the location contains a city (and it's not just a province or country).
-    if (!cityComponent) {
+    var countryComponent = place.address_components.find(function(component) {
+        return component.types.indexOf("country") != -1;
+    });
+    // Make sure the location has both a city and a country.
+    if (!cityComponent || !countryComponent) {
         clearLocation();
         return
     }
     $("#address").val($("#autocomplete").val());
     var city = cityComponent.long_name;
+    var country = countryComponent.short_name;
     var coordinates = place.geometry.location;
     $("#city").val(city);
+    $("#country").val(country);
     $("#latitude").val(coordinates.lat);
     $("#longitude").val(coordinates.lng);
     if (!marker) {
@@ -117,6 +123,7 @@ function clearLocation() {
     $("#autocomplete").val("");
     $("#address").val("");
     $("#city").val("");
+    $("#country").val("");
     $("#latitude").val("");
     $("#longitude").val("");
     if (marker) {
@@ -129,6 +136,7 @@ function clearLocation() {
     $("#autocomplete").val("{{ address }}");
     $("#address").val("{{ address }}");
     $("#city").val("{{ city }}");
+    $("#country").val("{{ country }}");
     $("#latitude").val("{{ global.coordinates.latitude }}");
     $("#longitude").val("{{ global.coordinates.longitude }}");
     marker = new google.maps.Marker({

@@ -161,6 +161,7 @@
     <!-- The correct default values will be set in code. -->
     <input id="address" name="address" type="hidden">
     <input id="city" name="city" type="hidden">
+    <input id="country" name="country" type="hidden">
     <input id="latitude" name="latitude" type="hidden">
     <input id="longitude" name="longitude" type="hidden">
     <p>
@@ -312,16 +313,21 @@
         var cityComponent = place.address_components.find(function(component) {
             return component.types.indexOf("locality") != -1;
         });
-        // Make sure the location contains a city (and it's not just a province or country).
-        if (!cityComponent) {
+        var countryComponent = place.address_components.find(function(component) {
+            return component.types.indexOf("country") != -1;
+        });
+        // Make sure the location has both a city and a country.
+        if (!cityComponent || !countryComponent) {
             clearLocation();
             $("#submit").attr("disabled", "disabled");
             return
         }
         $("#address").val($("#autocomplete").val());
         var city = cityComponent.long_name;
+        var country = countryComponent.short_name;
         var coordinates = place.geometry.location;
         $("#city").val(city);
+        $("#country").val(country);
         $("#latitude").val(coordinates.lat);
         $("#longitude").val(coordinates.lng);
         if (!marker) {
@@ -364,6 +370,7 @@
         $("#autocomplete").val("");
         $("#address").val("");
         $("#city").val("");
+        $("#country").val("");
         $("#latitude").val("");
         $("#longitude").val("");
         if (marker) {
@@ -375,6 +382,7 @@
         $("#autocomplete").val("{{ location.address }}");
         $("#address").val("{{ location.address }}");
         $("#city").val("{{ location.city }}");
+        $("#country").val("{{ location.country }}");
         $("#latitude").val("{{ global.coordinates.latitude }}");
         $("#longitude").val("{{ global.coordinates.longitude }}");
         var coordinates = {

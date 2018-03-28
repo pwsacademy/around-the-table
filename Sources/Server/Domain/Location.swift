@@ -2,6 +2,7 @@ struct Location {
     
     let address: String
     let city: String
+    let country: String
     let latitude: Double
     let longitude: Double
     
@@ -11,9 +12,10 @@ struct Location {
      */
     var distance: Double?
     
-    init(address: String = "", city: String = "", latitude: Double, longitude: Double, distance: Double? = nil) {
+    init(address: String = "", city: String = "", country: String = "", latitude: Double, longitude: Double, distance: Double? = nil) {
         self.address = address
         self.city = city
+        self.country = country
         self.latitude = latitude
         self.longitude = longitude
         self.distance = distance
@@ -36,6 +38,9 @@ extension Location {
         guard let city = String(bson["city"]) else {
             try logAndThrow(BSONError.missingField(name: "city"))
         }
+        guard let country = String(bson["country"]) else {
+            try logAndThrow(BSONError.missingField(name: "country"))
+        }
         guard let coordinates = Array(bson["coordinates"]["coordinates"]) else {
             try logAndThrow(BSONError.missingField(name: "coordinates"))
         }
@@ -52,6 +57,7 @@ extension Location {
         let distance = Double(bson["distance"])
         self.init(address: address,
                   city: city,
+                  country: country,
                   latitude: latitude,
                   longitude: longitude,
                   distance: distance)
@@ -61,6 +67,7 @@ extension Location {
         return [
             "address": address,
             "city": city,
+            "country": country,
             "coordinates": Point(coordinate: Position(first: longitude, second: latitude))
         ]
     }

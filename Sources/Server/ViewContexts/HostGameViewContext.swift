@@ -35,7 +35,8 @@ struct HostGameViewContext: ViewContext {
         if let location = user.location {
             contents["location"] = [
                 "address": location.address,
-                "city": location.city
+                "city": location.city,
+                "country": location.country
             ]
         }
     }

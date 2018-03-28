@@ -230,6 +230,7 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
               let deadlineType = body["deadline"],
               let address = body["address"], address.count > 0,
               let city = body["city"], city.count > 0,
+              let country = body["country"], country.count > 0,
               let latitudeString = body["latitude"], let latitude = Double(latitudeString),
               let longitudeString = body["longitude"], let longitude = Double(longitudeString),
               let info = body["info"] else {
@@ -302,7 +303,7 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
                         data: data,
                         date: date,
                         deadline: deadline,
-                        location: Location(address: address, city: city, latitude: latitude, longitude: longitude),
+                        location: Location(address: address, city: city, country: country, latitude: latitude, longitude: longitude),
                         info: info.trimmingCharacters(in: .whitespacesAndNewlines))
         try GameRepository().add(game)
         guard let gameID = game.id else {
