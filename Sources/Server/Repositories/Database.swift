@@ -32,6 +32,7 @@ private func getDatabase() throws -> Database {
  */
 enum CollectionName: String {
     
+    case admin = "admin"
     case users = "users"
     case gameData = "gameData"
     case games = "games"

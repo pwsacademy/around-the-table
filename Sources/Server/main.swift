@@ -31,6 +31,8 @@ private let credentials = configureAuthenticationRouter(using: router.route("/au
 router.all("/web", middleware: session)
 configureWebRouter(using: router.route("/web"), credentials)
 
+configureAdminRouter(using: router.route("/admin"))
+
 router.get("/") {
     request, response, next in
     try response.redirect("/web/home")
