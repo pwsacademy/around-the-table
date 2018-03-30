@@ -617,11 +617,12 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
         }
         if !address.isEmpty {
             guard let city = body["city"], !city.isEmpty,
+                  let country = body["country"], !country.isEmpty,
                   let latitudeString = body["latitude"], let latitude = Double(latitudeString),
                   let longitudeString = body["longitude"], let longitude = Double(longitudeString) else {
                 try logAndThrow(ServerError.invalidRequest)
             }
-            user.location = Location(address: address, city: city, latitude: latitude, longitude: longitude)
+            user.location = Location(address: address, city: city, country: country, latitude: latitude, longitude: longitude)
         } else {
             user.location = nil
         }
