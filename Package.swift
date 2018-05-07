@@ -11,16 +11,31 @@ let package = Package(
         .package(url: "https://github.com/ddunn2/Kitura-StencilTemplateEngine.git", .branch("testNewAPI")),
         .package(url: "https://github.com/IBM-Swift/Swift-cfenv.git", .upToNextMinor(from: "6.0.0")),
         .package(url: "https://github.com/OpenKitten/MongoKitten.git", .upToNextMinor(from: "4.1.0")),
-        .package(url: "https://github.com/IBM-Swift/SwiftyRequest.git", .upToNextMinor(from: "1.1.0"))
+        .package(url: "https://github.com/IBM-Swift/SwiftyRequest.git", .upToNextMinor(from: "1.1.0")),
     ],
     targets: [
-        .target(name: "Server", dependencies: [
+        .target(name: "Main", dependencies: [
             "HeliumLogger",
             "Kitura",
             "CredentialsFacebook",
+            "KituraSession",
             "KituraStencil",
             "CloudFoundryEnv",
             "MongoKitten",
+            "SwiftyRequest"
+        ]),
+        .target(name: "AroundTheTable", dependencies: [
+            "HeliumLogger",
+            "Kitura",
+            "CredentialsFacebook",
+            "KituraSession",
+            "KituraStencil",
+            "CloudFoundryEnv",
+            "MongoKitten",
+            "SwiftyRequest"
+        ]),
+        .testTarget(name: "AroundTheTableTests", dependencies: [
+            "AroundTheTable"
         ])
     ]
 )
