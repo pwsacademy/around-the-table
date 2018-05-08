@@ -2,7 +2,20 @@ import BSON
 import XCTest
 @testable import AroundTheTable
 
-class BSONCodableTests: XCTestCase {
+class BSONExtensionsTests: XCTestCase {
+    
+    static var allTests: [(String, (BSONExtensionsTests) -> () throws -> Void)] {
+        return [
+            ("testEncodeCountableClosedRange", testEncodeCountableClosedRange),
+            ("testDecodeCountableClosedRange", testDecodeCountableClosedRange),
+            ("testDecodeCountableClosedRangeNotADocument", testDecodeCountableClosedRangeNotADocument),
+            ("testDecodeCountableClosedRangeMissingLowerBound", testDecodeCountableClosedRangeMissingLowerBound),
+            ("testDecodeCountableClosedRangeMissingUpperBound", testDecodeCountableClosedRangeMissingUpperBound),
+            ("testEncodeURL", testEncodeURL),
+            ("testDecodeURL", testDecodeURL),
+            ("testDecodeURLNotAString", testDecodeURLNotAString)
+        ]
+    }
     
     /* CountableClosedRange */
     

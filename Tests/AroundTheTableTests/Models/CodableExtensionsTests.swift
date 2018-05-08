@@ -3,6 +3,13 @@ import XCTest
 
 class CodableExtensionsTests: XCTestCase {
     
+    static var allTests: [(String, (CodableExtensionsTests) -> () throws -> Void)] {
+        return [
+            ("testEncodeCountableClosedRange", testEncodeCountableClosedRange),
+            ("testDecodeCountableClosedRange", testDecodeCountableClosedRange)
+        ]
+    }
+    
     /* CountableClosedRange */
     
     func testEncodeCountableClosedRange() throws {
