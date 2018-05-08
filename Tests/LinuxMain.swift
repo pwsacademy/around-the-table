@@ -6,5 +6,6 @@ XCTMain([
     testCase(BSONExtensionsTests.allTests),
     testCase(CodableExtensionsTests.allTests),
     testCase(CoordinatesTests.allTests),
-    testCase(LocationTests.allTests)
+    testCase(LocationTests.allTests),
+    testCase(UserTests.allTests)
 ])
