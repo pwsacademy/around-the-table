@@ -21,22 +21,18 @@ struct Coordinates: Equatable, Codable {
  */
 extension Coordinates: Primitive {
     
-    /**
-     Returns these `Coordinates` as a GeoJSON `Point`.
-     */
+    /// The `Coordinates` as a GeoJSON `Point`.
     var point: Point {
         return Point(coordinate: Position(first: longitude, second: latitude))
     }
     
-    /**
-     `Coordinates` are stored as a GeoJSON `Point` (which is a `Document`).
-     */
+    /// `Coordinates` are stored as a GeoJSON `Point` (which is a `Document`).
     var typeIdentifier: Byte {
         return point.makePrimitive().typeIdentifier
     }
     
     /**
-     Returns these `Coordinates` as a GeoJSON `Point` in binary form.
+     Returns the `Coordinates` as a GeoJSON `Point` in binary form.
      */
     func makeBinary() -> Bytes {
         return point.makePrimitive().makeBinary()

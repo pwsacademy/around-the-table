@@ -60,6 +60,8 @@ enum Settings {
     
     /**
      A default location that is used to calculate distances when a user has not specified his/her location.
+     
+     This location is also available as `Coordinates.default`.
      */
     enum defaultCoordinates {
         

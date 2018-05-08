@@ -6,16 +6,12 @@ import Foundation
  */
 extension CountableClosedRange: Primitive where Bound: Primitive {
     
-    /**
-     A `CountableClosedRange` is stored as a BSON `Document`.
-     */
+    /// A `CountableClosedRange` is stored as a BSON `Document`.
     public var typeIdentifier: Byte {
         return Document().typeIdentifier
     }
     
-    /**
-     Returns this `CountableClosedRange` as a BSON `Document`.
-     */
+    /// This `CountableClosedRange` as a BSON `Document`.
     var document: Document {
         return [
             "lowerBound": lowerBound,
@@ -55,9 +51,7 @@ extension CountableClosedRange: Primitive where Bound: Primitive {
  */
 extension URL: Primitive {
     
-    /**
-     A `URL` is stored as a string.
-     */
+    /// A `URL` is stored as a string.
     public var typeIdentifier: Byte {
         return absoluteString.typeIdentifier
     }
