@@ -6,7 +6,7 @@ import Foundation
  */
 enum Strings {
     
-    private static let strings = ConfigurationManager().load(file: "Configuration/strings-\(Settings.locale).json", relativeFrom: .project)
+    private static let strings = ConfigurationManager().load(file: "Configuration/old/strings-\(Settings.locale).json", relativeFrom: .project)
     
     static func facebookAnnouncement(for game: Game) -> String {
         return (strings["facebookGameAnnouncement"] as! String)

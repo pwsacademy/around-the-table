@@ -5,7 +5,7 @@ import Configuration
  */
 enum Secrets {
     
-    private static let secrets = ConfigurationManager().load(file: "Configuration/secrets.json", relativeFrom: .project)
+    private static let secrets = ConfigurationManager().load(file: "Configuration/old/secrets.json", relativeFrom: .project)
     
     // Used to encrypt the session ID cookie.
     static let sessionSecret = secrets["sessionSecret"] as! String

@@ -6,7 +6,7 @@ import Foundation
  */
 enum Settings {
     
-    private static let settings = ConfigurationManager().load(file: "Configuration/settings.json", relativeFrom: .project)
+    private static let settings = ConfigurationManager().load(file: "Configuration/old/settings.json", relativeFrom: .project)
     
     /*
      Configures a custom domain name. 
