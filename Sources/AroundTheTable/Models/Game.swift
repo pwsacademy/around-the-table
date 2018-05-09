@@ -83,6 +83,18 @@ class Game {
     }
 }
 
+/**
+ Adds `Equatable` conformance to `Game`.
+ 
+ Games are considered equal if they have the same `id`.
+ */
+extension Game: Equatable {
+    
+    static func ==(lhs: Game, rhs: Game) -> Bool {
+        return lhs.id == rhs.id
+    }
+}
+
 extension Game {
     
     /**
