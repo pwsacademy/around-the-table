@@ -9,7 +9,7 @@ class GameTests: XCTestCase {
      Some tests are commented out due to https://bugs.swift.org/browse/SR-4628.
      This should be fixed in Swift 4.2.
      */
-    static var allTests: [(String, (GameTests) -> () throws -> Void)] = {
+    static var allTests: [(String, (GameTests) -> () throws -> Void)] {
         return [
             ("testParseXML", testParseXML),
 //            ("testParseXMLNoID", testParseXMLNoID),
@@ -41,7 +41,7 @@ class GameTests: XCTestCase {
             ("testDecodeMissingPlayerCount", testDecodeMissingPlayerCount),
             ("testDecodeMissingPlayingTime", testDecodeMissingPlayingTime)
         ]
-    }()
+    }
     
     private let now = Date()
     private let picture = URL(string: "https://cf.geekdo-images.com/original/img/ME73s_0dstlA4qLpLEBvPyvq8gE=/0x0/pic3090929.jpg")!

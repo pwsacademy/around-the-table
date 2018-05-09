@@ -21,10 +21,7 @@ class LocationTests: XCTestCase {
     func testEncode() {
         let input = Location(coordinates: coordinates, address: "Street 1", city: "City", country: "BE")
         let expected: Document = [
-            "coordinates": [
-                "type": "Point",
-                "coordinates": [ 2.0, 50.0 ]
-            ],
+            "coordinates": coordinates,
             "address": "Street 1",
             "city": "City",
             "country": "BE"
@@ -35,10 +32,7 @@ class LocationTests: XCTestCase {
     
     func testDecode() throws {
         let input: Document = [
-            "coordinates": [
-                "type": "Point",
-                "coordinates": [ 2.0, 50.0 ]
-            ],
+            "coordinates": coordinates,
             "address": "Street 1",
             "city": "City",
             "country": "BE"
@@ -65,10 +59,7 @@ class LocationTests: XCTestCase {
     
     func testDecodeMissingAddress() {
         let input: Document = [
-            "coordinates": [
-                "type": "Point",
-                "coordinates": [ 2.0, 50.0 ]
-            ],
+            "coordinates": coordinates,
             "city": "City",
             "country": "BE"
         ]
@@ -77,10 +68,7 @@ class LocationTests: XCTestCase {
     
     func testDecodeMissingCity() {
         let input: Document = [
-            "coordinates": [
-                "type": "Point",
-                "coordinates": [ 2.0, 50.0 ]
-            ],
+            "coordinates": coordinates,
             "address": "Street 1",
             "country": "BE"
         ]
@@ -89,10 +77,7 @@ class LocationTests: XCTestCase {
     
     func testDecodeMissingCountry() {
         let input: Document = [
-            "coordinates": [
-                "type": "Point",
-                "coordinates": [ 2.0, 50.0 ]
-            ],
+            "coordinates": coordinates,
             "address": "Street 1",
             "city": "City"
         ]
