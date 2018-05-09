@@ -64,13 +64,13 @@ class Game {
     /**
      Full initializer, only used when decoding from BSON.
      */
-    fileprivate init(id: Int,
-                     creationDate: Date,
-                     name: String, names: [String],
-                     yearPublished: Int,
-                     playerCount: CountableClosedRange<Int>,
-                     playingTime: CountableClosedRange<Int>,
-                     picture: URL?, thumbnail: URL?) {
+    init(id: Int,
+         creationDate: Date,
+         name: String, names: [String],
+         yearPublished: Int,
+         playerCount: CountableClosedRange<Int>,
+         playingTime: CountableClosedRange<Int>,
+         picture: URL?, thumbnail: URL?) {
         self.id = id
         self.creationDate = creationDate
         self.name = name

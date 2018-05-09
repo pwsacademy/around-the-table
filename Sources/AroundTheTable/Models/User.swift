@@ -42,7 +42,7 @@ final class User {
     /**
      Full initializer, only used when decoding from BSON.
      */
-    fileprivate init(id: String, name: String, picture: URL?, location: Location?, lastSignIn: Date) {
+    init(id: String, name: String, picture: URL?, location: Location?, lastSignIn: Date) {
         self.id = id
         self.name = name
         self.picture = picture
