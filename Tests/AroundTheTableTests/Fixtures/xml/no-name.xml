@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?><items termsofuse="https://boardgamegeek.com/xmlapi/termsofuse"><item type="boardgame" id="192457">
+         <thumbnail>https://cf.geekdo-images.com/thumb/img/7X5vG9KruQ9CmSMVZ3rmiSSqTCM=/fit-in/200x150/pic3090929.jpg</thumbnail>
+      <image>https://cf.geekdo-images.com/original/img/ME73s_0dstlA4qLpLEBvPyvq8gE=/0x0/pic3090929.jpg</image>
+                                     							
+						                           
+						               													<description>Cry Havoc is a card-driven, asymmetric, area control war game set in a brutal science fiction setting. Each player commands one of four unique factions with varying abilities and units. The game includes 54 custom miniatures, a large format board, and over one hundred unique cards, all with stunning new artwork.&amp;#10;&amp;#10;</description>
+										      	               				<yearpublished value="2016" />
+						               				<minplayers value="2" />
+						               				<maxplayers value="4" />
+						      			<poll name="suggested_numplayers" title="User Suggested Number of Players" totalvotes="81">
+			
+		<results numplayers="1">		
+					<result value="Best" numvotes="0" />
+					<result value="Recommended" numvotes="0" />
+					<result value="Not Recommended" numvotes="42" />
+				</results>					
+			
+		<results numplayers="2">		
+					<result value="Best" numvotes="11" />
+					<result value="Recommended" numvotes="34" />
+					<result value="Not Recommended" numvotes="18" />
+				</results>					
+			
+		<results numplayers="3">		
+					<result value="Best" numvotes="23" />
+					<result value="Recommended" numvotes="34" />
+					<result value="Not Recommended" numvotes="9" />
+				</results>					
+			
+		<results numplayers="4">		
+					<result value="Best" numvotes="45" />
+					<result value="Recommended" numvotes="21" />
+					<result value="Not Recommended" numvotes="3" />
+				</results>					
+			
+		<results numplayers="4+">		
+					<result value="Best" numvotes="0" />
+					<result value="Recommended" numvotes="0" />
+					<result value="Not Recommended" numvotes="33" />
+				</results>					
+	</poll> 
+			               				<playingtime value="120" />
+						               				<minplaytime value="60" />
+						               				<maxplaytime value="120" />
+						               				<minage value="10" />
+						      			<poll name="suggested_playerage" title="User Suggested Player Age" totalvotes="13">
+			<results>		
+					<result value="2" numvotes="0" />
+					<result value="3" numvotes="0" />
+					<result value="4" numvotes="0" />
+					<result value="5" numvotes="0" />
+					<result value="6" numvotes="0" />
+					<result value="8" numvotes="0" />
+					<result value="10" numvotes="2" />
+					<result value="12" numvotes="7" />
+					<result value="14" numvotes="4" />
+					<result value="16" numvotes="0" />
+					<result value="18" numvotes="0" />
+					<result value="21 and up" numvotes="0" />
+				</results>					
+	</poll> 
+			      			<poll name="language_dependence" title="Language Dependence" totalvotes="8">
+			
+		<results>		
+					<result level="1" value="No necessary in-game text" numvotes="0" />
+					<result level="2" value="Some necessary text - easily memorized or small crib sheet" numvotes="0" />
+					<result level="3" value="Moderate in-game text - needs crib sheet or paste ups" numvotes="8" />
+					<result level="4" value="Extensive use of text - massive conversion needed to be playable" numvotes="0" />
+					<result level="5" value="Unplayable in another language" numvotes="0" />
+				</results>					
+	</poll> 
+			      			 
+			      				
+		 			
+
+			
+		
+					<link type="boardgamecategory" id="1046" value="Fighting" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgamecategory" id="1047" value="Miniatures" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgamecategory" id="1016" value="Science Fiction" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgamecategory" id="1019" value="Wargame" />
+		
+									
+			
+
+			      				
+		 			
+
+			
+		
+					<link type="boardgamemechanic" id="2080" value="Area Control / Area Influence" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgamemechanic" id="2046" value="Area Movement" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgamemechanic" id="2664" value="Deck / Pool Building" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgamemechanic" id="2040" value="Hand Management" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgamemechanic" id="2015" value="Variable Player Powers" />
+		
+									
+			
+
+			      			
+
+			      				
+		 			
+
+			
+		
+					<link type="boardgameexpansion" id="210697" value="Cry Havoc: Aftermath" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgameexpansion" id="238547" value="Cry Havoc: Essen 2017 Promo" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgameexpansion" id="211164" value="Cry Havoc: New Orders" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgameexpansion" id="233280" value="Cry Havoc: Secret Objective Promo Pack" />
+		
+									
+			
+
+			      			
+
+			      			
+
+			      			
+
+			      			
+
+			      			
+
+			      			
+
+			      	      	      				
+		 			
+
+			
+		
+					<link type="boardgamedesigner" id="50231" value="Grant Rodiek" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgamedesigner" id="5143" value="Michał Oracz" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgamedesigner" id="85259" value="Michał Walczak" />
+		
+									
+			
+
+			      				
+		 			
+
+			
+		
+					<link type="boardgameartist" id="76333" value="Fyodor Ananiev" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgameartist" id="38917" value="Mateusz Bielski" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgameartist" id="77570" value="Grzegorz Bobrowski" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgameartist" id="74048" value="Tomasz Larek" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgameartist" id="77069" value="Florent Llamas" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgameartist" id="87331" value="Fernando Olmedo" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgameartist" id="90019" value="Lukasz Poduch" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgameartist" id="21002" value="Rafał Szyma" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgameartist" id="36749" value="Aleksander Tutaj" />
+		
+									
+			
+
+			      	      				
+		 			
+
+			
+		
+					<link type="boardgamepublisher" id="2726" value="Portal Games" />
+		
+									
+				
+		 			
+
+			
+		
+					<link type="boardgamepublisher" id="39" value="Pegasus Spiele" />
+		
+									
+			
+
+			
+	
+
+	
+
+	
+	
+	
+   
+	
+          
+</item>
+</items>
