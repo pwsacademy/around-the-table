@@ -7,7 +7,7 @@ import LoggerAPI
  
  This data is gathered from BoardGameGeek.
  */
-class Game {
+final class Game {
     
     /// The game's ID on BGG.
     let id: Int
