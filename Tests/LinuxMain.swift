@@ -3,6 +3,8 @@ import XCTest
 
 XCTMain([
     // Models
+    testCase(ActivityTests.allTests),
+    testCase(ActivityRegistrationTests.allTests),
     testCase(BSONExtensionsTests.allTests),
     testCase(CodableExtensionsTests.allTests),
     testCase(CoordinatesTests.allTests),
