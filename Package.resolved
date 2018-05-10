@@ -114,7 +114,7 @@
         "repositoryURL": "https://github.com/ddunn2/Kitura.git",
         "state": {
           "branch": "testNewAPI",
-          "revision": "870c03581e0871bda7a139fb120b6839556a2c66",
+          "revision": "9407cafdda5486568622597d94b44bee36b7b94b",
           "version": null
         }
       },
@@ -159,7 +159,7 @@
         "repositoryURL": "https://github.com/ddunn2/Kitura-StencilTemplateEngine.git",
         "state": {
           "branch": "testNewAPI",
-          "revision": "2f2e4a9bf42d38b1dd96ba0417e630b4e0ac1f72",
+          "revision": "ae52050544290ade203c4eac04657176ea060dea",
           "version": null
         }
       },
@@ -168,7 +168,7 @@
         "repositoryURL": "https://github.com/ddunn2/Kitura-TemplateEngine.git",
         "state": {
           "branch": "testNewAPI",
-          "revision": "a790839d649594cc7f9b823f2b453a349f911ab4",
+          "revision": "0d461990e25401fdd92d5e80388756ab20697821",
           "version": null
         }
       },
