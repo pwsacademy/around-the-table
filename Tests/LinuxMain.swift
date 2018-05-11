@@ -13,5 +13,7 @@ XCTMain([
     testCase(CoordinatesTests.allTests),
     testCase(GameTests.allTests),
     testCase(LocationTests.allTests),
-    testCase(UserTests.allTests)
+    testCase(UserTests.allTests),
+    // Persistence
+    testCase(UserRepositoryTests.allTests)
 ])
