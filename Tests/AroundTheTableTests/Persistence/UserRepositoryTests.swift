@@ -33,12 +33,9 @@ class UserRepositoryTests: XCTestCase {
     }
     
     func testReadUser() throws {
-        let alice = try persistence.user(withID: "1")
-        XCTAssertNotNil(alice)
-        let bob = try persistence.user(withID: "2")
-        XCTAssertNotNil(bob)
-        let charlie = try persistence.user(withID: "3")
-        XCTAssertNotNil(charlie)
+        for id in ["1", "2", "3"] {
+            XCTAssertNotNil(try persistence.user(withID: id))
+        }
     }
     
     func testUpdateUser() throws {
