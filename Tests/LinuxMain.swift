@@ -16,6 +16,7 @@ XCTMain([
     testCase(UserTests.allTests),
     // Persistence
     testCase(ActivityRepositoryTests.allTests),
+    testCase(ConversationRepositoryTests.allTests),
     testCase(GameRepositoryTests.allTests),
     testCase(UserRepositoryTests.allTests)
 ])
