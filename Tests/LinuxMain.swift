@@ -3,6 +3,7 @@ import XCTest
 
 XCTMain([
     testCase(ExtensionsTests.allTests),
+    testCase(StencilFiltersTests.allTests),
     // Models
     testCase(ActivityTests.allTests),
     testCase(ActivityRegistrationTests.allTests),
