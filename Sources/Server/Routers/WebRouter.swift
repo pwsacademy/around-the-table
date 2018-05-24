@@ -306,7 +306,6 @@ func configureWebRouter(using router: Router, _ credentials: Credentials) {
                         location: Location(address: address, city: city, country: country, latitude: latitude, longitude: longitude),
                         info: info.trimmingCharacters(in: .whitespacesAndNewlines))
         try GameRepository().add(game)
-        try FacebookService().accounce(game)
         guard let gameID = game.id else {
             try logAndThrow(ServerError.invalidState)
         }

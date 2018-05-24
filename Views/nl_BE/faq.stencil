@@ -6,7 +6,7 @@
 <h2>Veelgestelde vragen</h2>
 <p>
     Op deze pagina vind je een antwoord op enkele veelgestelde vragen.
-    Heb je een andere vraag, dan kan je die altijd stellen in onze <a href="https://www.facebook.com/groups/{{ global.facebook.groupID }}" target="_blank">Facebookgroep</a>.
+    Heb je een andere vraag, dan kan je die altijd stellen via onze <a href="https://www.facebook.com/ronddetafel.be" target="_blank">Facebookpagina</a>.
 </p>
 <h3 class="mb-3">Inhoudstafel</h3>
 <ul>
@@ -22,7 +22,6 @@
         <ul>
             <li><a href="#extensions">Hoe kan ik aangeven met welke uitbreidingen we spelen?</a></li>
             <li><a href="#unknownaddress">Google Maps kent mijn adres niet.</a></li>
-            <li><a href="#facebook-group-post">Ik heb een spel aangemaakt. Waarom verschijnt dit niet in de Facebookgroep?</a></li>
         </ul>
     </li>
     <li>
@@ -50,7 +49,6 @@
         Je zoekresultaten zijn gefilterd. Heel wat spellen op BoardGameGeek bevatten onvolledige informatie.
         Dit is vaak het geval voor spellen die nog niet verkrijgbaar zijn.
         Om de werking van de site te garanderen worden deze spellen gefilterd.
-        Als je een spel wil organiseren dat je niet terugvindt via de site, dan kan je altijd een oproepje plaatsen in de Facebookgroep.
     </li>
     <li>
         Er is een technisch probleem bij BoardGameGeek.
@@ -78,11 +76,6 @@
     kies dan ofwel een straat in je buurt ofwel de naam van je gemeente.
     Het volledige adres kan je altijd bezorgen via privébericht op Facebook.
 </p>
-<a name="facebook-group-post"><h5>Ik heb een spel aangemaakt. Waarom verschijnt dit niet in de Facebookgroep?</h5></a>
-<p>
-    Deze automatische berichten zijn tijdelijk uitschakeld en worden voorlopig geplaatst door een beheerder van de Facebookgroep.
-    Dit kan dus even duren.
-</p>
 <h3 class="mb-3">Facebook</h3>
 <a name="facebook-required"><h5>Ik heb geen Facebook. Wat nu?</h5></a>
 <p>
@@ -103,6 +96,6 @@
 </ul>
 <a name="facebook-privacy"><h5>Worden er gegevens gedeeld met Facebook of andere partijen?</h5></a>
 <p>
-    Neen.
+    Neen. Deze site houdt enkel de minimale gegevens bij die nodig zijn voor haar werking en deelt deze gegevens niet met derden.
 </p>
 {% endblock %}

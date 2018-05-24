@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <title>{% block title %}Rond de tafel{% endblock %}</title>
+    <title>{% block title %}Rond De Tafel{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Steven Van Impe">
-    <meta name="description" content="Rond de Tafel brengt mensen en spellen samen. Vind spellen, zoek medespelers en maak nieuwe vrienden.">
-    <meta property="og:site_name" content="Rond de tafel">
+    <meta name="description" content="Rond De Tafel brengt mensen en spellen samen. Vind spellen, zoek medespelers en maak nieuwe vrienden.">
+    <meta property="og:site_name" content="Rond De Tafel">
     <meta property="og:type" content="website">
     <meta property="fb:app_id" content="{{ global.facebook.appID }}">
-    <meta property="og:description" content="Rond de Tafel brengt mensen en spellen samen. Vind spellen, zoek medespelers en maak nieuwe vrienden.">
+    <meta property="og:description" content="Rond De Tafel brengt mensen en spellen samen. Vind spellen, zoek medespelers en maak nieuwe vrienden.">
     <meta property="og:url" content="{{ global.opengraph.url }}">
     {% block opengraph %}
-        <meta property="og:title" content="Rond de tafel">   
+        <meta property="og:title" content="Rond De Tafel">   
         <meta property="og:image" content="{{ global.opengraph.image }}">
     {% endblock %}
     <link href="/public/img/favicon.png" rel="icon" type="image/png">
@@ -73,7 +73,7 @@
 <body>
     <!-- Collapsed navbar -->
     <nav class="d-md-none navbar navbar-dark">
-        <a class="navbar-brand" href="/web/home">Rond de tafel</a>
+        <a class="navbar-brand" href="/web/home">Rond De Tafel</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -117,7 +117,7 @@
     </nav>
     <!-- Full navbar -->
     <nav class="d-none d-md-flex navbar navbar-expand navbar-dark">
-        <a class="navbar-brand" href="/web/home">Rond de tafel</a>
+        <a class="navbar-brand" href="/web/home">Rond De Tafel</a>
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
                 <a class="nav-link" href="/web/games">Spellen</a>
@@ -165,8 +165,8 @@
     </div>
     <!-- Footer -->
     <footer class="container py-3 text-center">
-        © 2017 - Rond de tafel<br>
-        Volg ons op <a href="https://www.facebook.com/groups/{{ global.facebook.groupID }}" target="_blank">Facebook</a> <i class="fa fa-facebook-official"></i><br>
+        © 2018 - Rond De Tafel<br>
+        Like ons op <a href="https://www.facebook.com/ronddetafel.be" target="_blank">Facebook</a> <i class="fa fa-facebook-official"></i><br>
         Broncode beschikbaar op <a href="https://github.com/svanimpe/around-the-table.git" target="_blank">GitHub</a> <i class="fa fa-github"></i>
     </footer>
     <!-- Scripts -->

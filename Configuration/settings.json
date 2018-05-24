@@ -15,9 +15,7 @@
     "defaultGameThumbnail": "/public/img/game-placeholder-t.png",
     "defaultProfilePicture": "/public/img/user-placeholder.png",
     "facebook": {
-        "appID": "1154313148030114",
-        "groupID": "256710991159762",
-        "announceInGroup": true,
+        "appID": "1154313148030114"
     },
     "locale": "nl_BE",
     "timeZone": "Europe/Brussels"
