@@ -19,5 +19,9 @@ XCTMain([
     testCase(ActivityRepositoryTests.allTests),
     testCase(ConversationRepositoryTests.allTests),
     testCase(GameRepositoryTests.allTests),
-    testCase(UserRepositoryTests.allTests)
+    testCase(UserRepositoryTests.allTests),
+    // Middleware
+    testCase(ForwardingMiddlewareTests.allTests),
+    // Routes
+    testCase(RoutesTests.allTests)
 ])
