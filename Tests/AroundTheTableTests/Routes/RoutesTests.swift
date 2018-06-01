@@ -13,8 +13,8 @@ class RoutesTests: XCTestCase {
         ]
     }
     
-    func testStaticFileServer() {
-        let persistence = try! Persistence()
+    func testStaticFileServer() throws {
+        let persistence = try Persistence()
         let router = Router()
         Routes(persistence: persistence).configure(using: router)
         
@@ -36,8 +36,8 @@ class RoutesTests: XCTestCase {
         }
     }
     
-    func testErrorHandlerForAPIRoutes() {
-        let persistence = try! Persistence()
+    func testErrorHandlerForAPIRoutes() throws {
+        let persistence = try Persistence()
         let router = Router()
         // This route must be added first, otherwise it will come after the error handler.
         router.get("/api/something-bad") {
@@ -64,8 +64,8 @@ class RoutesTests: XCTestCase {
         }
     }
     
-    func testErrorHandlerForWebRoutes() {
-        let persistence = try! Persistence()
+    func testErrorHandlerForWebRoutes() throws {
+        let persistence = try Persistence()
         let router = Router()
         // This route must be added first, otherwise it will come after the error handler.
         router.get("/web/something-bad") {
