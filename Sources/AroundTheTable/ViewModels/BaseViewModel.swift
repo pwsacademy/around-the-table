@@ -4,10 +4,18 @@
 struct BaseViewModel: Codable {
 
     struct UserViewModel: Codable {
+        
         let id: String
         let name: String
         let picture: String
         let location: Location?
+        
+        init(_ user: User) {
+            self.id = user.id
+            self.name = user.name
+            self.picture = user.picture?.absoluteString ?? Settings.defaultProfilePicture
+            self.location = user.location
+        }
     }
     
     /// The user who is currently signed in.
@@ -48,10 +56,7 @@ struct BaseViewModel: Codable {
      */
     init(user: User?, unreadMessageCount: Int, requestURL: String) {
         if let user = user {
-            self.user = UserViewModel(id: user.id,
-                                      name: user.name,
-                                      picture: user.picture?.absoluteString ?? Settings.defaultProfilePicture,
-                                      location: user.location)
+            self.user = UserViewModel(user)
         } else {
             self.user = nil
         }
