@@ -21,6 +21,7 @@ XCTMain([
     testCase(GameRepositoryTests.allTests),
     testCase(UserRepositoryTests.allTests),
     // Middleware
+    testCase(AuthenticationMiddlewareTests.allTests),
     testCase(ForwardingMiddlewareTests.allTests),
     // Routes
     testCase(RoutesTests.allTests)
