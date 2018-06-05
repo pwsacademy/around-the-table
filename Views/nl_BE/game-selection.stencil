@@ -1,4 +1,4 @@
-{% extends "nl_BE/base.stencil" %}
+{% extends "base.stencil" %}
 
 {% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
 
@@ -10,19 +10,19 @@
         <img class="d-flex mr-4" style="width: 200px" src="{{ game.picture }}">
         <div class="media-body">
             <h5>{{ game.name }}</h5>
-            <p class="text-muted">{{ game.year }}</p>
+            <p class="text-muted">{{ game.yearPublished }}</p>
             <p>
-                {% if game.minPlayerCount == game.maxPlayerCount %}
-                    <i class="fa fa-user"></i> {{ game.minPlayerCount }}
+                {% if game.playerCount.lowerBound == game.playerCount.upperBound %}
+                    <i class="fa fa-user"></i> {{ game.playerCount.lowerBound }}
                 {% else %}
-                    <i class="fa fa-user"></i> {{ game.minPlayerCount }} - {{ game.maxPlayerCount }}
+                    <i class="fa fa-user"></i> {{ game.playerCount.lowerBound }} - {{ game.playerCount.upperBound }}
                 {% endif %}
             </p>
             <p>
-                {% if game.minPlayingTime == game.maxPlayingTime %}
-                    <i class="fa fa-clock-o"></i> {{ game.minPlayingTime }}
+                {% if game.playingTime.lowerBound == game.playingTime.upperBound %}
+                    <i class="fa fa-clock-o"></i> {{ game.playingTime.lowerBound }}
                 {% else %}
-                    <i class="fa fa-clock-o"></i> {{ game.minPlayingTime }} - {{ game.maxPlayingTime }}
+                    <i class="fa fa-clock-o"></i> {{ game.playingTime.lowerBound }} - {{ game.playingTime.upperBound }}
                 {% endif %}
             </p>
         </div>
