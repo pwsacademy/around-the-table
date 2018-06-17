@@ -527,8 +527,7 @@ extension Routes {
             response.status(.badRequest)
             return next()
         }
-        // TODO: Surely, there must be a better way to do this... If not, file a bug report.
-        guard let index = Array(activity.registrations.reversed()).index(where: { $0.player == player }) else {
+        guard let index = activity.registrations.lastIndex(where: { $0.player == player }) else {
             response.status(.badRequest)
             return next()
         }
