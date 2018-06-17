@@ -129,7 +129,7 @@ final class Activity {
     /// The number of seats still available.
     /// This is a computed property.
     var availableSeats: Int {
-        let approvedSeats = registrations.filter { $0.isApproved && !$0.isCancelled }.map { $0.seats }.reduce(0, +)
+        let approvedSeats = approvedRegistrations.map { $0.seats }.reduce(0, +)
         return max(0, playerCount.upperBound - prereservedSeats - approvedSeats)
     }
     

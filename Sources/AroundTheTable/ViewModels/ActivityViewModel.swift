@@ -105,7 +105,7 @@ struct ActivityViewModel: Codable {
         self.approvedRegistrations = try activity.approvedRegistrations.map { try RegistrationViewModel($0, for: activity) }
         self.pendingRegistrations = try activity.pendingRegistrations.map { try RegistrationViewModel($0, for: activity) }
         self.userIsHost = activity.host == user
-        self.userIsPlayer = activity.registrations.filter { $0.isApproved }.contains { $0.player == user }
-        self.userIsPending = activity.registrations.filter { !$0.isApproved }.contains { $0.player == user }
+        self.userIsPlayer = activity.approvedRegistrations.contains { $0.player == user }
+        self.userIsPending = activity.pendingRegistrations.contains { $0.player == user }
     }
 }
