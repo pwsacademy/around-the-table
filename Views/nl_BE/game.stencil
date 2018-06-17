@@ -72,7 +72,7 @@
     <h2>Spelers</h2>
     <p>
         <img class="avatar rounded-circle mr-2" src="{{ activity.host.picture }}">
-        <a href="https://facebook.com/{{ activity.host.id }}" target="_blank">{{ activity.host.name }}</a>
+        {{ activity.host.name }}
         {% if activity.prereservedSeats == 0 %}
             (neemt zelf niet deel)
         {% elif activity.prereservedSeats == 2 %}
