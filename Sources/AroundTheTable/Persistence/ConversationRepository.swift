@@ -179,7 +179,7 @@ extension Persistence {
         ])
         guard let result = results.next(),
               let count = Int(result["unreadMessageCount"]) else {
-            throw log(BSONError.missingField(name: "unreadMessageCount"))
+            return 0
         }
         return count
     }

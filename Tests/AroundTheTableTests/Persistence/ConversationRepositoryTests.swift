@@ -16,6 +16,7 @@ class ConversationRepositoryTests: XCTestCase {
             ("testFindConversationRegardingUnpersistedActivity", testFindConversationRegardingUnpersistedActivity),
             ("testConversationsForUser", testConversationsForUser),
             ("testUnreadMessageCount", testUnreadMessageCount),
+            ("testUnreadMessageCountZero", testUnreadMessageCountZero),
             ("testUpdateConversation", testUpdateConversation),
             ("testUpdateUnpersistedConversation", testUpdateUnpersistedConversation)
         ]
@@ -138,6 +139,13 @@ class ConversationRepositoryTests: XCTestCase {
         // Clean-up
         try persistence.collection(.activities).remove(["_id": activityID])
         try persistence.collection(.conversations).remove(["_id": conversationID])
+    }
+    
+    func testUnreadMessageCountZero() throws {
+        guard let charlie = try persistence.user(withID: "3") else {
+            return XCTFail()
+        }
+        XCTAssert(try persistence.unreadMessageCount(for: charlie) == 0)
     }
     
     func testUpdateConversation() throws {
