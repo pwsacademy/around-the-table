@@ -41,6 +41,15 @@ extension Routes {
         router.post("game/:id/registrations", handler: submitRegistration)
         router.post("game/:id/registrations/:player", middleware: [credentials, authentication])
         router.post("game/:id/registrations/:player", handler: editRegistration)
+        
+        // Pages from the user's personal menu.
+        router.all("my-games", middleware: [credentials, authentication])
+        router.get("my-games", handler: myActivities)
+        router.get("messages", middleware: [credentials, authentication])
+        router.get("messages", handler: conversations)
+        router.all("settings", middleware: [credentials, authentication])
+        router.get("settings", handler: settings)
+        router.post("settings", handler: editSettings)
     }
     
     /**
@@ -565,5 +574,86 @@ extension Routes {
             }
         }
         try response.redirect("/web/game/\(id)")
+    }
+    
+    /**
+     Shows an overview of the activities the user is hosting and the activities the user has joined.
+     */
+    private func myActivities(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let userID = request.userProfile?.id else {
+            throw log(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard let user = try persistence.user(withID: userID) else {
+            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
+        let hosted = try persistence.activities(hostedBy: user)
+        let joined = try persistence.activities(joinedBy: user)
+        let base = try baseViewModel(for: request)
+        try response.render("my-games", with: MyActivitiesViewModel(base: base,
+                                                                    hosted: hosted,
+                                                                    joined: joined))
+        next()
+    }
+    
+    /**
+     Shows the current user's active conversations.
+     */
+    private func conversations(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let userID = request.userProfile?.id else {
+            throw log(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard let user = try persistence.user(withID: userID) else {
+            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
+        let conversations = try persistence.conversations(for: user)
+        let base = try baseViewModel(for: request)
+        try response.render("messages", with: try ConversationsViewModel(base: base, conversations: conversations, for: user))
+        for conversation in conversations {
+            // Mark all messages for the current user as read.
+            for (index, message) in conversation.messages.enumerated() {
+                if user == conversation.sender && message.direction == .incoming ||
+                   user == conversation.recipient && message.direction == .outgoing {
+                    conversation.messages[index].isRead = true
+                }
+            }
+            try persistence.update(conversation)
+        }
+        next()
+    }
+    
+    /**
+     Shows the user's settings.
+     */
+    private func settings(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let userID = request.userProfile?.id else {
+            throw log(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard try persistence.user(withID: userID) != nil else {
+            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
+        let base = try baseViewModel(for: request)
+        try response.render("settings", with: SettingsViewModel(base: base, saved: false))
+        next()
+    }
+    
+    /**
+     Processes the form submitted to change the user's settings.
+     */
+    private func editSettings(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let userID = request.userProfile?.id else {
+            throw log(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard let user = try persistence.user(withID: userID) else {
+            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
+        guard let form = try? request.read(as: EditSettingsForm.self) else {
+            response.status(.badRequest)
+            return next()
+        }
+        user.location = form.location
+        try persistence.update(user)
+        let base = try baseViewModel(for: request)
+        try response.render("settings", with: SettingsViewModel(base: base, saved: true))
+        next()
     }
 }
