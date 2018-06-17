@@ -107,6 +107,25 @@ final class Activity {
     /// The registrations that have been submitted for this activity.
     var registrations: [Registration]
     
+    /// The approved registrations for this activity.
+    /// This is a computed property.
+    var approvedRegistrations: [Registration] {
+        return registrations.filter { $0.isApproved && !$0.isCancelled }
+    }
+    
+    /// The pending (not yet approved) registrations for this activity.
+    /// This is a computed property.
+    var pendingRegistrations: [Registration] {
+        return registrations.filter { !$0.isApproved && !$0.isCancelled }
+    }
+    
+    /// The players who've joined this activity.
+    /// This does not include the host.
+    /// This is a computed property.
+    var players: [User] {
+        return approvedRegistrations.map { $0.player }
+    }
+    
     /// The number of seats still available.
     /// This is a computed property.
     var availableSeats: Int {

@@ -1,5 +1,8 @@
+import BSON
 import Credentials
+import Foundation
 import Kitura
+import LoggerAPI
 
 extension Routes {
     
@@ -26,6 +29,18 @@ extension Routes {
         router.all("host-game", middleware: [credentials, authentication])
         router.get("host-game", handler: createActivity)
         router.post("host-game", handler: submitActivity)
+        
+        // View and edit activities.
+        router.get("game/:id", handler: activity)
+        router.get("game/:id/edit", middleware: [credentials, authentication])
+        router.get("game/:id/edit", handler: editActivity)
+        router.post("game/:id/edit", handler: submitEditActivity)
+        
+        // Submit and edit registrations.
+        router.post("game/:id/registrations", middleware: [credentials, authentication])
+        router.post("game/:id/registrations", handler: submitRegistration)
+        router.post("game/:id/registrations/:player", middleware: [credentials, authentication])
+        router.post("game/:id/registrations/:player", handler: editRegistration)
     }
     
     /**
@@ -287,5 +302,268 @@ extension Routes {
                 next()
             }
         }
+    }
+    
+    /**
+     Gives detailed information about an activity, including its approved and pending registrations.
+     */
+    private func activity(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        let user: User?
+        if let userID = request.userProfile?.id {
+            guard let existingUser = try persistence.user(withID: userID) else {
+                throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+            }
+            user = existingUser
+        } else {
+            user = nil
+        }
+        guard let id = request.parameters["id"],
+              let activity = try persistence.activity(with: ObjectId(id),
+                                                      measuredFrom: user?.location?.coordinates ?? .default) else {
+            response.status(.badRequest)
+            return next()
+        }
+        let base = try baseViewModel(for: request)
+        try response.render("game", with: ActivityViewModel(base: base,
+                                                            user: user,
+                                                            activity: activity))
+        next()
+    }
+    
+    /**
+     Editable view of an activity.
+     */
+    private func editActivity(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let userID = request.userProfile?.id else {
+            throw log(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard let user = try persistence.user(withID: userID) else {
+            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
+        guard let id = request.parameters["id"],
+              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+              activity.date.compare(Date()) == .orderedDescending,
+              activity.host == user,
+              let type = request.queryParameters["type"],
+              ["players", "datetime", "deadline", "address", "info"].contains(type) else {
+            response.status(.badRequest)
+            return next()
+        }
+        let base = try baseViewModel(for: request)
+        try response.render("host-game", with: EditActivityViewModel(base: base, activity: activity, type: type))
+        next()
+    }
+    
+    /**
+     Processes the form submitted to edit or cancel an activity.
+     */
+    private func submitEditActivity(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let userID = request.userProfile?.id else {
+            throw log(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard let user = try persistence.user(withID: userID) else {
+            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
+        guard let id = request.parameters["id"],
+              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+              // Past or cancelled activities cannot be editing.
+              activity.date.compare(Date()) == .orderedDescending,
+              !activity.isCancelled,
+              // Only the host can edit an activity.
+              activity.host == user else {
+            response.status(.badRequest)
+            return next()
+        }
+        guard let form = try? request.read(as: EditActivityForm.self) else {
+            response.status(.badRequest)
+            return next()
+        }
+        switch form.result {
+        case .players(let count, let min, let prereserved):
+            activity.playerCount = min...count
+            activity.prereservedSeats = prereserved
+            try persistence.update(activity)
+            try response.redirect("/web/game/\(id)")
+        case .date(let date):
+            // Not only adjust the date, also adjust the deadline accordingly.
+            let deadlineInterval = date.timeIntervalSince(activity.date)
+            activity.date = date
+            activity.deadline.addTimeInterval(deadlineInterval)
+            try persistence.update(activity)
+            for player in activity.players {
+                if let conversation = try persistence.conversation(between: user, player, regarding: activity) {
+                    conversation.hostChangedDate()
+                    try persistence.update(conversation)
+                } else {
+                    let conversation = Conversation(topic: activity, sender: user, recipient: player)
+                    conversation.hostChangedDate()
+                    try persistence.add(conversation)
+                    Log.warning("Created a conversation that should already exist: \(String(describing: conversation.id)).")
+                }
+            }
+            try response.redirect("/web/game/\(id)")
+        case .deadline(let type):
+            let calendar = Calendar(identifier: .gregorian)
+            switch type {
+            case "one hour":
+                activity.deadline = calendar.date(byAdding: .hour, value: -1, to: activity.date)!
+            case "one day":
+                activity.deadline = calendar.date(byAdding: .day, value: -1, to: activity.date)!
+            case "two days":
+                activity.deadline = calendar.date(byAdding: .day, value: -2, to: activity.date)!
+            case "one week":
+                activity.deadline = calendar.date(byAdding: .weekOfYear, value: -1, to: activity.date)!
+            default:
+                response.status(.badRequest)
+                return next()
+            }
+            try persistence.update(activity)
+            try response.redirect("/web/game/\(id)")
+        case .address(let location):
+            activity.location = location
+            try persistence.update(activity)
+            for player in activity.players {
+                if let conversation = try persistence.conversation(between: user, player, regarding: activity) {
+                    conversation.hostChangedAddress()
+                    try persistence.update(conversation)
+                } else {
+                    let conversation = Conversation(topic: activity, sender: user, recipient: player)
+                    conversation.hostChangedAddress()
+                    try persistence.add(conversation)
+                    Log.warning("Created a conversation that should already exist: \(String(describing: conversation.id)).")
+                }
+            }
+            try response.redirect("/web/game/\(id)")
+        case .info(let info):
+            activity.info = info
+            try persistence.update(activity)
+            try response.redirect("/web/game/\(id)")
+        case .cancel:
+            activity.isCancelled = true
+            try persistence.update(activity)
+            for player in activity.players {
+                if let conversation = try persistence.conversation(between: user, player, regarding: activity) {
+                    conversation.hostCancelledActivity()
+                    try persistence.update(conversation)
+                } else {
+                    let conversation = Conversation(topic: activity, sender: user, recipient: player)
+                    conversation.hostCancelledActivity()
+                    try persistence.add(conversation)
+                    Log.warning("Created a conversation that should already exist: \(String(describing: conversation.id)).")
+                }
+            }
+            try response.redirect("/web/my-games")
+        case .invalid:
+            response.status(.badRequest)
+            return next()
+        }
+    }
+    
+    /**
+     Submit a registration.
+     */
+    private func submitRegistration(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let userID = request.userProfile?.id else {
+            throw log(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard let user = try persistence.user(withID: userID) else {
+            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
+        guard let id = request.parameters["id"],
+              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+              // You can't register for past or cancelled activities.
+              activity.date.compare(Date()) == .orderedDescending,
+              !activity.isCancelled else {
+            response.status(.badRequest)
+            return next()
+        }
+        guard let form = try? request.read(as: ActivityRegistrationFrom.self),
+              form.seats >= 1 else {
+            response.status(.badRequest)
+            return next()
+        }
+        activity.registrations.append(Activity.Registration(player: user, seats: form.seats))
+        try persistence.update(activity)
+        if let conversation = try persistence.conversation(between: user, activity.host, regarding: activity) {
+            conversation.playerSentRegistration()
+            try persistence.update(conversation)
+        } else {
+            let conversation = Conversation(topic: activity, sender: user, recipient: activity.host)
+            conversation.playerSentRegistration()
+            try persistence.add(conversation)
+        }
+        try response.redirect("/web/game/\(id)")
+    }
+
+    /**
+     Approve or cancel a registration.
+     */
+    private func editRegistration(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let userID = request.userProfile?.id else {
+            throw log(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard let user = try persistence.user(withID: userID) else {
+            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
+        }
+        guard let id = request.parameters["id"],
+              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+              // You can't edit registrations for past or cancelled activities.
+              activity.date.compare(Date()) == .orderedDescending,
+              !activity.isCancelled else {
+            response.status(.badRequest)
+            return next()
+        }
+        guard let playerID = request.parameters["player"],
+              let player = try persistence.user(withID: playerID) else {
+            response.status(.badRequest)
+            return next()
+        }
+        // TODO: Surely, there must be a better way to do this... If not, file a bug report.
+        guard let index = Array(activity.registrations.reversed()).index(where: { $0.player == player }) else {
+            response.status(.badRequest)
+            return next()
+        }
+        guard let form = try? request.read(as: EditActivityRegistrationForm.self) else {
+            response.status(.badRequest)
+            return next()
+        }
+        if let approved = form.approved, approved, user == activity.host {
+            activity.registrations[index].isApproved = true
+            try persistence.update(activity)
+            if let conversation = try persistence.conversation(between: user, player, regarding: activity) {
+                conversation.hostApprovedRegistration()
+                try persistence.update(conversation)
+            } else {
+                let conversation = Conversation(topic: activity, sender: user, recipient: player)
+                conversation.hostApprovedRegistration()
+                try persistence.add(conversation)
+                Log.warning("Created a conversation that should already exist: \(String(describing: conversation.id)).")
+            }
+        } else if let cancelled = form.cancelled, cancelled, user == player {
+            activity.registrations[index].isCancelled = true
+            try persistence.update(activity)
+            if let conversation = try persistence.conversation(between: user, activity.host, regarding: activity) {
+                conversation.playerCancelledRegistration()
+                try persistence.update(conversation)
+            } else {
+                let conversation = Conversation(topic: activity, sender: user, recipient: activity.host)
+                conversation.playerCancelledRegistration()
+                try persistence.add(conversation)
+                Log.warning("Created a conversation that should already exist: \(String(describing: conversation.id)).")
+            }
+        } else if let cancelled = form.cancelled, cancelled, user == activity.host {
+            activity.registrations[index].isCancelled = true
+            try persistence.update(activity)
+            if let conversation = try persistence.conversation(between: user, player, regarding: activity) {
+                conversation.hostCancelledRegistration()
+                try persistence.update(conversation)
+            } else {
+                let conversation = Conversation(topic: activity, sender: user, recipient: player)
+                conversation.hostCancelledRegistration()
+                try persistence.add(conversation)
+                Log.warning("Created a conversation that should already exist: \(String(describing: conversation.id)).")
+            }
+        }
+        try response.redirect("/web/game/\(id)")
     }
 }
