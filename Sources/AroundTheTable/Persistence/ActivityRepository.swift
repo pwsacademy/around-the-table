@@ -45,7 +45,7 @@ extension Persistence {
             )),
             .sort(sort),
             .skip(start),
-            .limit(limit),
+            .limit(max(limit, 1)), // Limit must be > 0.
             // Denormalize `host`.
             .lookup(from: collection(.users), localField: "host", foreignField: "_id", as: "host"),
             .unwind("$host"),
