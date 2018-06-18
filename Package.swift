@@ -4,6 +4,7 @@ import PackageDescription
 let package = Package(
     name: "AroundTheTable",
     dependencies: [
+        .package(url: "https://github.com/IBM-Swift/Health.git", .upToNextMinor(from: "1.0.0")),
         .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", .upToNextMinor(from: "1.7.0")),
         .package(url: "https://github.com/IBM-Swift/Kitura.git", .upToNextMinor(from: "2.4.0")),
         .package(url: "https://github.com/IBM-Swift/Kitura-CredentialsFacebook.git", .upToNextMinor(from: "2.2.0")),
@@ -18,6 +19,7 @@ let package = Package(
             "AroundTheTable"
         ]),
         .target(name: "AroundTheTable", dependencies: [
+            "Health",
             "HeliumLogger",
             "Kitura",
             "CredentialsFacebook",

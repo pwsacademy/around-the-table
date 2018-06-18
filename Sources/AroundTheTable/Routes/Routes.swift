@@ -1,5 +1,6 @@
 import Credentials
 import CredentialsFacebook
+import Health
 import Kitura
 import KituraStencil
 import KituraSession
@@ -17,6 +18,9 @@ public class Routes {
     
     /// The persistence layer.
     let persistence: Persistence
+    
+    /// The health checker.
+    private let health = Health()
     
     /**
      Initializes the routing layer.
@@ -63,6 +67,16 @@ public class Routes {
         router.get("/") {
             request, response, next in
             try response.redirect("/web/home")
+        }
+        
+        // Registers a health endpoint.
+        router.get("/health") {
+            request, response, next in
+            if self.health.status.state == .UP {
+                try response.status(.OK).send(self.health.status).end()
+            } else {
+                try response.status(.serviceUnavailable).send(self.health.status).end()
+            }
         }
         
         // Registers a global error handler.
