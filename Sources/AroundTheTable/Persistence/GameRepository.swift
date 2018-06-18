@@ -57,8 +57,8 @@ extension Persistence {
             return callback([])
         }
         // First check which games are in the cache.
-        let cachedIDs = try ids.filter { try collection(.games).count(["_id": $0], limitedTo: 1) == 1 }
-        let cachedGames = try collection(.games).find(["_id": ["$in": cachedIDs]]).compactMap(Game.init)
+        let cachedIDs = try ids.filter { try games.count(["_id": $0], limitedTo: 1) == 1 }
+        let cachedGames = try games.find(["_id": ["$in": cachedIDs]]).compactMap(Game.init)
         // Then fetch the remaining ones.
         let newIDs = ids.filter { !cachedIDs.contains($0) }
         let joinedIDs = newIDs.map { String($0) }.joined(separator: ",")
@@ -76,7 +76,7 @@ extension Persistence {
                 // Instead, we simply exlude it from the results.
                 let results = try xml.nodes(forXPath: "/items/item").compactMap { try? Game(xml: $0) }
                 // Cache the new games.
-                try self.collection(.games).insert(contentsOf: results.map { $0.document })
+                try self.games.insert(contentsOf: results.map { $0.document })
                 callback(cachedGames + results)
             } catch {
                 Log.warning("Failed to parse XML for IDs \(joinedIDs).")
@@ -94,7 +94,7 @@ extension Persistence {
      */
     func game(forID id: Int, callback: @escaping (Game?) -> Void) throws {
         // First check if the game is in the cache.
-        if let game = try collection(.games).findOne(["_id": id]).map(Game.init) {
+        if let game = try games.findOne(["_id": id]).map(Game.init) {
             return callback(game)
         }
         // If not, fetch it.
@@ -115,7 +115,7 @@ extension Persistence {
                     return callback(nil)
                 }
                 // Cache the new game.
-                try self.collection(.games).insert(game.document)
+                try self.games.insert(game.document)
                 callback(game)
             } catch {
                 Log.warning("Failed to parse XML for ID \(id).")
@@ -152,7 +152,7 @@ extension Persistence {
                 return
             }
             do {
-                try self.collection(.games).update(["_id": game.id], to: ["$set": ["picture": newURL]])
+                try self.games.update(["_id": game.id], to: ["$set": ["picture": newURL]])
             } catch {
                 Log.warning("Failed to update picture URL for #\(game.id)")
             }

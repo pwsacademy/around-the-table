@@ -19,7 +19,7 @@ extension Persistence {
         guard activity.id == nil else {
             throw log(ServerError.persistedEntity)
         }
-        guard let id = try collection(.activities).insert(activity.document) as? ObjectId else {
+        guard let id = try activities.insert(activity.document) as? ObjectId else {
             throw log(BSONError.missingField(name: "_id"))
         }
         activity.id = id
@@ -35,22 +35,22 @@ extension Persistence {
                             sortedBy sort: Sort,
                             startingFrom start: Int,
                             limitedTo limit: Int) throws -> [Activity] {
-        let results = try collection(.activities).aggregate([
+        let results = try activities.aggregate([
             .geoNear(options: GeoNearOptions(
                 near: Point(coordinate: Position(first: coordinates.longitude, second: coordinates.latitude)),
                 spherical: true,
                 distanceField: "distance",
-                limit: try collection(.activities).count(),
+                limit: try activities.count(),
                 query: query
             )),
             .sort(sort),
             .skip(start),
             .limit(max(limit, 1)), // Limit must be > 0.
             // Denormalize `host`.
-            .lookup(from: collection(.users), localField: "host", foreignField: "_id", as: "host"),
+            .lookup(from: users, localField: "host", foreignField: "_id", as: "host"),
             .unwind("$host"),
             // Denormalize `game`.
-            .lookup(from: collection(.games), localField: "game", foreignField: "_id", as: "game"),
+            .lookup(from: games, localField: "game", foreignField: "_id", as: "game"),
             .unwind("$game", preserveNullAndEmptyArrays: true)
         ])
         return try results.compactMap {
@@ -95,9 +95,9 @@ extension Persistence {
      */
     func numberOfActivities(notHostedBy host: User? = nil) throws -> Int {
         if let host = host {
-            return try collection(.activities).count(["host": ["$ne": host.id], "deadline": ["$gt": Date()], "isCancelled": false])
+            return try activities.count(["host": ["$ne": host.id], "deadline": ["$gt": Date()], "isCancelled": false])
         } else {
-            return try collection(.activities).count(["deadline": ["$gt": Date()], "isCancelled": false])
+            return try activities.count(["deadline": ["$gt": Date()], "isCancelled": false])
         }
     }
     
@@ -179,7 +179,7 @@ extension Persistence {
                               measuredFrom: .default,
                               sortedBy: ["date": .ascending],
                               startingFrom: 0,
-                              limitedTo: try collection(.activities).count())
+                              limitedTo: try activities.count())
     }
     
     /**
@@ -198,7 +198,7 @@ extension Persistence {
                               measuredFrom: player.location?.coordinates ?? .default,
                               sortedBy: ["date": .ascending],
                               startingFrom: 0,
-                              limitedTo: try collection(.activities).count())
+                              limitedTo: try activities.count())
     }
 
     /**
@@ -211,6 +211,6 @@ extension Persistence {
         guard let id = activity.id else {
             throw log(ServerError.unpersistedEntity)
         }
-        try collection(.activities).update(["_id": id], to: activity.document)
+        try activities.update(["_id": id], to: activity.document)
     }
 }

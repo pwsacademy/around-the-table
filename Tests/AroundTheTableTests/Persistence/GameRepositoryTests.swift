@@ -65,8 +65,8 @@ class GameRepositoryTests: XCTestCase {
     func testGamesCached() throws {
         let ids = [1323, 27092, 192457]
         // The cache contains only these three games.
-        XCTAssert(try persistence.collection(.games).count() == 3)
-        XCTAssert(try persistence.collection(.games).count(["_id": ["$in": ids]]) == 3)
+        XCTAssert(try persistence.games.count() == 3)
+        XCTAssert(try persistence.games.count(["_id": ["$in": ids]]) == 3)
         // Now try to fetch them.
         let resultsReceived = expectation(description: "results received")
         try persistence.games(forIDs: ids) {
@@ -79,13 +79,13 @@ class GameRepositoryTests: XCTestCase {
             XCTAssertNil(error)
         }
         // There should be no additional games in the cache as a result of this operation.
-        XCTAssert(try persistence.collection(.games).count() == 3)
+        XCTAssert(try persistence.games.count() == 3)
     }
     
     func testGamesNew() throws {
         let id = 40692
         // The game shouldn't be in the cache.
-        XCTAssertNil(try persistence.collection(.games).findOne(["_id": id]))
+        XCTAssertNil(try persistence.games.findOne(["_id": id]))
         // Now fetch it.
         let resultsReceived = expectation(description: "results received")
         try persistence.games(forIDs: [id]) {
@@ -98,16 +98,16 @@ class GameRepositoryTests: XCTestCase {
             XCTAssertNil(error)
         }
         // The game should now be in the cache.
-        XCTAssertNotNil(try persistence.collection(.games).findOne(["_id": id]))
+        XCTAssertNotNil(try persistence.games.findOne(["_id": id]))
         // Clean-up
-        try persistence.collection(.games).remove(["_id": id])
+        try persistence.games.remove(["_id": id])
     }
     
     func testGameCached() throws {
         let id = 192457
         // The game should be in the cache.
-        XCTAssertNotNil(try persistence.collection(.games).findOne(["_id": id]))
-        XCTAssert(try persistence.collection(.games).count() == 3)
+        XCTAssertNotNil(try persistence.games.findOne(["_id": id]))
+        XCTAssert(try persistence.games.count() == 3)
         // Now fetch it.
         let resultReceived = expectation(description: "result received")
         try persistence.game(forID: id) {
@@ -120,13 +120,13 @@ class GameRepositoryTests: XCTestCase {
             XCTAssertNil(error)
         }
         // There should be no additional games in the cache as a result of this operation.
-        XCTAssert(try persistence.collection(.games).count() == 3)
+        XCTAssert(try persistence.games.count() == 3)
     }
     
     func testGameNew() throws {
         let id = 40692
         // The game shouldn't be in the cache.
-        XCTAssertNil(try persistence.collection(.games).findOne(["_id": id]))
+        XCTAssertNil(try persistence.games.findOne(["_id": id]))
         // Now fetch it.
         let resultReceived = expectation(description: "result received")
         try persistence.game(forID: id) {
@@ -139,9 +139,9 @@ class GameRepositoryTests: XCTestCase {
             XCTAssertNil(error)
         }
         // The game should now be in the cache.
-        XCTAssertNotNil(try persistence.collection(.games).findOne(["_id": id]))
+        XCTAssertNotNil(try persistence.games.findOne(["_id": id]))
         // Clean-up
-        try persistence.collection(.games).remove(["_id": id])
+        try persistence.games.remove(["_id": id])
     }
     
     func testMediumPicture() throws {
@@ -175,7 +175,7 @@ class GameRepositoryTests: XCTestCase {
             XCTAssertNil(error)
         }
         // Clean-up
-        try persistence.collection(.games).update(["_id": id], to: ["$set": [
+        try persistence.games.update(["_id": id], to: ["$set": [
             "picture": "https://cf.geekdo-images.com/original/img/ME73s_0dstlA4qLpLEBvPyvq8gE=/0x0/pic3090929.jpg"
         ]])
     }

@@ -37,7 +37,7 @@ class ConversationRepositoryTests: XCTestCase {
         }
         XCTAssertNotNil(try persistence.conversation(between: alice, charlie, regarding: activity))
         // Clean-up
-        try persistence.collection(.conversations).remove(["_id": id])
+        try persistence.conversations.remove(["_id": id])
     }
     
     func testAddPersistedConversation() throws {
@@ -108,8 +108,8 @@ class ConversationRepositoryTests: XCTestCase {
             conversationID
         ])
         // Clean-up
-        try persistence.collection(.activities).remove(["_id": activityID])
-        try persistence.collection(.conversations).remove(["_id": conversationID])
+        try persistence.activities.remove(["_id": activityID])
+        try persistence.conversations.remove(["_id": conversationID])
     }
     
     func testUnreadMessageCount() throws {
@@ -137,8 +137,8 @@ class ConversationRepositoryTests: XCTestCase {
         }
         XCTAssert(try persistence.unreadMessageCount(for: bob) == 3)
         // Clean-up
-        try persistence.collection(.activities).remove(["_id": activityID])
-        try persistence.collection(.conversations).remove(["_id": conversationID])
+        try persistence.activities.remove(["_id": activityID])
+        try persistence.conversations.remove(["_id": conversationID])
     }
     
     func testUnreadMessageCountZero() throws {

@@ -15,6 +15,18 @@ public class Persistence {
     
     private var database: Database
     
+    /// The `activities` collection.
+    let activities: MongoKitten.Collection
+    
+    /// The `conversations` collection.
+    let conversations: MongoKitten.Collection
+    
+    /// The `games` collection.
+    let games: MongoKitten.Collection
+    
+    /// The `users` collection.
+    let users: MongoKitten.Collection
+    
     /**
      Initializes the persistence layer and connects to the database.
      
@@ -37,35 +49,9 @@ public class Persistence {
         }
         let server = try Server(settings)
         database = server[Settings.database.name]
-    }
-    
-    /**
-     Typesafe collection names.
-     */
-    enum Collection: String {
-        
-        case activities
-        case conversations
-        case games
-        case users
-    }
-    
-    /**
-     Collection instances can safely be reused and shared so we store created instances in a dictionary.
-     */
-    private var collections: [Persistence.Collection: MongoKitten.Collection] = [:]
-    
-    /**
-     Looks up the `Collection` instance for the collection with the given name.
-     Creates it if necessary.
-     */
-    func collection(_ name: Persistence.Collection) throws -> MongoKitten.Collection {
-        if let collection = collections[name] {
-            return collection
-        } else {
-            let collection = database[name.rawValue]
-            collections[name] = collection
-            return collection
-        }
+        activities = database["activities"]
+        conversations = database["conversations"]
+        games = database["games"]
+        users = database["users"]
     }
 }

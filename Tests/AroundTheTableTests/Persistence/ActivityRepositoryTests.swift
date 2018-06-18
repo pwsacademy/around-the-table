@@ -49,7 +49,7 @@ class ActivityRepositoryTests: XCTestCase {
         }
         XCTAssertNotNil(try persistence.activity(with: id, measuredFrom: .default))
         // Clean-up
-        try persistence.collection(.activities).remove(["_id": id])
+        try persistence.activities.remove(["_id": id])
     }
     
     func testAddPersistedActivity() throws {
@@ -181,7 +181,7 @@ class ActivityRepositoryTests: XCTestCase {
             ObjectId("5af69d330c92b55f601b1ad0")!
         ])
         // Clean-up
-        try persistence.collection(.activities).remove(["_id": id])
+        try persistence.activities.remove(["_id": id])
     }
     
     func testActivitiesJoinedBy() throws {
@@ -210,7 +210,7 @@ class ActivityRepositoryTests: XCTestCase {
             ObjectId("5af5abdd0c92b55f601b043f")!
         ])
         // Clean-up
-        try persistence.collection(.activities).remove(["_id": id])
+        try persistence.activities.remove(["_id": id])
     }
     
     func testUpdateActivity() throws {

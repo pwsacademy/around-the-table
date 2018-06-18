@@ -18,7 +18,7 @@ extension Persistence {
         guard conversation.id == nil else {
             throw log(ServerError.persistedEntity)
         }
-        guard let id = try collection(.conversations).insert(conversation.document) as? ObjectId else {
+        guard let id = try conversations.insert(conversation.document) as? ObjectId else {
             throw log(BSONError.missingField(name: "_id"))
         }
         conversation.id = id
@@ -35,7 +35,7 @@ extension Persistence {
         guard let id = topic.id else {
             throw log(ServerError.unpersistedEntity)
         }
-        let results = try collection(.conversations).aggregate([
+        let results = try conversations.aggregate([
             .match([
                 "topic": id,
                 "$or": [
@@ -45,19 +45,19 @@ extension Persistence {
             ] as Query),
             .limit(1),
             // Denormalize `topic`.
-            .lookup(from: collection(.activities), localField: "topic", foreignField: "_id", as: "topic"),
+            .lookup(from: activities, localField: "topic", foreignField: "_id", as: "topic"),
             .unwind("$topic"),
             // Denormalize `topic.host`.
-            .lookup(from: collection(.users), localField: "topic.host", foreignField: "_id", as: "topic.host"),
+            .lookup(from: users, localField: "topic.host", foreignField: "_id", as: "topic.host"),
             .unwind("$topic.host"),
             // Denormalize `topic.game`.
-            .lookup(from: collection(.games), localField: "topic.game", foreignField: "_id", as: "topic.game"),
+            .lookup(from: games, localField: "topic.game", foreignField: "_id", as: "topic.game"),
             .unwind("$topic.game", preserveNullAndEmptyArrays: true),
             // Denormalize `sender`.
-            .lookup(from: collection(.users), localField: "sender", foreignField: "_id", as: "sender"),
+            .lookup(from: users, localField: "sender", foreignField: "_id", as: "sender"),
             .unwind("$sender"),
             // Denormalize `recipient`.
-            .lookup(from: collection(.users), localField: "recipient", foreignField: "_id", as: "recipient"),
+            .lookup(from: users, localField: "recipient", foreignField: "_id", as: "recipient"),
             .unwind("$recipient")
         ])
         return try results.compactMap {
@@ -87,7 +87,7 @@ extension Persistence {
      */
     func conversations(for user: User) throws -> [Conversation] {
         let yesterday = Calendar(identifier: .gregorian).date(byAdding: .day, value: -1, to: Date())
-        let results = try collection(.conversations).aggregate([
+        let results = try conversations.aggregate([
             .match([
                 "$or": [
                     ["sender": user.id],
@@ -95,21 +95,21 @@ extension Persistence {
                 ]
             ] as Query),
             // Denormalize `topic`.
-            .lookup(from: collection(.activities), localField: "topic", foreignField: "_id", as: "topic"),
+            .lookup(from: activities, localField: "topic", foreignField: "_id", as: "topic"),
             .unwind("$topic"),
             // Filter only active conversations.
             .match(["topic.date": ["$gt": yesterday]] as Query),
             // Denormalize `topic.host`.
-            .lookup(from: collection(.users), localField: "topic.host", foreignField: "_id", as: "topic.host"),
+            .lookup(from: users, localField: "topic.host", foreignField: "_id", as: "topic.host"),
             .unwind("$topic.host"),
             // Denormalize `topic.game`.
-            .lookup(from: collection(.games), localField: "topic.game", foreignField: "_id", as: "topic.game"),
+            .lookup(from: games, localField: "topic.game", foreignField: "_id", as: "topic.game"),
             .unwind("$topic.game", preserveNullAndEmptyArrays: true),
             // Denormalize `sender`.
-            .lookup(from: collection(.users), localField: "sender", foreignField: "_id", as: "sender"),
+            .lookup(from: users, localField: "sender", foreignField: "_id", as: "sender"),
             .unwind("$sender"),
             // Denormalize `recipient`.
-            .lookup(from: collection(.users), localField: "recipient", foreignField: "_id", as: "recipient"),
+            .lookup(from: users, localField: "recipient", foreignField: "_id", as: "recipient"),
             .unwind("$recipient"),
             // Sort by the most recent message.
             .sort(["messages.timestamp": .descending])
@@ -141,7 +141,7 @@ extension Persistence {
      */
     func unreadMessageCount(for user: User) throws -> Int {
         let yesterday = Calendar(identifier: .gregorian).date(byAdding: .day, value: -1, to: Date())
-        let results = try collection(.conversations).aggregate([
+        let results = try conversations.aggregate([
             // Find all conversations with unread messages for this user.
             .match([
                 "$or": [
@@ -156,7 +156,7 @@ extension Persistence {
                 ]
             ] as Query),
             // Denormalize `topic`.
-            .lookup(from: collection(.activities), localField: "topic", foreignField: "_id", as: "topic"),
+            .lookup(from: activities, localField: "topic", foreignField: "_id", as: "topic"),
             .unwind("$topic"),
             // Filter only active conversations.
             .match(["topic.date": ["$gt": yesterday]] as Query),
@@ -194,6 +194,6 @@ extension Persistence {
         guard let id = conversation.id else {
             throw log(ServerError.unpersistedEntity)
         }
-        try collection(.conversations).update(["_id": id], to: conversation.document)
+        try conversations.update(["_id": id], to: conversation.document)
     }
 }

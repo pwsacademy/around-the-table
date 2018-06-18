@@ -24,7 +24,7 @@ class UserRepositoryTests: XCTestCase {
         try persistence.add(david)
         XCTAssertNotNil(try persistence.user(withID: "4"))
         // Clean-up
-        try persistence.collection(.users).remove(["_id": "4"])
+        try persistence.users.remove(["_id": "4"])
     }
     
     func testAddDuplicateUser() {
