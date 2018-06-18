@@ -1,5 +1,5 @@
 applications:
 - name: AroundTheTable
   memory: 256M
-  command: Server
+  command: Main
   buildpack: swift_buildpack
