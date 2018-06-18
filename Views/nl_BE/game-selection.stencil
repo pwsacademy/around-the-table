@@ -1,0 +1,42 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
+
+{% block content %}
+<h2>Kies een spel</h2>
+<p>Kies het spel dat je wenst te spelen uit de onderstaande lijst.</p>
+{% for game in results %}
+    <div class="media mb-3" data-link="/web/host-game?id={{ game.id }}">
+        <img class="d-flex mr-4" style="width: 200px" src="{{ game.picture }}">
+        <div class="media-body">
+            <h5>{{ game.name }}</h5>
+            <p class="text-muted">{{ game.yearPublished }}</p>
+            <p>
+                {% if game.playerCount.lowerBound == game.playerCount.upperBound %}
+                    <i class="fa fa-user"></i> {{ game.playerCount.lowerBound }}
+                {% else %}
+                    <i class="fa fa-user"></i> {{ game.playerCount.lowerBound }} - {{ game.playerCount.upperBound }}
+                {% endif %}
+            </p>
+            <p>
+                {% if game.playingTime.lowerBound == game.playingTime.upperBound %}
+                    <i class="fa fa-clock-o"></i> {{ game.playingTime.lowerBound }}
+                {% else %}
+                    <i class="fa fa-clock-o"></i> {{ game.playingTime.lowerBound }} - {{ game.playingTime.upperBound }}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}
+
+{% block additional-body %}
+<script>
+$(".media").on("click", function() {
+    var link = $(this).attr("data-link");
+    if (link) {
+        window.location = link;
+    }
+});
+</script>
+{% endblock %}

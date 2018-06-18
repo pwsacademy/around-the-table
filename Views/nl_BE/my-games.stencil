@@ -1,41 +1,41 @@
-{% extends "nl_BE/base.stencil" %}
+{% extends "base.stencil" %}
 
 {% block title %}{{ block.super }} - Mijn spellen{% endblock %}
 
 {% block content %}
 <h2>Spellen die ik organiseer</h2>
-{% if hostedGames %}
+{% if hosted %}
     <div class="row">
-        {% for game in hostedGames %}
+        {% for h in hosted %}
             <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
-                <div {% if game.availableSeats < 1 %} class="red card" {% elif game.availableSeats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>
-                    <a href="/web/game/{{ game.id }}">
-                        <img class="card-img-top" src="{{ game.data.picture }}">
+                <div {% if h.activity.availableSeats < 1 %} class="red card" {% elif h.activity.availableSeats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>
+                    <a href="/web/game/{{ h.activity.id }}">
+                        <img class="card-img-top" src="{{ h.activity.picture }}">
                     </a>
                     <div class="card-body">
-                        <h5 class="card-title">{{ game.data.name }}</h5>
+                        <h5 class="card-title">{{ h.activity.name }}</h5>
                         <p class="card-subtitle text-muted mb-2">
-                            <i class="fa fa-calendar"></i> {{ game.date }}
+                            <i class="fa fa-calendar"></i> {{ h.activity.date }}
                         </p>
                         <div class="card-text">
-                            {% if game.players %}
+                            {% if h.players %}
                                 <p>
-                                    {% for player in game.players %}
+                                    {% for player in h.players %}
                                         <img class="avatar rounded-circle mb-1" src="{{ player.picture }}">
                                     {% endfor %}
                                 </p>
                             {% endif %}
-                            {% if game.availableSeats < 1 %}
+                            {% if h.activity.availableSeats < 1 %}
                                 <p>Volzet!</p>
-                            {% elif game.availableSeats == 1 %}
+                            {% elif h.activity.availableSeats == 1 %}
                                 <p>1 plaats beschikbaar.</p>
                             {% else %}
-                                <p>{{ game.availableSeats }} plaatsen beschikbaar.</p>
+                                <p>{{ h.activity.availableSeats }} plaatsen beschikbaar.</p>
                             {% endif %}
-                            {% if game.requests == 1 %}
+                            {% if h.pendingRegistrationCount == 1 %}
                                 <p>1 aanvraag.</p>
-                            {% elif game.requests > 1 %}
-                                <p>{{ game.requests }} aanvragen.</p>
+                            {% elif h.pendingRegistrationCount > 1 %}
+                                <p>{{ h.pendingRegistrationCount }} aanvragen.</p>
                             {% endif %}
                         </div>
                     </div>
@@ -47,43 +47,43 @@
     <p>Je organiseert nog geen spellen.</p>
 {% endif %}
 <h2>Spellen waaraan ik deelneem</h2>
-{% if playingGames %}
+{% if joined %}
     <div class="row">
-        {% for game in playingGames %}
+        {% for j in joined %}
             <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
-                <div {% if game.availableSeats < 1 %} class="red card" {% elif game.availableSeats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>
-                    <a href="/web/game/{{ game.id }}">
-                        <img class="card-img-top" src="{{ game.data.picture }}">
+                <div {% if j.activity.availableSeats < 1 %} class="red card" {% elif j.activity.availableSeats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>
+                    <a href="/web/game/{{ j.activity.id }}">
+                        <img class="card-img-top" src="{{ j.activity.picture }}">
                     </a>
                     <div class="card-body">
-                        <h5 class="card-title">{{ game.data.name }}</h5>
+                        <h5 class="card-title">{{ j.activity.name }}</h5>
                         <p class="card-subtitle text-muted mb-2">
-                            <i class="fa fa-calendar"></i> {{ game.date }}
+                            <i class="fa fa-calendar"></i> {{ j.activity.date }}
                         </p>
                         <div class="card-text">
-                            <p>Bij {{ game.host.name }}.</p>
+                            <p>Bij {{ j.activity.host.name }}.</p>
                             <p>
-                                <img class="avatar rounded-circle mb-1" src="{{ game.host.picture }}">
-                                {% for player in game.players %}
+                                <img class="avatar rounded-circle mb-1" src="{{ j.activity.host.picture }}">
+                                {% for player in j.players %}
                                     <img class="avatar rounded-circle mb-1" src="{{ player.picture }}">
                                 {% endfor %}
                             </p>
-                            {% if game.availableSeats < 1 %}
+                            {% if j.activity.availableSeats < 1 %}
                                 <p>Volzet!</p>
-                            {% elif game.availableSeats == 1 %}
+                            {% elif j.activity.availableSeats == 1 %}
                                 <p>1 plaats beschikbaar.</p>
                             {% else %}
-                                <p>{{ game.availableSeats }} plaatsen beschikbaar.</p>
+                                <p>{{ j.activity.availableSeats }} plaatsen beschikbaar.</p>
                             {% endif %}
                         </div>
                     </div>
                     <div class="card-footer text-muted">
-                        {% if global.coordinates.actual %}
+                        {% if base.user.location %}
                             <span class="float-right">
-                                {{ game.distance }}km
+                                {{ j.activity.distance }}km
                             </span>
                         {% endif %}
-                        <i class="fa fa-map-marker"></i> {{ game.city }}
+                        <i class="fa fa-map-marker"></i> {{ j.activity.location.city }}
                     </div>
                 </div>
             </div>

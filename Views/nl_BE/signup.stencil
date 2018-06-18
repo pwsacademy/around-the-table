@@ -1,4 +1,4 @@
-{% extends "nl_BE/base.stencil" %}
+{% extends "base.stencil" %}
 
 {% block title %}{{ block.super }} - Account aanmaken{% endblock %}
 

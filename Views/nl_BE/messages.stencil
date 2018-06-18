@@ -1,17 +1,109 @@
-{% extends "nl_BE/base.stencil" %}
+{% extends "base.stencil" %}
 
 {% block title %}{{ block.super }} - Berichten{% endblock %}
 
 {% block content %}
 <h2>Berichten</h2>
-{% if messages %}
-    {% for message in messages %}
-        <div class="media alert" data-category="{{ message.category }}" {% if message.category != "hostCancelledGame" %} data-link="{{ message.link }}" {% endif %}>
+<p>
+    Op deze pagina verschijnen de berichten die je verstuurt of ontvangt.
+    Deze berichten verdwijnen automatisch van zodra de activiteit waarover ze gaan is afgelopen.
+</p>
+{% if conversations %}
+    {% for conversation in conversations %}
+        <div class="media mt-3">
+            <a href="/web/game/{{ conversation.activity }}">
+                <img class="avatar-large mr-3" src="{{ conversation.picture }}">
+            </a>
+            <div class="media-body">
+                <h5 class="mt-0">{{ conversation.title }}</h5>
+                <p>
+                    Gesprek met {{ conversation.other.name }}
+                </p>
+                {% for message in conversation.messages %}
+                    <!-- Nested version for everything except mobile -->
+                    <div class="media d-none d-md-flex mt-3">
+                        {% if conversation.userIsSender and message.direction == "incoming" or 
+                           not conversation.userIsSender and message.direction == "outgoing" %}
+                            <img class="avatar rounded-circle mr-3" src="{{ conversation.other.picture }}">
+                            <div class="media-body">
+                                <h6 class="text-muted">
+                                    {{ message.timestamp }}
+                                    {% if not message.isRead %}
+                                        <i class="fa fa-asterisk text-danger"></i>
+                                    {% endif %}
+                                </h6>
+                                {{ message.text }}
+                            </div>
+                        {% else %}
+                            <img class="avatar rounded-circle mr-3" src="{{ base.user.picture }}">
+                            <div class="media-body">
+                                <h6 class="text-muted">
+                                    {{ message.timestamp }}
+                                </h6>
+                                {{ message.text }}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <!-- <form class="d-none d-md-flex mt-3" method="post">
+                    <div class="form-group w-100">
+                        <div class="input-group">
+                            <input class="form-control" type="text" name="reply" placeholder="Verstuur een reactie">
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary" type="button">
+                                    <i class="fa fa-reply"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form> -->
+            </div>
+        </div>
+        <!-- Collapsed version for mobile -->
+        {% for message in conversation.messages %}
+            <div class="media d-md-none mt-3">
+                {% if conversation.userIsSender and message.direction == "incoming" or 
+                   not conversation.userIsSender and message.direction == "outgoing" %}
+                    <img class="avatar rounded-circle mr-3" src="{{ conversation.other.picture }}">
+                    <div class="media-body">
+                        <h6 class="text-muted">
+                            {{ message.timestamp }}
+                            {% if not message.isRead %}
+                                <i class="fa fa-asterisk text-danger"></i>
+                            {% endif %}
+                        </h6>
+                        {{ message.text }}
+                    </div>
+                {% else %}
+                    <img class="avatar rounded-circle mr-3" src="{{ base.user.picture }}">
+                    <div class="media-body">
+                        <h6 class="text-muted">
+                            {{ message.timestamp }}
+                        </h6>
+                        {{ message.text }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <!-- <form class="d-md-none mt-3" method="post">
+            <div class="form-group">
+                <div class="input-group">
+                    <input class="form-control" type="text" name="reply" placeholder="Verstuur een reactie">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary" type="button">
+                            <i class="fa fa-reply"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form> -->
+    {% endfor %}
+        <!-- <div class="media alert" data-category="{{ message.category }}" {% if message.category != "hostCancelledGame" %} data-link="{{ message.link }}" {% endif %}>
             <i class="fa"></i>
             <div class="media-body">
                 <h6 class="alert-heading">
                     {{ message.creationDate }}
-                    {% if not message.read %}
+                    {% if not message.isRead %}
                         <i class="fa fa-asterisk text-danger"></i>
                     {% endif %}
                 </h6>
@@ -31,49 +123,8 @@
                     {{ message.sender.name }} heeft het spel {{ message.game.name }} op {{ message.game.date }} geannuleerd.
                 {% endif %}
             </div>
-        </div>
-    {% endfor %}
+        </div> -->
 {% else %}
-    <p>Geen berichten.</p>
+    <p>Je hebt momenteel geen berichten.</p>
 {% endif %}
-{% endblock %}
-
-{% block additional-body %}
-<script>
-$(".media.alert").each(function() {
-    var category = $(this).attr("data-category");
-    // Set a message's color and icon based on its category.
-    switch (category) {
-        case "requestReceived":
-            $(this).addClass("alert-secondary");
-            $(this).find("> i.fa").addClass("fa-question");
-            break;
-        case "requestApproved":
-            $(this).addClass("alert-success");
-            $(this).find("> i.fa").addClass("fa-check");
-            break;
-        case "hostChangedAddress":
-            $(this).addClass("alert-warning");
-            $(this).find("> i.fa").addClass("fa-map-marker");
-            break;
-        case "hostChangedDate":
-            $(this).addClass("alert-warning");
-            $(this).find("> i.fa").addClass("fa-calendar");
-            break;
-        case "hostCancelledRequest":
-        case "playerCancelledRequest":
-        case "hostCancelledGame":
-            $(this).addClass("alert-danger");
-            $(this).find("> i.fa").addClass("fa-times");
-            break;
-    }
-});
-// Add links to messages if they have a data-link attribute.
-$(".media.alert").on("click", function() {
-    var link = $(this).attr("data-link");
-    if (link) {
-        window.location = link;
-    }
-});
-</script>
 {% endblock %}

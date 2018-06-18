@@ -1,4 +1,4 @@
-{% extends "nl_BE/base.stencil" %}
+{% extends "base.stencil" %}
 
 {% if type == "create" %}
     {% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
@@ -22,22 +22,22 @@
     <form method="post" action="/web/host-game">
 {% else %}
     <h2>Spel aanpassen</h2>
-    <form method="post" action="/web/game/{{ id }}">
+    <form method="post" action="/web/game/{{ id }}/edit">
         <input name="type" type="hidden" value="{{ type }}">
 {% endif %}
 {% if type == "create" %}
     <h3>Spel</h3>
-    <input name="id" type="hidden" value="{{ game.id }}">
+    <input name="game" type="hidden" value="{{ game }}">
     <div class="form-group">
         <label>Naam</label>
-        {% if game.nameOptions %}
+        {% if nameOptions|count > 1 %}
             <select class="form-control custom-select" name="name">
-                {% for name in game.nameOptions %}
+                {% for name in nameOptions %}
                     <option value="{{ name }}">{{ name }}</option>
                 {% endfor %}
             </select>
         {% else %}
-            <input class="form-control" name="name" type="text" value="{{ game.name }}" readonly>
+            <input class="form-control" name="name" type="text" value="{{ nameOptions|first }}" readonly>
         {% endif %}
     </div>
 {% endif %}
@@ -45,10 +45,10 @@
     <!-- For "edit-players", the correct default values will be set in code. -->
     <div class="form-group">
         <label>Aantal spelers</label>
-        {% if game.playerCountOptions|count > 1 %}
+        {% if playerCountOptions|count > 1 %}
             <select id="playerCount" class="form-control custom-select" name="playerCount">
-                {% for playerCount in game.playerCountOptions %}
-                    {% if playerCount == game.playerCountOptions|max %}
+                {% for playerCount in playerCountOptions %}
+                    {% if playerCount == playerCountOptions|max %}
                         <option value="{{ playerCount }}" selected>{{ playerCount }}</option>
                     {% else %}
                         <option value="{{ playerCount }}">{{ playerCount }}</option>
@@ -56,7 +56,7 @@
                 {% endfor %}
             </select>
         {% else %}
-            <input class="form-control" name="playerCount" type="text" value="{{ game.playerCountOptions|first }}" readonly>
+            <input class="form-control" name="playerCount" type="text" value="{{ playerCountOptions|first }}" readonly>
         {% endif %}
         <p class="form-text text-muted">
             Dit is het totaal aantal spelers, organisatoren meegerekend.
@@ -64,14 +64,14 @@
     </div>
     <div class="form-group">
         <label>Minimum aantal spelers</label>
-        {% if game.playerCountOptions|count > 1 %}
+        {% if playerCountOptions|count > 1 %}
             <select id="minPlayerCount" class="form-control custom-select" name="minPlayerCount">
-                {% for playerCount in game.playerCountOptions %}
+                {% for playerCount in playerCountOptions %}
                     <option value="{{ playerCount }}">{{ playerCount }}</option>
                 {% endfor %}
             </select>
         {% else %}
-            <input class="form-control" name="minPlayerCount" type="text" value="{{ game.playerCountOptions|first }}" readonly>
+            <input class="form-control" name="minPlayerCount" type="text" value="{{ playerCountOptions|first }}" readonly>
         {% endif %}        
         <p class="form-text text-muted">
             Het minimum aantal spelers dat nodig is om het spel te laten doorgaan.
@@ -134,19 +134,19 @@
     <div class="form-group">
         <label>Deadline voor inschrijving</label>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="deadline" value="one hour" checked>
+            <input class="form-check-input" type="radio" name="deadlineType" value="one hour" checked>
             <label class="form-check-label">een uur op voorhand</label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="deadline" value="one day">
+            <input class="form-check-input" type="radio" name="deadlineType" value="one day">
             <label class="form-check-label">een dag op voorhand</label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="deadline" value="two days">
+            <input class="form-check-input" type="radio" name="deadlineType" value="two days">
             <label class="form-check-label">twee dagen op voorhand</label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="deadline" value="one week">
+            <input class="form-check-input" type="radio" name="deadlineType" value="one week">
             <label class="form-check-label">een week op voorhand</label>
         </div>
         <p class="form-text text-muted">
@@ -167,12 +167,12 @@
     <p>
         Deze adresgegevens worden getoond aan de spelers wiens aanvraag jij hebt goedkeurd.
     </p>
-    {% if global.coordinates.actual %}
+    {% if base.user.location %}
         <div class="form-group">
             <div class="form-check">
                 <input id="use-saved-location" class="form-check-input" type="checkbox" checked>
                 <label class="form-check-label">
-                    Gebruik mijn opgeslagen adres: {{ location.address }}.
+                    Gebruik mijn opgeslagen adres: {{ base.user.location.address }}.
                 </label>
             </div>
         </div>
@@ -279,8 +279,8 @@
 {% endif %}
 {% if type == "edit-players" %}
     // Set the correct default values when editing a game.
-    $("#playerCount").val("{{ game.playerCount }}");
-    $("#minPlayerCount").val("{{ game.minPlayerCount }}");
+    $("#playerCount").val("{{ playerCount }}");
+    $("#minPlayerCount").val("{{ minPlayerCount }}");
     $("#prereservedSeats").val("{{ prereservedSeats }}");
     checkPlayerCounts();
 {% endif %}
@@ -291,19 +291,19 @@
     function loadMap() {
         map = new google.maps.Map(document.getElementById("map"), {
             center: {
-                lat: {{ global.coordinates.latitude }},
-                lng: {{ global.coordinates.longitude }}
+                lat: {{ base.coordinates.latitude }},
+                lng: {{ base.coordinates.longitude }}
             },
             zoom: 15
         });
     }
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ global.googleAPIKey }}&libraries=places&callback=loadMap"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ base.google.key }}&libraries=places&callback=loadMap"></script>
     <script>
     // Set up the autocomplete address field.
     var autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocomplete"), {
         componentRestrictions: {
-            country: {{ global.countries }}
+            country: {{ base.google.countries }}
         }
     });
     // Adjust the map and set a marker when the user enters an address.
@@ -341,31 +341,51 @@
         map.setCenter(coordinates);
         $("#submit").removeAttr("disabled");
     });
-    // Toggle the address picker.
-    $("#use-saved-location").on("change", function() {
-        if (!this.checked) {
-            clearLocation();
-            $("#address-picker").show();
-            // These next two statements make sure the map renders properly.
-            // The map won't render properly when the address picker is hidden.
-            google.maps.event.trigger(map, "resize");
-            map.setCenter({
-                lat: {{ global.coordinates.latitude }},
-                lng: {{ global.coordinates.longitude }}
-            });
-            $("#submit").attr("disabled", "disabled");
-        } else {
-            setSavedLocation();
-            $("#address-picker").hide();
-            $("#submit").removeAttr("disabled");
+    {% if base.user.location %}
+        function setSavedLocation() {
+            $("#autocomplete").val("{{ base.user.location.address }}");
+            $("#address").val("{{ base.user.location.address }}");
+            $("#city").val("{{ base.user.location.city }}");
+            $("#country").val("{{ base.user.location.country }}");
+            $("#latitude").val("{{ base.user.location.coordinates.latitude }}");
+            $("#longitude").val("{{ base.user.location.coordinates.longitude }}");
+            var coordinates = {
+                lat: {{ base.user.location.coordinates.latitude }},
+                lng: {{ base.user.location.coordinates.longitude }}
+            };
+            if (!marker) {
+                marker = new google.maps.Marker({
+                    position: coordinates,
+                    map: map
+                });
+            } else {
+                marker.setPosition(coordinates);
+            }
+            map.setCenter(coordinates);
         }
-    });
-    {% if global.coordinates.actual %}
+        // Toggle the address picker.
+        $("#use-saved-location").on("change", function() {
+            if (!this.checked) {
+                clearLocation();
+                $("#address-picker").show();
+                // These next two statements make sure the map renders properly.
+                // The map won't render properly when the address picker is hidden.
+                google.maps.event.trigger(map, "resize");
+                map.setCenter({
+                    lat: {{ base.user.location.coordinates.latitude }},
+                    lng: {{ base.user.location.coordinates.longitude }}
+                });
+                $("#submit").attr("disabled", "disabled");
+            } else {
+                setSavedLocation();
+                $("#address-picker").hide();
+                $("#submit").removeAttr("disabled");
+            }
+        });
         setSavedLocation();
         $("#address-picker").hide();
         $("#submit").removeAttr("disabled");
     {% endif %}
-    // Helper functions.
     function clearLocation() {
         $("#autocomplete").val("");
         $("#address").val("");
@@ -377,27 +397,6 @@
             marker.setMap(null);
             marker = null;
         }
-    }
-    function setSavedLocation() {
-        $("#autocomplete").val("{{ location.address }}");
-        $("#address").val("{{ location.address }}");
-        $("#city").val("{{ location.city }}");
-        $("#country").val("{{ location.country }}");
-        $("#latitude").val("{{ global.coordinates.latitude }}");
-        $("#longitude").val("{{ global.coordinates.longitude }}");
-        var coordinates = {
-            lat: {{ global.coordinates.latitude }},
-            lng: {{ global.coordinates.longitude }}
-        };
-        if (!marker) {
-            marker = new google.maps.Marker({
-                position: coordinates,
-                map: map
-            });
-        } else {
-            marker.setPosition(coordinates);
-        }
-        map.setCenter(coordinates);
     }
 {% endif %}
 </script>

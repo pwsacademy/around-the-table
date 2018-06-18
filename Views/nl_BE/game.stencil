@@ -1,10 +1,10 @@
-{% extends "nl_BE/base.stencil" %}
+{% extends "base.stencil" %}
 
-{% block title %}{{ block.super }} - {{ data.name }}{% endblock %}
+{% block title %}{{ block.super }} - {{ activity.name }}{% endblock %}
 
 {% block opengraph %}
-<meta property="og:title" content="{{ data.name }}">
-<meta property="og:image" content="{{ data.picture }}">
+<meta property="og:title" content="{{ activity.name }}">
+<meta property="og:image" content="{{ activity.picture }}">
 {% endblock %}
 
 {% block additional-head %}
@@ -25,34 +25,34 @@
 
 {% block content %}
 <!--
-    General game information (visible to everyone).
+    General information (visible to everyone).
 -->
 <div class="d-flex flex-column flex-md-row mb-3">
     <div class="mr-md-3 mb-3 mb-md-0">
-        <a href="https://boardgamegeek.com/boardgame/{{ data.id }}" target="_blank">
-            <img id="image" class="rounded" src="{{ data.picture }}">
+        <a href="https://boardgamegeek.com/boardgame/{{ activity.game }}" target="_blank">
+            <img id="image" class="rounded" src="{{ activity.picture }}">
         </a>
     </div>
     <div>
-        <h2>{{ data.name }}</h2>
-        <p><i class="fa fa-user"></i> {{ data.playerCount }}</p>
-        {% if data.minPlayingTime == data.maxPlayingTime %}
-            <p><i class="fa fa-clock-o"></i> {{ data.minPlayingTime }}</p>
+        <h2>{{ activity.name }}</h2>
+        <p><i class="fa fa-user"></i> {{ activity.playerCount.upperBound }}</p>
+        {% if activity.playingTime.lowerBound == activity.playingTime.upperBound %}
+            <p><i class="fa fa-clock-o"></i> {{ activity.playingTime.lowerBound }}</p>
         {% else %}
-            <p><i class="fa fa-clock-o"></i> {{ data.minPlayingTime }} - {{ data.maxPlayingTime }}</p>
+            <p><i class="fa fa-clock-o"></i> {{ activity.playingTime.lowerBound }} - {{ activity.playingTime.upperBound }}</p>
         {% endif %}
-        <p><i class="fa fa-calendar"></i> {{ date }} om {{ time }}</p>
+        <p><i class="fa fa-calendar"></i> {{ activity.date }} om {{ activity.time }}</p>
         <p>
             <i class="fa fa-map-marker"></i>
             {% if userIsPlayer or userIsHost %}
                 <!-- The href will be set in code -->
-                <a id="address" class="d-none d-md-inline" href="#" target="_blank">{{ location.address }}</a>
-                <span class="d-md-none">{{ location.address }}</span>
+                <a id="address" class="d-none d-md-inline" href="#" target="_blank">{{ activity.location.address }}</a>
+                <span class="d-md-none">{{ activity.location.address }}</span>
             {% else %}
-                {{ location.city }}
+                {{ activity.location.city }}
             {% endif %}
-            {% if not userIsHost and global.coordinates.actual %}
-                ({{ location.distance }}km)
+            {% if not userIsHost and base.user.location %}
+                ({{ activity.distance }}km)
             {% endif %}
         </p>
         {% if userIsPlayer or userIsHost %}
@@ -60,54 +60,54 @@
         {% endif %}
     </div>
 </div>
-{% if info %}
+{% if activity.info %}
     <h2>Extra informatie</h2>
-    <p>{{ info }}</p>
+    <p>{{ activity.info }}</p>
 {% endif %}
 <!--
     Host and player information, shown to visitors and players.
-    Also shown when the game is cancelled or over.
+    Also shown when the activity is cancelled or over.
 -->
-{% if not userIsHost or isCancelled or isOver %}
+{% if not userIsHost or activity.isCancelled or activity.isOver %}
     <h2>Spelers</h2>
     <p>
-        <img class="avatar rounded-circle mr-2" src="{{ host.picture }}">
-        <a href="https://facebook.com/{{ host.id }}" target="_blank">{{ host.name }}</a>
-        {% if prereservedSeats == 0 %}
+        <img class="avatar rounded-circle mr-2" src="{{ activity.host.picture }}">
+        {{ activity.host.name }}
+        {% if activity.prereservedSeats == 0 %}
             (neemt zelf niet deel)
-        {% elif prereservedSeats == 2 %}
+        {% elif activity.prereservedSeats == 2 %}
             en 1 extra persoon
-        {% elif prereservedSeats > 2 %}
-            en {{ prereservedSeats|previous }} extra personen
+        {% elif activity.prereservedSeats > 2 %}
+            en {{ activity.prereservedSeats|previous }} extra personen
         {% endif %}
         <i class="fa fa-home"></i>
     </p>
-    {% for request in approvedRequests %}
-        <!-- Players can cancel their own requests -->
-        {% if not isCancelled and not isOver and global.user and global.user.id == request.player.id %}
-            <form method="post" action="/web/request/{{ request.id }}" style="float: right">
-                <input type="hidden" name="cancelled" value="on">
+    {% for registration in approvedRegistrations %}
+        <!-- Players can cancel their own registration -->
+        {% if not activity.isCancelled and not activity.isOver and base.user and base.user.id == registration.player.id %}
+            <form method="post" action="/web/game/{{ activity.id }}/registrations/{{ registration.player.id }}" style="float: right">
+                <input type="hidden" name="cancelled" value="true">
                 <button class="btn btn-danger responsive" type="submit">
                     <i class="fa fa-times"></i><span class="d-none d-md-inline"> Annuleren</span>
                 </button>
             </form>
         {% endif %}
         <p>
-            <img class="avatar rounded-circle mr-2" src="{{ request.player.picture }}">
-            <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a>
-            {% if request.seats == 2 %}
+            <img class="avatar rounded-circle mr-2" src="{{ registration.player.picture }}">
+            {{ registration.player.name }}</a>
+            {% if registration.seats == 2 %}
                 en 1 extra speler
-            {% elif request.seats > 2 %}
-                en {{ request.seats|previous }} extra spelers
+            {% elif registration.seats > 2 %}
+                en {{ registration.seats|previous }} extra spelers
             {% endif %}
         </p>
     {% endfor %}
 {% endif %}
-{% if isCancelled %}
+{% if activity.isCancelled %}
     <div class="alert alert-danger">
         Dit spel is geannuleerd.
     </div>
-{% elif isOver %}
+{% elif activity.isOver %}
     <div class="alert alert-warning">
         Dit spel is afgelopen.
     </div>
@@ -115,52 +115,51 @@
     Request seats (for visitors and players).
 -->
 {% elif not userIsHost %}
-    {% if not minPlayerCountIsReached %}
-        {% if data.minPlayerCount == 1 %}
+    {% if not activity.requiredPlayerCountReached %}
+        {% if activity.playerCount.lowerBound == 1 %}
             <p>Dit spel gaat door vanaf 1 speler.</p>
         {% else %}
-            <p>Dit spel gaat door vanaf {{ data.minPlayerCount }} spelers.</p>
+            <p>Dit spel gaat door vanaf {{ activity.playerCount.lowerBound }} spelers.</p>
         {% endif %}
     {% endif %}
-    {% if availableSeats < 1 %}
+    {% if activity.availableSeats < 1 %}
         <p>Dit spel is <strong>volzet</strong>.</p>
-    {% elif availableSeats == 1 %}
+    {% elif activity.availableSeats == 1 %}
         <p>Er is nog 1 plaats beschikbaar.</p>
     {% else %}
-        <p>Er zijn nog {{ availableSeats }} plaatsen beschikbaar.</p>
+        <p>Er zijn nog {{ activity.availableSeats }} plaatsen beschikbaar.</p>
     {% endif %}
-    {% if global.user %}
-        {% if userHasRequested and not userIsPlayer %}
+    {% if base.user %}
+        {% if userIsPending %}
             <p><i class="fa fa-hourglass-o fa-lg"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
-        {% elif not deadlineHasPassed and not userIsPlayer %}
-            <form class="form-inline mb-3" method="post" action="/web/requests">
-                <input name="game" type="hidden" value="{{ id }}">
+        {% elif not activity.deadlineHasPassed and not userIsPlayer %}
+            <form class="form-inline mb-3" method="post" action="/web/game/{{ activity.id }}/registrations">
                 <select id="seats" class="custom-select mr-3" name="seats" style="width: auto">
-                    {% for seat in seatOptions %}
+                    {% for seat in activity.seatOptions %}
                         <option value="{{ seat }}">{{ seat }}</option>
                     {% endfor %}
                 </select>
                 <span id="seatsText" class="mr-3">plaats</span>
-                {% if availableSeats < 1 %}
+                {% if activity.availableSeats < 1 %}
                     <button class="btn btn-warning" type="submit">aanvragen</button>
                 {% else %}
                     <button class="btn btn-primary" type="submit">aanvragen</button>
                 {% endif %}
             </form>
-            {% if availableSeats < 1 %}
+            {% if activity.availableSeats < 1 %}
                 <div class="alert alert-warning">
                     <strong>Opgelet:</strong> Dit spel is reeds volzet. Je kan nog plaatsen aanvragen en bent dan beschikbaar als reservespeler.
                 </div>
             {% endif %}
         {% endif %}
     {% endif %}
-    {% if deadlineHasPassed %}
+    {% if activity.deadlineHasPassed %}
         <p>Inschrijven voor dit spel is niet meer mogelijk.</p>
-    {% elif global.user %}
-        <p>Inschrijven is mogelijk tot {{ deadlineDate }} om {{ deadlineTime }}.</p>
+    {% elif base.user %}
+        <p>Inschrijven is mogelijk tot {{ activity.deadlineDate }} om {{ activity.deadlineTime }}.</p>
     {% else %} 
         <div class="alert alert-warning">
-            Om in te schrijven moet je eerst <a class="alert-link" href="/authentication/welcome?redirect=%2Fweb%2Fgame%2F{{ id }}">aanmelden</a>.
+            Om in te schrijven moet je eerst <a class="alert-link" href="/authentication/welcome?redirect=%2Fweb%2Fgame%2F{{ activity.id }}">aanmelden</a>.
         </div>
     {% endif %}
 <!--
@@ -169,21 +168,21 @@
 {% else %}
     <h2>Aanvragen</h2>
     <h4 class="mb-3">Goedgekeurd</h4>
-    {% if approvedRequests %}
-        {% for request in approvedRequests %}
-            <form method="post" action="/web/request/{{ request.id }}" style="float: right">
-                <input name="cancelled" type="hidden" value="on">
+    {% if approvedRegistrations %}
+        {% for registration in approvedRegistrations %}
+            <form method="post" action="/web/game/{{ activity.id }}/registrations/{{ registration.player.id }}" style="float: right">
+                <input name="cancelled" type="hidden" value="true">
                 <button class="btn btn-danger responsive" type="submit">
                     <i class="fa fa-times"></i><span class="d-none d-md-inline"> Annuleren</span>
                 </button>
             </form>
             <p>
-                <img class="avatar rounded-circle mr-2" src="{{ request.player.picture }}">
-                <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a>
-                {% if request.seats == 2 %}
+                <img class="avatar rounded-circle mr-2" src="{{ registration.player.picture }}">
+                {{ registration.player.name }}
+                {% if registration.seats == 2 %}
                     en 1 extra speler
-                {% elif request.seats > 2 %}
-                    en {{ request.seats|previous }} extra spelers
+                {% elif registration.seats > 2 %}
+                    en {{ registration.seats|previous }} extra spelers
                 {% endif %}
             </p>
         {% endfor %}
@@ -191,11 +190,11 @@
         <p>Je hebt nog geen aanvragen goedgekeurd.</p>
     {% endif %}
     <h4 class="mb-3">Ontvangen</h4>
-    {% if requests %}
-        {% for request in requests %}
-            <form method="post" action="/web/request/{{ request.id }}" style="float: right">
-                <input name="approved" type="hidden" value="on">
-                {% if request.willCauseOverbooking %}
+    {% if pendingRegistrations %}
+        {% for registration in pendingRegistrations %}
+            <form method="post" action="/web/game/{{ activity.id }}/registrations/{{ registration.player.id }}" style="float: right">
+                <input name="approved" type="hidden" value="true">
+                {% if registration.willCauseOverbooking %}
                     <button class="btn btn-warning" type="submit">
                         <i class="fa fa-check"></i><span class="d-none d-md-inline"> Goedkeuren</span>
                     </button>
@@ -206,15 +205,15 @@
                 {% endif %}
             </form>
             <p>
-                <img class="avatar rounded-circle mr-2" src="{{ request.player.picture }}">
-                <a href="https://facebook.com/{{ request.player.id }}" target="_blank">{{ request.player.name }}</a>
-                {% if request.seats == 2 %}
+                <img class="avatar rounded-circle mr-2" src="{{ registration.player.picture }}">
+                {{ registration.player.name }}
+                {% if registration.seats == 2 %}
                     en 1 extra speler
-                {% elif request.seats > 2 %}
-                    en {{ request.seats|previous }} extra spelers
+                {% elif registration.seats > 2 %}
+                    en {{ registration.seats|previous }} extra spelers
                 {% endif %}
             </p>
-            {% if request.willCauseOverbooking %}
+            {% if registration.willCauseOverbooking %}
                 <div class="alert alert-warning">
                     <strong>Opgelet:</strong> Deze aanvraag goedkeuren leidt tot overboeking!
                 </div>
@@ -224,33 +223,33 @@
         <p>Je hebt geen openstaande aanvragen.</p>
     {% endif %}
     <!-- Some more general information -->
-    {% if not minPlayerCountIsReached %}
-        {% if data.minPlayerCount == 1 %}
+    {% if not activity.requiredPlayerCountReached %}
+        {% if activity.playerCount.lowerBound == 1 %}
             <p>Dit spel gaat door vanaf 1 speler.</p>
         {% else %}
-            <p>Dit spel gaat door vanaf {{ data.minPlayerCount }} spelers.</p>
+            <p>Dit spel gaat door vanaf {{ activity.playerCount.lowerBound }} spelers.</p>
         {% endif %}
     {% endif %}
-    {% if availableSeats < 1 %}
+    {% if activity.availableSeats < 1 %}
         <p>Dit spel is <strong>volzet</strong>.</p>
-    {% elif availableSeats == 1 %}
+    {% elif activity.availableSeats == 1 %}
         <p>Er is nog 1 plaats beschikbaar.</p>
     {% else %}
-        <p>Er zijn nog {{ availableSeats }} plaatsen beschikbaar.</p>
+        <p>Er zijn nog {{ activity.availableSeats }} plaatsen beschikbaar.</p>
     {% endif %}
-    {% if deadlineHasPassed %}
+    {% if activity.deadlineHasPassed %}
         <p>Inschrijven voor dit spel is niet meer mogelijk.</p>
     {% else %}
-        <p>Inschrijven is mogelijk tot {{ deadlineDate }} om {{ deadlineTime }}.</p>
+        <p>Inschrijven is mogelijk tot {{ activity.deadlineDate }} om {{ activity.deadlineTime }}.</p>
     {% endif %}
     <!-- Administration tasks -->
     <h2>Beheer</h2>
-    <p><a href="/web/game/{{ id }}/edit?type=players">Spelersaantal en reservaties aanpassen</a></p>
-    <p><a href="/web/game/{{ id }}/edit?type=datetime">Datum en tijdstip aanpassen</a></p>
-    <p><a href="/web/game/{{ id }}/edit?type=deadline">Deadline aanpassen</a></p>
-    <p><a href="/web/game/{{ id }}/edit?type=address">Adres aanpassen</a></p>
-    <p><a href="/web/game/{{ id }}/edit?type=info">Extra informatie aanpassen</a></p>
-    <form method="post" action="/web/game/{{ id }}">
+    <p><a href="/web/game/{{ activity.id }}/edit?type=players">Spelersaantal en reservaties aanpassen</a></p>
+    <p><a href="/web/game/{{ activity.id }}/edit?type=datetime">Datum en tijdstip aanpassen</a></p>
+    <p><a href="/web/game/{{ activity.id }}/edit?type=deadline">Deadline aanpassen</a></p>
+    <p><a href="/web/game/{{ activity.id }}/edit?type=address">Adres aanpassen</a></p>
+    <p><a href="/web/game/{{ activity.id }}/edit?type=info">Extra informatie aanpassen</a></p>
+    <form method="post" action="/web/game/{{ activity.id }}/edit">
         <input type="hidden" name="type" value="cancel">
         <button class="btn btn-danger" type="submit">
             <i class="fa fa-times"></i> Spel annuleren</span>
@@ -283,12 +282,12 @@ $("#seats").on("change", function() {
     }
 });
 // Add the href attribute to the address link.
-var googleMapsLink = "https://maps.google.com/?q=" + encodeURIComponent("{{ location.address }}");
+var googleMapsLink = "https://maps.google.com/?q=" + encodeURIComponent("{{ activity.location.address }}");
 $("#address").attr("href", googleMapsLink);
 // Set up the map.
 var coordinates = {
-    lat: {{ location.latitude }},
-    lng: {{ location.longitude }}
+    lat: {{ activity.location.coordinates.latitude }},
+    lng: {{ activity.location.coordinates.longitude }}
 };
 function loadMap() {
     if (document.getElementById("map")) {
@@ -303,5 +302,5 @@ function loadMap() {
     }
 }
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ global.googleAPIKey }}&callback=loadMap"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ base.google.key }}&callback=loadMap"></script>
 {% endblock %}

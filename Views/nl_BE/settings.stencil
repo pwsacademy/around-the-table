@@ -1,4 +1,4 @@
-{% extends "nl_BE/base.stencil" %}
+{% extends "base.stencil" %}
 
 {% block title %}{{ block.super }} - Instellingen{% endblock %}
 {% block additional-head %}
@@ -18,8 +18,8 @@
 {% endif %}
 <h2>Instellingen</h2>
 <p>
-    <img class="avatar rounded-circle mr-2" src="{{ global.user.picture }}">
-    {{ global.user.name }}
+    <img class="avatar rounded-circle mr-2" src="{{ base.user.picture }}">
+    {{ base.user.name }}
 </p>
 <p class="text-muted">
     Je gebruikersnaam en profielfoto worden opgehaald bij Facebook tijdens het aanmelden.
@@ -70,19 +70,19 @@ var map;
 function loadMap() {
     map = new google.maps.Map(document.getElementById("map"), {
         center: {
-            lat: {{ global.coordinates.latitude }},
-            lng: {{ global.coordinates.longitude }}
+            lat: {{ base.coordinates.latitude }},
+            lng: {{ base.coordinates.longitude }}
         },
         zoom: 15
     });
 }
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ global.googleAPIKey }}&libraries=places&callback=loadMap"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ base.google.key }}&libraries=places&callback=loadMap"></script>
 <script>
 // Set up the autocomplete address field.
 var autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocomplete"), {
     componentRestrictions: {
-        country: {{ global.countries }}
+        country: {{ base.google.countries }}
     }
 });
 // Adjust the map and set a marker when the user enters an address.
@@ -131,14 +131,14 @@ function clearLocation() {
         marker = null;
     }
 }
-{% if global.coordinates.actual %}
+{% if base.user.location %}
     // If the user already had a location set, prefill the fields and add a marker.
-    $("#autocomplete").val("{{ address }}");
-    $("#address").val("{{ address }}");
-    $("#city").val("{{ city }}");
-    $("#country").val("{{ country }}");
-    $("#latitude").val("{{ global.coordinates.latitude }}");
-    $("#longitude").val("{{ global.coordinates.longitude }}");
+    $("#autocomplete").val("{{ base.user.location.address }}");
+    $("#address").val("{{ base.user.location.address }}");
+    $("#city").val("{{ base.user.location.city }}");
+    $("#country").val("{{ base.user.location.country }}");
+    $("#latitude").val("{{ base.user.location.coordinates.latitude }}");
+    $("#longitude").val("{{ base.user.location.coordinates.longitude }}");
     marker = new google.maps.Marker({
         position: map.center,
         map: map

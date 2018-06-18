@@ -8,12 +8,12 @@
     <meta name="description" content="Rond De Tafel brengt mensen en spellen samen. Vind spellen, zoek medespelers en maak nieuwe vrienden.">
     <meta property="og:site_name" content="Rond De Tafel">
     <meta property="og:type" content="website">
-    <meta property="fb:app_id" content="{{ global.facebook.appID }}">
+    <meta property="fb:app_id" content="{{ base.facebook.app }}">
     <meta property="og:description" content="Rond De Tafel brengt mensen en spellen samen. Vind spellen, zoek medespelers en maak nieuwe vrienden.">
-    <meta property="og:url" content="{{ global.opengraph.url }}">
+    <meta property="og:url" content="{{ base.opengraph.url }}">
     {% block opengraph %}
-        <meta property="og:title" content="Rond De Tafel">   
-        <meta property="og:image" content="{{ global.opengraph.image }}">
+        <meta property="og:title" content="Rond De tafel">   
+        <meta property="og:image" content="{{ base.opengraph.image }}">
     {% endblock %}
     <link href="/public/img/favicon.png" rel="icon" type="image/png">
     <link href="/public/css/bootstrap.min.css" rel="stylesheet">
@@ -28,6 +28,10 @@
         img.avatar {
             width: 40px;
             height: 40px;
+        }
+        img.avatar-large {
+            width: 75px;
+            height: 75px;
         }
         .card {
             width: 100%;
@@ -58,12 +62,6 @@
         button > i.fa, .input-group-text > i.fa {
             margin-right: 0;
         }
-        /* Message icons */
-        div.media.alert > i.fa {
-            font-size: 2.5rem;
-            width: 42px;
-            margin-right: 1rem;
-        }
         .fa-facebook-official {
             color: #29487d;
         }
@@ -85,15 +83,15 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/web/host">Organiseer</a>
                 </li>
-                {% if global.user %}
+                {% if base.user %}
                     <li class="nav-item">
                         <a class="nav-link" href="/web/my-games">Mijn spellen</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/web/messages">
                             Berichten
-                            {% if global.user.unreadMessageCount > 0 %}
-                                ({{ global.user.unreadMessageCount }})
+                            {% if base.unreadMessageCount > 0 %}
+                                ({{ base.unreadMessageCount }})
                             {% endif %}
                         </a>
                     </li>
@@ -127,8 +125,8 @@
             </li>
         </ul>
         <ul class="navbar-nav">
-            {% if global.user %}
-                {% if global.user.unreadMessageCount > 0 %}
+            {% if base.user %}
+                {% if base.unreadMessageCount > 0 %}
                     <li class="nav-item">
                         <a class="nav-link" href="/web/messages">
                             <i class="fa fa-envelope"></i>
@@ -137,7 +135,7 @@
                 {% endif %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
-                        {{ global.user.name }}
+                        {{ base.user.name }}
                     </a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="/web/my-games">Mijn spellen</a>

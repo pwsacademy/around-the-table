@@ -1,7 +1,6 @@
 .build/*
 AroundTheTable.xcodeproj/
 
-Configuration/secrets.json
 Configuration/CAFile
 
 .DS_Store

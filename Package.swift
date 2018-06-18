@@ -5,21 +5,30 @@ let package = Package(
     name: "AroundTheTable",
     dependencies: [
         .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", .upToNextMinor(from: "1.7.0")),
-        .package(url: "https://github.com/IBM-Swift/Kitura.git", .upToNextMinor(from: "2.2.0")),
-        .package(url: "https://github.com/IBM-Swift/Kitura-CredentialsFacebook.git", .upToNextMinor(from: "2.1.0")),
-        .package(url: "https://github.com/IBM-Swift/Kitura-Session.git", .upToNextMinor(from: "3.0.0")),
-        .package(url: "https://github.com/IBM-Swift/Kitura-StencilTemplateEngine.git", .upToNextMinor(from: "1.8.0")),
+        .package(url: "https://github.com/IBM-Swift/Kitura.git", .upToNextMinor(from: "2.4.0")),
+        .package(url: "https://github.com/IBM-Swift/Kitura-CredentialsFacebook.git", .upToNextMinor(from: "2.2.0")),
+        .package(url: "https://github.com/IBM-Swift/Kitura-Session.git", .upToNextMinor(from: "3.2.0")),
+        .package(url: "https://github.com/IBM-Swift/Kitura-StencilTemplateEngine.git", .upToNextMinor(from: "1.10.0")),
         .package(url: "https://github.com/IBM-Swift/Swift-cfenv.git", .upToNextMinor(from: "6.0.0")),
         .package(url: "https://github.com/OpenKitten/MongoKitten.git", .upToNextMinor(from: "4.1.0")),
+        .package(url: "https://github.com/IBM-Swift/SwiftyRequest.git", .upToNextMinor(from: "1.1.0")),
     ],
     targets: [
-        .target(name: "Server", dependencies: [
+        .target(name: "Main", dependencies: [
+            "AroundTheTable"
+        ]),
+        .target(name: "AroundTheTable", dependencies: [
             "HeliumLogger",
             "Kitura",
             "CredentialsFacebook",
+            "KituraSession",
             "KituraStencil",
             "CloudFoundryEnv",
             "MongoKitten",
+            "SwiftyRequest"
+        ]),
+        .testTarget(name: "AroundTheTableTests", dependencies: [
+            "AroundTheTable"
         ])
     ]
 )

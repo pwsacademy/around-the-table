@@ -1,22 +1,26 @@
 {
-    "countries": ["be", "nl"],
-    "customDomainName": "www.rond-de-tafel.be",
-    "database": {
-        "bluemixService": "MongoDB",
-        "localURI": "mongodb://localhost:27017",
-        "name": "aroundthetable",
-        "test": "aroundthetable-test"
+  "ATT": {
+    "COUNTRIES": ["be", "nl"],
+    "DATABASE": {
+        "URI": "mongodb://localhost:27017/",
+        "NAME": "aroundthetable"
     },
-    "defaultCoordinates": {
-        "latitude": 51.047546,
-        "longitude": 3.753204
+    "DEFAULT_COORDINATES": {
+        "LATITUDE": 51.047546,
+        "LONGITUDE": 3.753204
     },
-    "defaultGamePicture": "/public/img/game-placeholder.png",
-    "defaultGameThumbnail": "/public/img/game-placeholder-t.png",
-    "defaultProfilePicture": "/public/img/user-placeholder.png",
-    "facebook": {
-        "appID": "1154313148030114"
+    "DEFAULT_GAME_PICTURE": "/public/img/game-placeholder.png",
+    "DEFAULT_GAME_THUMBNAIL": "/public/img/game-placeholder-t.png",
+    "DEFAULT_PROFILE_PICTURE": "/public/img/user-placeholder.png",
+    "ENABLE_DUMMIES": "false",
+    "FACEBOOK": {
+        "APP": "1154313148030114"
     },
-    "locale": "nl_BE",
-    "timeZone": "Europe/Brussels"
+    "LOCALE": "nl_BE",
+    "SECRETS": {
+        "GOOGLE": "AIzaSyBviCALpxxUTx920-IGXf05gIjBASQtceM",
+        "SESSION": "supersecret"
+    },
+    "TIME_ZONE": "Europe/Brussels"
+  }
 }

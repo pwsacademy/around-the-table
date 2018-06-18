@@ -1,4 +1,4 @@
-{% extends "nl_BE/base.stencil" %}
+{% extends "base.stencil" %}
 
 {% block title %}
 {% if type == "newest-games" %}
@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-{% if global.user %}
+{% if base.user %}
     <div class="alert alert-info">
         Spellen die je zelf organiseert worden niet getoond op deze pagina.
         Deze spellen zijn te vinden in je persoonlijk menu, onder <a class="alert-link" href="/web/my-games">Mijn spellen</a>.
@@ -24,30 +24,39 @@
 {% elif type == "games-near-me" %}
     <h2>In mijn buurt</h2>
 {% endif %}
-{% if games %}
+{% if type == "games-near-me" and not base.user.location %}
+    <div class="alert alert-warning">
+        {% if base.user %}
+            Om deze pagina te bekijken moet je een adres ingeven bij <a class="alert-link" href="/web/settings">Instellingen</a>.
+        {% else %}
+            Om deze pagina te bekijken moet je eerst <a class="alert-link" href="/authentication/welcome?redirect=%2Fweb%2Fgames">aanmelden</a>.
+            Daarna kan je een adres ingeven bij <a class="alert-link" href="/web/settings">Instellingen</a>.
+        {% endif %}
+    </div>
+{% elif activities %}
     <div class="row">
-        {% for game in games %}
+        {% for activity in activities %}
             <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
-                <div {% if game.seats < 1 %} class="red card" {% elif game.seats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>
-                    <a href="/web/game/{{ game.id }}">
-                        <img class="card-img-top" src="{{ game.data.picture }}">
+                <div {% if activity.availableSeats < 1 %} class="red card" {% elif activity.availableSeats == 1 %} class="yellow card" {% else %} class="green card" {% endif %}>
+                    <a href="/web/game/{{ activity.id }}">
+                        <img class="card-img-top" src="{{ activity.picture }}">
                     </a>
                     <div class="card-body">
-                        <h5 class="card-title">{{ game.data.name }}</h5>
+                        <h5 class="card-title">{{ activity.name }}</h5>
                         <p class="card-subtitle text-muted mb-2">
-                            <i class="fa fa-calendar"></i> {{ game.date }}
+                            <i class="fa fa-calendar"></i> {{ activity.date }}
                         </p>
                         <p class="card-text">
-                            Bij {{ game.host }}.
+                            Bij {{ activity.host.name }}.
                         </p>
                     </div>
                     <div class="card-footer text-muted">
-                        {% if global.coordinates.actual %}
+                        {% if base.user.location %}
                             <span class="float-right">
-                                {{ game.distance }}km
+                                {{ activity.distance }}km
                             </span>
                         {% endif %}
-                        <i class="fa fa-map-marker"></i> {{ game.city }}
+                        <i class="fa fa-map-marker"></i> {{ activity.location.city }}
                     </div>
                 </div>
             </div>
