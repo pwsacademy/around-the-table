@@ -174,12 +174,11 @@ extension Persistence {
                         "messages.direction": "outgoing"
                     ]
                 ]
-            ] as Query),
-            .count(insertedAtKey: "unreadMessageCount")
+            ] as Query)
         ])
-        guard let result = results.next(),
-              let count = Int(result["unreadMessageCount"]) else {
-            return 0
+        var count = 0
+        while results.next() != nil {
+            count += 1
         }
         return count
     }
