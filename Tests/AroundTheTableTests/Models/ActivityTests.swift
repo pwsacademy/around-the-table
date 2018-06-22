@@ -31,14 +31,19 @@ class ActivityTests: XCTestCase {
     private let id = try! ObjectId("594d5bef819a5360829a5360")
     private let host = User(id: "1", name: "Host")
     private let player = User(id: "2", name: "Player")
-    private let game = Game(id: 1, name: "Game", names: ["Game"],
-                            yearPublished: 2000,
-                            playerCount: 2...4,
-                            playingTime: 60...90,
-                            picture: nil, thumbnail: nil)
+    private let picture = URL(string: "https://cf.geekdo-images.com/original/img/ME73s_0dstlA4qLpLEBvPyvq8gE=/0x0/pic3090929.jpg")!
+    private let thumbnail = URL(string: "https://cf.geekdo-images.com/thumb/img/7X5vG9KruQ9CmSMVZ3rmiSSqTCM=/fit-in/200x150/pic3090929.jpg")!
     private let now = Date()
     private let location = Location(coordinates: Coordinates(latitude: 50, longitude: 2),
                                     address: "Street 1", city: "City", country: "Country")
+    
+    private var game: Game {
+        return Game(id: 1, name: "Game", names: ["Game"],
+                    yearPublished: 2000,
+                    playerCount: 2...4,
+                    playingTime: 60...90,
+                    picture: picture, thumbnail: thumbnail)
+    }
     
     func testInitializationValues() {
         let activity = Activity(host: host,
@@ -48,6 +53,8 @@ class ActivityTests: XCTestCase {
                                 location: location,
                                 info: "Info")
         XCTAssertNil(activity.distance)
+        XCTAssert(activity.picture == picture)
+        XCTAssert(activity.thumbnail == thumbnail)
         XCTAssertFalse(activity.isCancelled)
         XCTAssert(activity.registrations.isEmpty)
     }
@@ -87,6 +94,8 @@ class ActivityTests: XCTestCase {
             "deadline": now,
             "location": location,
             "info": "Info",
+            "picture": picture,
+            "thumbnail": thumbnail,
             "isCancelled": false,
             "registrations": [ registration ]
         ]
@@ -134,6 +143,8 @@ class ActivityTests: XCTestCase {
             "location": location,
             "distance": 5,
             "info": "Info",
+            "picture": picture,
+            "thumbnail": thumbnail,
             "isCancelled": false,
             "registrations": [
                 [
@@ -160,6 +171,8 @@ class ActivityTests: XCTestCase {
         XCTAssert(result.location == location)
         XCTAssert(result.distance == 5)
         XCTAssert(result.info == "Info")
+        XCTAssert(result.picture == picture)
+        XCTAssert(result.thumbnail == thumbnail)
         XCTAssertFalse(result.isCancelled)
         XCTAssert(result.registrations.count == 1)
         assertDatesEqual(result.registrations[0].creationDate, now)

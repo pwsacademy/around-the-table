@@ -47,7 +47,7 @@ struct ConversationsViewModel: Codable {
             }
             activity = id.hexString
             title = conversation.topic.name
-            picture = conversation.topic.game?.thumbnail?.absoluteString ?? Settings.defaultGameThumbnail
+            picture = conversation.topic.thumbnail?.absoluteString ?? Settings.defaultGameThumbnail
             if user == conversation.sender {
                 userIsSender = true
                 other = UserViewModel(conversation.recipient)

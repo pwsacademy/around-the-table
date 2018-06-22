@@ -52,6 +52,14 @@ final class Activity {
     /// Additional information about the activity.
     var info: String
     
+    /// An image for the activity.
+    /// If this is `nil`, a default image will be used.
+    var picture: URL?
+    
+    /// A thumbnail version of the activity's image.
+    /// If this is `nil`, a default image will be used.
+    var thumbnail: URL?
+    
     /// Whether the host has cancelled the activity.
     var isCancelled: Bool
     
@@ -136,6 +144,9 @@ final class Activity {
     /**
      Initializes an `Activity`.
      
+     If `picture` is `nil` and a headlining game is set, that game's image will be used.
+     `thumbnail` will be set accordingly.
+     
      `id` will be set when the activity is persisted.
      `creationDate` is set to the current date and time.
      `distance` is set to `nil`.
@@ -144,7 +155,8 @@ final class Activity {
      */
     init(host: User, name: String, game: Game?,
          playerCount: CountableClosedRange<Int>, prereservedSeats: Int,
-         date: Date, deadline: Date, location: Location, info: String) {
+         date: Date, deadline: Date, location: Location, info: String,
+         picture: URL? = nil, thumbnail: URL? = nil) {
         creationDate = Date()
         self.host = host
         self.name = name
@@ -156,6 +168,8 @@ final class Activity {
         self.location = location
         distance = nil
         self.info = info
+        self.picture = picture ?? game?.picture
+        self.thumbnail = thumbnail ?? game?.thumbnail
         isCancelled = false
         registrations = []
     }
@@ -167,7 +181,7 @@ final class Activity {
                  host: User, name: String, game: Game?,
                  playerCount: CountableClosedRange<Int>, prereservedSeats: Int,
                  date: Date, deadline: Date, location: Location, distance: Double?, info: String,
-                 isCancelled: Bool, registrations: [Registration]) {
+                 picture: URL?, thumbnail: URL?, isCancelled: Bool, registrations: [Registration]) {
         self.id = id
         self.creationDate = creationDate
         self.host = host
@@ -180,6 +194,8 @@ final class Activity {
         self.location = location
         self.distance = distance
         self.info = info
+        self.picture = picture
+        self.thumbnail = thumbnail
         self.isCancelled = isCancelled
         self.registrations = registrations
     }
@@ -294,6 +310,12 @@ extension Activity: Primitive {
         if let game = game {
             document["game"] = game.id // Normalized.
         }
+        if let picture = picture {
+            document["picture"] = picture
+        }
+        if let thumbnail = thumbnail {
+            document["thumbnail"] = thumbnail
+        }
         return document
     }
     
@@ -354,6 +376,8 @@ extension Activity: Primitive {
         }
         let game = try Game(bson["game"])
         let distance = Double(bson["distance"])
+        let picture = try URL(bson["picture"])
+        let thumbnail = try URL(bson["thumbnail"])
         self.init(id: id,
                   creationDate: creationDate,
                   host: host,
@@ -366,6 +390,8 @@ extension Activity: Primitive {
                   location: location,
                   distance: distance,
                   info: info,
+                  picture: picture,
+                  thumbnail: thumbnail,
                   isCancelled: isCancelled,
                   registrations: registrations)
     }

@@ -44,7 +44,7 @@ struct ActivitiesPageViewModel: Codable {
             self.id = id.hexString
             self.host = UserViewModel(activity.host)
             self.name = activity.name
-            self.picture = activity.game?.picture?.absoluteString ?? Settings.defaultGamePicture
+            self.picture = activity.picture?.absoluteString ?? Settings.defaultGamePicture
             self.availableSeats = activity.availableSeats
             self.date = activity.date.formatted(dateStyle: .full)
             self.location = activity.location
