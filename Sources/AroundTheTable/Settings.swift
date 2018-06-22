@@ -21,9 +21,6 @@ enum Settings {
         .load(file: "Configuration/settings.json", relativeFrom: .project)
         .load(.environmentVariables)
     
-    /// The countries to which you want to limit Google Maps address autocompletion results.
-    static let countries = settings["ATT:COUNTRIES"] as! [String]
-    
     /// Configures a custom domain name.
     /// If a custom domain name is configured, the app will forward all requests to this custom domain.
     /// This forwarding is necessary as the app uses session cookies, which are attached to a particular domain.
@@ -82,37 +79,39 @@ enum Settings {
     static let areDummiesEnabled = (settings["ATT:ENABLE_DUMMIES"] as? String) == "true"
     
     /**
-     Settings related to Facebook.
+     Settings related to Facebook Web Login.
      */
     enum facebook {
         
         /// The Facebook app ID.
-        /// This is used for Facebook Web Login.
         static let app = settings["ATT:FACEBOOK:APP"] as! String
-    }
-    
-    /// The locale used to localize anything that needs it (e.g. views, messages, dates, ...).
-    static let locale = settings["ATT:LOCALE"] as! String
-    
-    /**
-     API keys and other tokens that should be kept secret.
-     For some of these secrets, a default value is provided in **settings.json**.
-     In production code, you should always override these using environment variables!
-     */
-    enum secrets {
         
         /// The Facebook app secret.
-        /// This is used for Facebook Web Login.
-        static let facebook = settings["ATT:SECRETS:FACEBOOK"] as! String
+        /// This should be provided by an environment variable.
+        static let secret = settings["ATT:FACEBOOK:SECRET"] as! String
+    }
+    
+    /**
+     Settings related to Google.
+     */
+    enum google {
+        
+        /// The countries to which you want to limit Google Maps address autocompletion results.
+        static let countries = settings["ATT:GOOGLE:COUNTRIES"] as! [String]
         
         /// The Google Maps API key.
         /// Note that this isn't really a secret, as it is visible in the source code.
         /// Hence, it should be limited to your domain so it can't be misused.
-        static let google = settings["ATT:SECRETS:GOOGLE"] as! String
-        
-        /// The key used to encrypt the session cookie.
-        static let session = settings["ATT:SECRETS:SESSION"] as! String
+        /// A default value is provided in **settings.json** for use during development.
+        static let secret = settings["ATT:GOOGLE:SECRET"] as! String
     }
+    
+    /// The locale used to localize anything that needs it (e.g. views, messages, dates, ...).
+    static let locale = settings["ATT:LOCALE"] as! String
+        
+    /// The key used to encrypt the session cookie.
+    /// A default value is provided in **settings.json** for use during development.
+    static let sessionSecret = settings["ATT:SESSION_SECRET"] as! String
     
     /// The time zone used to display dates.
     static let timeZone = TimeZone(identifier: settings["ATT:TIME_ZONE"] as! String) ?? TimeZone.current

@@ -1,6 +1,5 @@
 {
   "ATT": {
-    "COUNTRIES": ["be", "nl"],
     "DATABASE": {
         "URI": "mongodb://localhost:27017/",
         "NAME": "aroundthetable"
@@ -16,11 +15,12 @@
     "FACEBOOK": {
         "APP": "1154313148030114"
     },
-    "LOCALE": "nl_BE",
-    "SECRETS": {
-        "GOOGLE": "AIzaSyBviCALpxxUTx920-IGXf05gIjBASQtceM",
-        "SESSION": "supersecret"
+    "GOOGLE": {
+        "COUNTRIES": ["be", "nl"],
+        "SECRET": "AIzaSyBviCALpxxUTx920-IGXf05gIjBASQtceM"
     },
+    "LOCALE": "nl_BE",
+    "SESSION_SECRET": "supersecret",
     "TIME_ZONE": "Europe/Brussels"
   }
 }

@@ -52,7 +52,7 @@ public class Routes {
         router.all("/public", middleware: StaticFileServer())
         
         // Creates a session and credentials middleware.
-        let session = Session(secret: Settings.secrets.session, cookie: [.maxAge(14 * 24 * 3600.0)])
+        let session = Session(secret: Settings.sessionSecret, cookie: [.maxAge(14 * 24 * 3600.0)])
         let credentials = makeCredentials()
         
         // Authentication routes.
@@ -90,7 +90,7 @@ public class Routes {
     private func makeCredentials() -> Credentials {
         let credentials = Credentials()
         let facebook = CredentialsFacebook(clientId: Settings.facebook.app,
-                                           clientSecret: Settings.secrets.facebook,
+                                           clientSecret: Settings.facebook.secret,
                                            callbackUrl: "\(Settings.url)/authentication/signin/callback",
                                            options: ["fields": "name,picture.type(large)", "scope": ["public_profile"]])
         credentials.register(plugin: facebook)

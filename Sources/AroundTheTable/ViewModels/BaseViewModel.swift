@@ -63,8 +63,8 @@ struct BaseViewModel: Codable {
         self.facebook = Facebook(app: Settings.facebook.app)
         self.opengraph = OpenGraph(url: requestURL, image: "\(Settings.url)/public/img/opengraph.jpg")
         coordinates = .default
-        google = Google(key: Settings.secrets.google,
+        google = Google(key: Settings.google.secret,
                         // Builds a JSON array
-                        countries: "[\(Settings.countries.map { "\"\($0)\"" }.joined(separator: ", "))]")
+                        countries: "[\(Settings.google.countries.map { "\"\($0)\"" }.joined(separator: ", "))]")
     }
 }
