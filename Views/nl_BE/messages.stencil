@@ -27,7 +27,7 @@
                             <img class="avatar rounded-circle mr-3" src="{{ conversation.other.picture }}">
                             <div class="media-body">
                                 <h6 class="text-muted">
-                                    {{ message.timestamp }}
+                                    {{ message.date }} om {{ message.time }}
                                     {% if not message.isRead %}
                                         <i class="fa fa-asterisk text-danger"></i>
                                     {% endif %}
@@ -38,7 +38,7 @@
                             <img class="avatar rounded-circle mr-3" src="{{ base.user.picture }}">
                             <div class="media-body">
                                 <h6 class="text-muted">
-                                    {{ message.timestamp }}
+                                    {{ message.date }} om {{ message.time }}
                                 </h6>
                                 {{ message.text }}
                             </div>
@@ -67,7 +67,7 @@
                     <img class="avatar rounded-circle mr-3" src="{{ conversation.other.picture }}">
                     <div class="media-body">
                         <h6 class="text-muted">
-                            {{ message.timestamp }}
+                            {{ message.date }} om {{ message.time }}
                             {% if not message.isRead %}
                                 <i class="fa fa-asterisk text-danger"></i>
                             {% endif %}
@@ -78,7 +78,7 @@
                     <img class="avatar rounded-circle mr-3" src="{{ base.user.picture }}">
                     <div class="media-body">
                         <h6 class="text-muted">
-                            {{ message.timestamp }}
+                            {{ message.date }} om {{ message.time }}
                         </h6>
                         {{ message.text }}
                     </div>

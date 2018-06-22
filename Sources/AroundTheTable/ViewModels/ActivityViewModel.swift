@@ -64,10 +64,10 @@ struct ActivityViewModel: Codable {
             self.availableSeats = activity.availableSeats
             self.requiredPlayerCountReached = playerCount.upperBound - availableSeats >= playerCount.lowerBound
             self.seatOptions = availableSeats > 0 ? Array(1...availableSeats) : Array(1...playerCount.upperBound)
-            self.date = activity.date.formatted(dateStyle: .full)
+            self.date = activity.date.formatted(format: "EEEE d MMMM")
             self.time = activity.date.formatted(timeStyle: .short)
             self.isOver = activity.date.compare(Date()) == .orderedAscending
-            self.deadlineDate = activity.deadline.formatted(dateStyle: .full)
+            self.deadlineDate = activity.deadline.formatted(format: "EEEE d MMMM")
             self.deadlineTime = activity.deadline.formatted(timeStyle: .short)
             self.deadlineHasPassed = activity.deadline.compare(Date()) == .orderedAscending
             self.location = activity.location

@@ -27,13 +27,15 @@ struct ConversationsViewModel: Codable {
         struct MessageViewModel: Codable {
             
             let direction: String
-            let timestamp: String
+            let date: String
+            let time: String
             let text: String
             let isRead: Bool
             
             init(_ message: Conversation.Message) {
                 self.direction = message.direction.rawValue
-                self.timestamp = message.timestamp.formatted(dateStyle: .full, timeStyle: .short)
+                self.date = message.timestamp.formatted(format: "EEEE d MMMM")
+                self.time = message.timestamp.formatted(timeStyle: .short)
                 self.text = message.text
                 self.isRead = message.isRead
             }

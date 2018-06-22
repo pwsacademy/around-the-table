@@ -46,7 +46,7 @@ struct ActivitiesPageViewModel: Codable {
             self.name = activity.name
             self.picture = activity.picture?.absoluteString ?? Settings.defaultGamePicture
             self.availableSeats = activity.availableSeats
-            self.date = activity.date.formatted(dateStyle: .full)
+            self.date = activity.date.formatted(format: "EEEE d MMMM")
             self.location = activity.location
             self.distance = Int(ceil(distance / 1000)) // in km
         }
