@@ -63,10 +63,16 @@ extension Routes {
         if let user = try persistence.user(withID: profile.id) {
             // Update the user's data.
             user.name = profile.displayName
-            let picture = profile.photos?.first?.value
-            user.picture = picture != nil ? URL(string: picture!) : nil
+            var pictureChanged = false
+            if let picture = profile.photos?.first?.value {
+                user.picture = URL(string: picture)
+                pictureChanged = true
+            }
             user.lastSignIn = Date()
             try persistence.update(user)
+            if pictureChanged {
+                storePicture(for: user)
+            }
             // Skip the sign-up page because the user has already signed up.
             if let returnAddress = session["originalReturnTo"] as? String, !returnAddress.contains("authentication") {
                 session.remove(key: "originalReturnTo")
@@ -96,17 +102,41 @@ extension Routes {
         guard let profile = request.userProfile else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        let picture = profile.photos?.first?.value
-        let user = User(id: profile.id,
-                        name: profile.displayName,
-                        picture: picture != nil ? URL(string: picture!) : nil)
+        let user = User(id: profile.id, name: profile.displayName)
+        if let picture = profile.photos?.first?.value {
+            user.picture = URL(string: picture)
+        }
         try persistence.add(user)
+        if user.picture != nil {
+            storePicture(for: user)
+        }
         // Redirect the user back to where he/she was (or to the home page).
         if let returnAddress = session["originalReturnTo"] as? String, !returnAddress.contains("authentication") {
             session.remove(key: "originalReturnTo")
             try response.redirect(returnAddress)
         } else {
             try response.redirect("/web/home")
+        }
+    }
+    
+    /**
+     Stores a user's profile picture in cloud object storage and updates the link.
+     Does nothing if cloud object storage is not configured.
+     */
+    private func storePicture(for user: User) {
+        guard let url = user.picture,
+              CloudObjectStorage.isConfigured else {
+            return
+        }
+        let cos = CloudObjectStorage()
+        let object = "user/\(user.id).jpg"
+        cos.storeImage(at: url, as: object) {
+            user.picture = URL(string: "\(Settings.cloudObjectStorage.bucketURL!)/\(object)")
+            do {
+                try self.persistence.update(user)
+            } catch {
+                Log.warning("COS warning: failed to persist user \(user.id) after update.")
+            }
         }
     }
     

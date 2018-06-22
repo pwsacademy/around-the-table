@@ -1,5 +1,8 @@
 {
   "ATT": {
+    "COS": {
+        "BUCKET_URL": "https://s3.eu-geo.objectstorage.softlayer.net/aroundthetable"
+    },
     "DATABASE": {
         "URI": "mongodb://localhost:27017/",
         "NAME": "aroundthetable"

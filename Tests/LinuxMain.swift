@@ -24,5 +24,7 @@ XCTMain([
     testCase(AuthenticationMiddlewareTests.allTests),
     testCase(ForwardingMiddlewareTests.allTests),
     // Routes
-    testCase(RoutesTests.allTests)
+    testCase(RoutesTests.allTests),
+    // Services
+    testCase(CloudObjectStorageTests.allTests)
 ])

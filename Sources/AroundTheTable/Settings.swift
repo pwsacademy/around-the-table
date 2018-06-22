@@ -39,6 +39,20 @@ enum Settings {
     }()
     
     /**
+     Settings related to Cloud Object Storage.
+     */
+    enum cloudObjectStorage {
+        
+        /// The API key that should be used to request an OAuth token.
+        /// This setting is optional and should be provided by an environment variable.
+        /// If no API key is provided, cloud object storage will not be used.
+        static let apiKey = settings["ATT:COS:API_KEY"] as? String
+        
+        /// The complete URL of the bucket where the images should be stored.
+        static let bucketURL = settings["ATT:COS:BUCKET_URL"] as? String
+    }
+    
+    /**
      Database configuration.
      */
     enum database {
