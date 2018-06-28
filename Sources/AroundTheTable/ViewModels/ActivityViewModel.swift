@@ -13,8 +13,11 @@ struct ActivityViewModel: Codable {
         let name: String
         let picture: String
         
-        init(_ user: User) {
-            self.id = user.id
+        init(_ user: User) throws {
+            guard let id = user.id else {
+                throw log(ServerError.unpersistedEntity)
+            }
+            self.id = id.hexString
             self.name = user.name
             self.picture = user.picture?.absoluteString ?? Settings.defaultProfilePicture
         }
@@ -54,7 +57,7 @@ struct ActivityViewModel: Codable {
                 throw log(ServerError.unpersistedEntity)
             }
             self.id = id.hexString
-            self.host = UserViewModel(activity.host)
+            self.host = try UserViewModel(activity.host)
             self.name = activity.name
             self.picture = activity.picture?.absoluteString ?? Settings.defaultGamePicture
             self.game = activity.game?.id
@@ -86,7 +89,7 @@ struct ActivityViewModel: Codable {
         let willCauseOverBooking: Bool
         
         init(_ registration: Activity.Registration, for activity: Activity) throws {
-            self.player = UserViewModel(registration.player)
+            self.player = try UserViewModel(registration.player)
             self.seats = registration.seats
             self.willCauseOverBooking = registration.seats > activity.availableSeats
         }

@@ -62,7 +62,7 @@ extension Persistence {
                 throw log(BSONError.missingField(name: "registrations"))
             }
             for (index, registration) in registrations.enumerated() {
-                guard let id = String(registration["player"]),
+                guard let id = ObjectId(registration["player"]),
                       let player = try user(withID: id) else {
                     throw log(BSONError.missingField(name: "player"))
                 }
@@ -95,7 +95,10 @@ extension Persistence {
      */
     func numberOfActivities(notHostedBy host: User? = nil) throws -> Int {
         if let host = host {
-            return try activities.count(["host": ["$ne": host.id], "deadline": ["$gt": Date()], "isCancelled": false])
+            guard let id = host.id else {
+                throw log(ServerError.unpersistedEntity)
+            }
+            return try activities.count(["host": ["$ne": id], "deadline": ["$gt": Date()], "isCancelled": false])
         } else {
             return try activities.count(["deadline": ["$gt": Date()], "isCancelled": false])
         }
@@ -114,7 +117,10 @@ extension Persistence {
                           startingFrom start: Int, limitedTo limit: Int) throws -> [Activity] {
         let query: Query
         if let host = host {
-            query = ["host": ["$ne": host.id], "deadline": ["$gt": Date()], "isCancelled": false]
+            guard let id = host.id else {
+                throw log(ServerError.unpersistedEntity)
+            }
+            query = ["host": ["$ne": id], "deadline": ["$gt": Date()], "isCancelled": false]
         } else {
             query = ["deadline": ["$gt": Date()], "isCancelled": false]
         }
@@ -137,7 +143,10 @@ extension Persistence {
                             startingFrom start: Int, limitedTo limit: Int) throws -> [Activity] {
         let query: Query
         if let host = host {
-            query = ["host": ["$ne": host.id], "deadline": ["$gt": Date()], "isCancelled": false]
+            guard let id = host.id else {
+                throw log(ServerError.unpersistedEntity)
+            }
+            query = ["host": ["$ne": id], "deadline": ["$gt": Date()], "isCancelled": false]
         } else {
             query = ["deadline": ["$gt": Date()], "isCancelled": false]
         }
@@ -158,10 +167,13 @@ extension Persistence {
      - Throws: ServerError.invalidState if the given user doesn't have a saved location.
      */
     func activitiesNear(user: User, startingFrom start: Int, limitedTo limit: Int) throws -> [Activity] {
+        guard let id = user.id else {
+            throw log(ServerError.unpersistedEntity)
+        }
         guard let coordinates = user.location?.coordinates else {
             throw log(ServerError.invalidState)
         }
-        return try activities(matching: ["host": ["$ne": user.id], "deadline": ["$gt": Date()], "isCancelled": false],
+        return try activities(matching: ["host": ["$ne": id], "deadline": ["$gt": Date()], "isCancelled": false],
                               measuredFrom: coordinates,
                               sortedBy: ["distance": .ascending, "date": .ascending],
                               startingFrom: start, limitedTo: limit)
@@ -174,8 +186,11 @@ extension Persistence {
      Results are sorted by date in ascending order.
      */
     func activities(hostedBy host: User) throws -> [Activity] {
+        guard let id = host.id else {
+            throw log(ServerError.unpersistedEntity)
+        }
         let yesterday = Calendar(identifier: .gregorian).date(byAdding: .day, value: -1, to: Date())!
-        return try activities(matching: ["host": host.id, "date": ["$gt": yesterday], "isCancelled": false],
+        return try activities(matching: ["host": id, "date": ["$gt": yesterday], "isCancelled": false],
                               measuredFrom: .default,
                               sortedBy: ["date": .ascending],
                               startingFrom: 0,
@@ -189,8 +204,11 @@ extension Persistence {
      Results are sorted by date in ascending order.
      */
     func activities(joinedBy player: User) throws -> [Activity] {
+        guard let id = player.id else {
+            throw log(ServerError.unpersistedEntity)
+        }
         let yesterday = Calendar(identifier: .gregorian).date(byAdding: .day, value: -1, to: Date())!
-        return try activities(matching: ["registrations": ["$elemMatch": ["player": player.id,
+        return try activities(matching: ["registrations": ["$elemMatch": ["player": id,
                                                                           "isApproved": true,
                                                                           "isCancelled": false]],
                                          "date": ["$gt": yesterday],

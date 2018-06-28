@@ -19,7 +19,12 @@ class ActivityRegistrationTests: XCTestCase {
     }
     
     private let now = Date()
-    private let player = User(id: "1", name: "Player")
+    
+    private var player: User {
+        let user = User(facebookID: "1", name: "Player")
+        user.id = ObjectId("594d5ccd819a5360859a5360")!
+        return user
+    }
     
     func testInitializationValues() {
         let registration = Activity.Registration(player: player, seats: 1)

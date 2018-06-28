@@ -11,21 +11,23 @@ class UserTests: XCTestCase {
             ("testDecode", testDecode),
             ("testDecodeNotADocument", testDecodeNotADocument),
             ("testDecodeMissingID", testDecodeMissingID),
+            ("testDecodeMissingFacebookID", testDecodeMissingFacebookID),
             ("testDecodeMissingName", testDecodeMissingName),
             ("testDecodeMissingLastSignIn", testDecodeMissingLastSignIn)
         ]
     }
     
+    private let id = ObjectId("594d5ccd819a5360859a5360")!
     private let url = URL(string: "http://github.com/")!
     private let location = Location(coordinates: Coordinates(latitude: 50, longitude: 2),
                                     address: "Street 1", city: "City", country: "Country")
     private let now = Date()
     
     func testEncode() {
-        let input = User(id: "123", name: "User", picture: url, location: location)
+        let input = User(facebookID: "123", name: "User", picture: url, location: location)
         input.lastSignIn = now
         let expected: Document = [
-            "_id": "123",
+            "facebookID": "123",
             "name": "User",
             "picture": url,
             "location": location,
@@ -36,10 +38,10 @@ class UserTests: XCTestCase {
     }
     
     func testEncodeSkipsNilValues() {
-        let input = User(id: "123", name: "User")
+        let input = User(facebookID: "123", name: "User")
         input.lastSignIn = now
         let expected: Document = [
-            "_id": "123",
+            "facebookID": "123",
             "name": "User",
             "lastSignIn": now
         ]
@@ -49,7 +51,8 @@ class UserTests: XCTestCase {
     
     func testDecode() throws {
         let input: Document = [
-            "_id": "123",
+            "_id": id,
+            "facebookID": "123",
             "name": "User",
             "picture": url,
             "location": location,
@@ -58,7 +61,8 @@ class UserTests: XCTestCase {
         guard let result = try User(input) else {
             return XCTFail()
         }
-        XCTAssert(result.id == "123")
+        XCTAssert(result.id == id)
+        XCTAssert(result.facebookID == "123")
         XCTAssert(result.name == "User")
         XCTAssert(result.picture == url)
         XCTAssert(result.location == location)
@@ -73,6 +77,16 @@ class UserTests: XCTestCase {
     
     func testDecodeMissingID() {
         let input: Document = [
+            "facebookID": "123",
+            "name": "User",
+            "lastSignIn": now
+        ]
+        XCTAssertThrowsError(try User(input))
+    }
+    
+    func testDecodeMissingFacebookID() {
+        let input: Document = [
+            "_id": "123",
             "name": "User",
             "lastSignIn": now
         ]
@@ -82,6 +96,7 @@ class UserTests: XCTestCase {
     func testDecodeMissingName() {
         let input: Document = [
             "_id": "123",
+            "facebookID": "123",
             "lastSignIn": now
         ]
         XCTAssertThrowsError(try User(input))
@@ -90,6 +105,7 @@ class UserTests: XCTestCase {
     func testDecodeMissingLastSignIn() {
         let input: Document = [
             "_id": "123",
+            "facebookID": "123",
             "name": "User"
         ]
         XCTAssertThrowsError(try User(input))

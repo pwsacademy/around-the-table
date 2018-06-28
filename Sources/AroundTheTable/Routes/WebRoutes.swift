@@ -75,8 +75,8 @@ extension Routes {
      */
     private func activities(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
         let user: User?
-        if let userID = request.userProfile?.id {
-            guard let existingUser = try persistence.user(withID: userID) else {
+        if let id = request.userProfile?.id {
+            guard let existingUser = try persistence.user(withFacebookID: id) else {
                 throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
             }
             user = existingUser
@@ -105,8 +105,8 @@ extension Routes {
             return next()
         }
         let user: User?
-        if let userID = request.userProfile?.id {
-            guard let existingUser = try persistence.user(withID: userID) else {
+        if let id = request.userProfile?.id {
+            guard let existingUser = try persistence.user(withFacebookID: id) else {
                 throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
             }
             user = existingUser
@@ -139,8 +139,8 @@ extension Routes {
             return next()
         }
         let user: User?
-        if let userID = request.userProfile?.id {
-            guard let existingUser = try persistence.user(withID: userID) else {
+        if let id = request.userProfile?.id {
+            guard let existingUser = try persistence.user(withFacebookID: id) else {
                 throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
             }
             user = existingUser
@@ -173,8 +173,8 @@ extension Routes {
             return next()
         }
         let base = try baseViewModel(for: request)
-        guard let userID = request.userProfile?.id,
-              let user = try persistence.user(withID: userID),
+        guard let id = request.userProfile?.id,
+              let user = try persistence.user(withFacebookID: id),
               user.location != nil else {
             try response.render("games-page", with: ActivitiesPageViewModel(base: base,
                                                                             type: .nearMe,
@@ -246,7 +246,7 @@ extension Routes {
         guard let userID = request.userProfile?.id else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard try persistence.user(withID: userID) != nil else {
+        guard try persistence.user(withFacebookID: userID) != nil else {
             throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let idString = request.queryParameters["id"], let id = Int(idString) else {
@@ -277,7 +277,7 @@ extension Routes {
         guard let userID = request.userProfile?.id else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let user = try persistence.user(withID: userID) else {
+        guard let user = try persistence.user(withFacebookID: userID) else {
             throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let form = try? request.read(as: ActivityForm.self), form.isValid else {
@@ -360,8 +360,8 @@ extension Routes {
      */
     private func activity(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
         let user: User?
-        if let userID = request.userProfile?.id {
-            guard let existingUser = try persistence.user(withID: userID) else {
+        if let id = request.userProfile?.id {
+            guard let existingUser = try persistence.user(withFacebookID: id) else {
                 throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
             }
             user = existingUser
@@ -388,7 +388,7 @@ extension Routes {
         guard let userID = request.userProfile?.id else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let user = try persistence.user(withID: userID) else {
+        guard let user = try persistence.user(withFacebookID: userID) else {
             throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let id = request.parameters["id"],
@@ -412,7 +412,7 @@ extension Routes {
         guard let userID = request.userProfile?.id else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let user = try persistence.user(withID: userID) else {
+        guard let user = try persistence.user(withFacebookID: userID) else {
             throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let id = request.parameters["id"],
@@ -517,7 +517,7 @@ extension Routes {
         guard let userID = request.userProfile?.id else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let user = try persistence.user(withID: userID) else {
+        guard let user = try persistence.user(withFacebookID: userID) else {
             throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let id = request.parameters["id"],
@@ -553,7 +553,7 @@ extension Routes {
         guard let userID = request.userProfile?.id else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let user = try persistence.user(withID: userID) else {
+        guard let user = try persistence.user(withFacebookID: userID) else {
             throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let id = request.parameters["id"],
@@ -565,7 +565,7 @@ extension Routes {
             return next()
         }
         guard let playerID = request.parameters["player"],
-              let player = try persistence.user(withID: playerID) else {
+              let player = try persistence.user(withID: ObjectId(playerID)) else {
             response.status(.badRequest)
             return next()
         }
@@ -624,7 +624,7 @@ extension Routes {
         guard let userID = request.userProfile?.id else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let user = try persistence.user(withID: userID) else {
+        guard let user = try persistence.user(withFacebookID: userID) else {
             throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         let hosted = try persistence.activities(hostedBy: user)
@@ -643,7 +643,7 @@ extension Routes {
         guard let userID = request.userProfile?.id else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let user = try persistence.user(withID: userID) else {
+        guard let user = try persistence.user(withFacebookID: userID) else {
             throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         let conversations = try persistence.conversations(for: user)
@@ -669,7 +669,7 @@ extension Routes {
         guard let userID = request.userProfile?.id else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard try persistence.user(withID: userID) != nil else {
+        guard try persistence.user(withFacebookID: userID) != nil else {
             throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         let base = try baseViewModel(for: request)
@@ -684,7 +684,7 @@ extension Routes {
         guard let userID = request.userProfile?.id else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let user = try persistence.user(withID: userID) else {
+        guard let user = try persistence.user(withFacebookID: userID) else {
             throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let form = try? request.read(as: EditSettingsForm.self) else {

@@ -60,7 +60,7 @@ extension Routes {
         guard let profile = request.userProfile else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        if let user = try persistence.user(withID: profile.id) {
+        if let user = try persistence.user(withFacebookID: profile.id) {
             // Update the user's data.
             user.name = profile.displayName
             var pictureChanged = false
@@ -71,7 +71,7 @@ extension Routes {
             user.lastSignIn = Date()
             try persistence.update(user)
             if pictureChanged {
-                storePicture(for: user)
+                try storePicture(for: user)
             }
             // Skip the sign-up page because the user has already signed up.
             if let returnAddress = session["originalReturnTo"] as? String, !returnAddress.contains("authentication") {
@@ -102,13 +102,13 @@ extension Routes {
         guard let profile = request.userProfile else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        let user = User(id: profile.id, name: profile.displayName)
+        let user = User(facebookID: profile.id, name: profile.displayName)
         if let picture = profile.photos?.first?.value {
             user.picture = URL(string: picture)
         }
         try persistence.add(user)
         if user.picture != nil {
-            storePicture(for: user)
+            try storePicture(for: user)
         }
         // Redirect the user back to where he/she was (or to the home page).
         if let returnAddress = session["originalReturnTo"] as? String, !returnAddress.contains("authentication") {
@@ -123,19 +123,22 @@ extension Routes {
      Stores a user's profile picture in cloud object storage and updates the link.
      Does nothing if cloud object storage is not configured.
      */
-    private func storePicture(for user: User) {
+    private func storePicture(for user: User) throws {
+        guard let id = user.id?.hexString else {
+            throw log(ServerError.unpersistedEntity)
+        }
         guard let url = user.picture,
               CloudObjectStorage.isConfigured else {
             return
         }
         let cos = CloudObjectStorage()
-        let object = "user/\(user.id).jpg"
+        let object = "user/\(id).jpg"
         cos.storeImage(at: url, as: object) {
             user.picture = URL(string: "\(Settings.cloudObjectStorage.bucketURL!)/\(object)")
             do {
                 try self.persistence.update(user)
             } catch {
-                Log.warning("COS warning: failed to persist user \(user.id) after update.")
+                Log.warning("COS warning: failed to persist user \(id) after update.")
             }
         }
     }
@@ -158,7 +161,7 @@ extension Routes {
     }
     
     /**
-     Signs in with a dummy account.
+     Signs in with a dummy Facebook account.
      This should only be enabled in development.
      */
     private func dummy(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
@@ -169,13 +172,13 @@ extension Routes {
         guard let session = request.session else {
             throw log(ServerError.missingMiddleware(type: Session.self))
         }
-        var dummy = try persistence.user(withID: id)
+        var dummy = try persistence.user(withFacebookID: id)
         if dummy == nil {
-            dummy = User(id: id, name: "Dummy \(id)")
+            dummy = User(facebookID: id, name: "Dummy \(id)")
             try persistence.add(dummy!)
         }
         session["userProfile"] = [
-            "id": dummy!.id,
+            "id": dummy!.facebookID,
             "displayName": dummy!.name,
             "provider": "Dummy"
         ]

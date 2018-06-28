@@ -19,11 +19,21 @@ class ConversationTests: XCTestCase {
         ]
     }
     
-    private let id = try! ObjectId("5ac8f06e5027834a5027834a")
-    private let host = User(id: "1", name: "Host")
-    private let player = User(id: "2", name: "Player")
+    private let id = ObjectId("5ac8f06e5027834a5027834a")!
     private let now = Date()
     private let message = Conversation.Message(direction: .outgoing, text: "Hello")
+    
+    private var host: User {
+        let user = User(facebookID: "1", name: "Host")
+        user.id = ObjectId("594d5ccd819a5360859a5360")!
+        return user
+    }
+    
+    private var player: User {
+        let user = User(facebookID: "2", name: "Player")
+        user.id = ObjectId("594d65bd819a5360869a5360")!
+        return user
+    }
     
     private var activity: Activity {
         let activity = Activity(host: host,
@@ -33,7 +43,7 @@ class ConversationTests: XCTestCase {
                                 location: Location(coordinates: Coordinates(latitude: 50, longitude: 2),
                                                    address: "Street 1", city: "City", country: "Country"),
                                 info: "")
-        activity.id = try! ObjectId("594d5bef819a5360829a5360")
+        activity.id = ObjectId("594d5bef819a5360829a5360")!
         return activity
     }
     

@@ -26,8 +26,8 @@ class ConversationRepositoryTests: XCTestCase {
     
     func testAddConversation() throws {
         guard let activity = try persistence.activity(with: ObjectId("5af5abdd0c92b55f601b043f")!, measuredFrom: .default),
-              let alice = try persistence.user(withID: "1"),
-              let charlie = try persistence.user(withID: "3") else {
+              let alice = try persistence.user(withFacebookID: "1"),
+              let charlie = try persistence.user(withFacebookID: "3") else {
             return XCTFail()
         }
         let conversation = Conversation(topic: activity, sender: alice, recipient: charlie)
@@ -42,8 +42,8 @@ class ConversationRepositoryTests: XCTestCase {
     
     func testAddPersistedConversation() throws {
         guard let activity = try persistence.activity(with: ObjectId("5af5abdd0c92b55f601b043f")!, measuredFrom: .default),
-              let bob = try persistence.user(withID: "2"),
-              let charlie = try persistence.user(withID: "3"),
+              let bob = try persistence.user(withFacebookID: "2"),
+              let charlie = try persistence.user(withFacebookID: "3"),
               let conversation = try persistence.conversation(between: bob, charlie, regarding: activity) else {
             return XCTFail()
         }
@@ -52,9 +52,9 @@ class ConversationRepositoryTests: XCTestCase {
     
     func testFindConversation() throws {
         guard let activity = try persistence.activity(with: ObjectId("5af5abdd0c92b55f601b043f")!, measuredFrom: .default),
-              let alice = try persistence.user(withID: "1"),
-              let bob = try persistence.user(withID: "2"),
-              let charlie = try persistence.user(withID: "3") else {
+              let alice = try persistence.user(withFacebookID: "1"),
+              let bob = try persistence.user(withFacebookID: "2"),
+              let charlie = try persistence.user(withFacebookID: "3") else {
             return XCTFail()
         }
         XCTAssertNotNil(try persistence.conversation(between: bob, charlie, regarding: activity))
@@ -63,8 +63,8 @@ class ConversationRepositoryTests: XCTestCase {
     }
     
     func testFindConversationRegardingUnpersistedActivity() throws {
-        guard let alice = try persistence.user(withID: "1"),
-              let bob = try persistence.user(withID: "2"),
+        guard let alice = try persistence.user(withFacebookID: "1"),
+              let bob = try persistence.user(withFacebookID: "2"),
               let location = alice.location else {
             return XCTFail()
         }
@@ -78,8 +78,8 @@ class ConversationRepositoryTests: XCTestCase {
     }
     
     func testConversationsForUser() throws {
-        guard let alice = try persistence.user(withID: "1"),
-              let bob = try persistence.user(withID: "2"),
+        guard let alice = try persistence.user(withFacebookID: "1"),
+              let bob = try persistence.user(withFacebookID: "2"),
               let location = alice.location else {
             return XCTFail()
         }
@@ -113,8 +113,8 @@ class ConversationRepositoryTests: XCTestCase {
     }
     
     func testUnreadMessageCount() throws {
-        guard let alice = try persistence.user(withID: "1"),
-              let bob = try persistence.user(withID: "2"),
+        guard let alice = try persistence.user(withFacebookID: "1"),
+              let bob = try persistence.user(withFacebookID: "2"),
               let location = alice.location else {
             return XCTFail()
         }
@@ -142,7 +142,7 @@ class ConversationRepositoryTests: XCTestCase {
     }
     
     func testUnreadMessageCountZero() throws {
-        guard let charlie = try persistence.user(withID: "3") else {
+        guard let charlie = try persistence.user(withFacebookID: "3") else {
             return XCTFail()
         }
         XCTAssert(try persistence.unreadMessageCount(for: charlie) == 0)
@@ -150,8 +150,8 @@ class ConversationRepositoryTests: XCTestCase {
     
     func testUpdateConversation() throws {
         guard let activity = try persistence.activity(with: ObjectId("5af5abdd0c92b55f601b043f")!, measuredFrom: .default),
-              let bob = try persistence.user(withID: "2"),
-              let charlie = try persistence.user(withID: "3"),
+              let bob = try persistence.user(withFacebookID: "2"),
+              let charlie = try persistence.user(withFacebookID: "3"),
               let conversation = try persistence.conversation(between: bob, charlie, regarding: activity) else {
             return XCTFail()
         }
@@ -165,8 +165,8 @@ class ConversationRepositoryTests: XCTestCase {
     
     func testUpdateUnpersistedConversation() throws {
         guard let activity = try persistence.activity(with: ObjectId("5af5abdd0c92b55f601b043f")!, measuredFrom: .default),
-              let alice = try persistence.user(withID: "1"),
-              let bob = try persistence.user(withID: "2") else {
+              let alice = try persistence.user(withFacebookID: "1"),
+              let bob = try persistence.user(withFacebookID: "2") else {
             return XCTFail()
         }
         let conversation = Conversation(topic: activity, sender: alice, recipient: bob)

@@ -9,8 +9,12 @@ import Foundation
  */
 final class User {
     
+    /// The user's ID will be set when it is persisted.
+    /// Never set this yourself!
+    var id: ObjectId?
+    
     /// The user's Facebook ID.
-    let id: String
+    let facebookID: String
     
     /// The user's display name.
     var name: String
@@ -28,11 +32,11 @@ final class User {
     /**
      Initializes a `User`.
      
-     Only `id` and `name` are required parameters.
+     Only `facebookID` and `name` are required parameters.
      `lastSignIn` is set to the current date and time.
      */
-    init(id: String, name: String, picture: URL? = nil, location: Location? = nil) {
-        self.id = id
+    init(facebookID: String, name: String, picture: URL? = nil, location: Location? = nil) {
+        self.facebookID = facebookID
         self.name = name
         self.picture = picture
         self.location = location
@@ -42,8 +46,9 @@ final class User {
     /**
      Full initializer, only used when decoding from BSON.
      */
-    init(id: String, name: String, picture: URL?, location: Location?, lastSignIn: Date) {
+    init(id: ObjectId, facebookID: String, name: String, picture: URL?, location: Location?, lastSignIn: Date) {
         self.id = id
+        self.facebookID = facebookID
         self.name = name
         self.picture = picture
         self.location = location
@@ -77,10 +82,13 @@ extension User: Primitive {
     /// Optional properties are included only when they are not `nil`.
     var document: Document {
         var document: Document = [
-            "_id": id,
+            "facebookID": facebookID,
             "name": name,
             "lastSignIn": lastSignIn
         ]
+        if let id = id {
+            document["_id"] = id
+        }
         if let picture = picture {
             document["picture"] = picture
         }
@@ -107,8 +115,11 @@ extension User: Primitive {
         guard let bson = bson as? Document else {
             return nil
         }
-        guard let id = String(bson["_id"]) else {
+        guard let id = ObjectId(bson["_id"]) else {
             throw log(BSONError.missingField(name: "_id"))
+        }
+        guard let facebookID = String(bson["facebookID"]) else {
+            throw log(BSONError.missingField(name: "facebookID"))
         }
         guard let name = String(bson["name"]) else {
             throw log(BSONError.missingField(name: "name"))
@@ -119,6 +130,7 @@ extension User: Primitive {
         let picture = try URL(bson["picture"])
         let location = try Location(bson["location"])
         self.init(id: id,
+                  facebookID: facebookID,
                   name: name,
                   picture: picture,
                   location: location,

@@ -14,7 +14,7 @@ struct AuthenticationMiddleware: RouterMiddleware {
         guard let id = request.userProfile?.id else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        if try persistence.user(withID: id) == nil {
+        if try persistence.user(withFacebookID: id) == nil {
             try response.redirect("/authentication/signup")
         } else {
             next()

@@ -29,18 +29,20 @@ extension Persistence {
  
      Returns `nil` if such a conversation doesn't exist.
      
-     - Throws: ServerError.unpersistedEntity if the activity hasn't been persisted yet.
+     - Throws: ServerError.unpersistedEntity if the activity or one of the users hasn't been persisted yet.
      */
     func conversation(between first: User, _ second: User, regarding topic: Activity) throws -> Conversation? {
-        guard let id = topic.id else {
+        guard let id = topic.id,
+              let first = first.id,
+              let second = second.id else {
             throw log(ServerError.unpersistedEntity)
         }
         let results = try conversations.aggregate([
             .match([
                 "topic": id,
                 "$or": [
-                    ["sender": first.id, "recipient": second.id],
-                    ["sender": second.id, "recipient": first.id],
+                    ["sender": first, "recipient": second],
+                    ["sender": second, "recipient": first],
                 ]
             ] as Query),
             .limit(1),
@@ -69,7 +71,7 @@ extension Persistence {
                 throw log(BSONError.missingField(name: "registrations"))
             }
             for (index, registration) in registrations.enumerated() {
-                guard let id = String(registration["player"]),
+                guard let id = ObjectId(registration["player"]),
                       let player = try user(withID: id) else {
                     throw log(BSONError.missingField(name: "player"))
                 }
@@ -86,12 +88,15 @@ extension Persistence {
      Results are sorted by the timestamp of the most recent message in a conversation, in descending order.
      */
     func conversations(for user: User) throws -> [Conversation] {
+        guard let id = user.id else {
+            throw log(ServerError.unpersistedEntity)
+        }
         let yesterday = Calendar(identifier: .gregorian).date(byAdding: .day, value: -1, to: Date())
         let results = try conversations.aggregate([
             .match([
                 "$or": [
-                    ["sender": user.id],
-                    ["recipient": user.id]
+                    ["sender": id],
+                    ["recipient": id]
                 ]
             ] as Query),
             // Denormalize `topic`.
@@ -123,7 +128,7 @@ extension Persistence {
                 throw log(BSONError.missingField(name: "registrations"))
             }
             for (index, registration) in registrations.enumerated() {
-                guard let id = String(registration["player"]),
+                guard let id = ObjectId(registration["player"]),
                       let player = try self.user(withID: id) else {
                     throw log(BSONError.missingField(name: "player"))
                 }
@@ -140,17 +145,20 @@ extension Persistence {
      A conversation is active if it regards an activity that is less than 24 hours in the past.
      */
     func unreadMessageCount(for user: User) throws -> Int {
+        guard let id = user.id else {
+            throw log(ServerError.unpersistedEntity)
+        }
         let yesterday = Calendar(identifier: .gregorian).date(byAdding: .day, value: -1, to: Date())
         let results = try conversations.aggregate([
             // Find all conversations with unread messages for this user.
             .match([
                 "$or": [
                     [
-                        "sender": user.id,
+                        "sender": id,
                         "messages": [ "$elemMatch": ["isRead": false, "direction": "incoming"]]
                     ],
                     [
-                        "recipient": user.id,
+                        "recipient": id,
                         "messages": [ "$elemMatch": ["isRead": false, "direction": "outgoing"]]
                     ]
                 ]
@@ -166,11 +174,11 @@ extension Persistence {
                 "messages.isRead": false,
                 "$or": [
                     [
-                        "sender": user.id,
+                        "sender": id,
                         "messages.direction": "incoming"
                     ],
                     [
-                        "recipient": user.id,
+                        "recipient": id,
                         "messages.direction": "outgoing"
                     ]
                 ]

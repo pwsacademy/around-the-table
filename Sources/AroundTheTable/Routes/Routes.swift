@@ -102,12 +102,12 @@ public class Routes {
      Creates a `BaseViewModel` based on the given request.
      */
     func baseViewModel(for request: RouterRequest) throws -> BaseViewModel {
-        guard let userID = request.userProfile?.id,
-              let user = try persistence.user(withID: userID) else {
-            return BaseViewModel(user: nil, unreadMessageCount: 0, requestURL: request.originalURL)
+        guard let id = request.userProfile?.id,
+              let user = try persistence.user(withFacebookID: id) else {
+            return try BaseViewModel(user: nil, unreadMessageCount: 0, requestURL: request.originalURL)
         }
         let unreadMessageCount = try persistence.unreadMessageCount(for: user)
-        return BaseViewModel(user: user, unreadMessageCount: unreadMessageCount, requestURL: request.originalURL)
+        return try BaseViewModel(user: user, unreadMessageCount: unreadMessageCount, requestURL: request.originalURL)
     }
     
     /**

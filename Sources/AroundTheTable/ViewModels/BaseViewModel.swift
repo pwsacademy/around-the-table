@@ -10,8 +10,11 @@ struct BaseViewModel: Codable {
         let picture: String
         let location: Location?
         
-        init(_ user: User) {
-            self.id = user.id
+        init(_ user: User) throws {
+            guard let id = user.id else {
+                throw log(ServerError.unpersistedEntity)
+            }
+            self.id = id.hexString
             self.name = user.name
             self.picture = user.picture?.absoluteString ?? Settings.defaultProfilePicture
             self.location = user.location
@@ -53,9 +56,9 @@ struct BaseViewModel: Codable {
     /**
      Initializes a `BaseViewModel` using the given user and request URL.
      */
-    init(user: User?, unreadMessageCount: Int, requestURL: String) {
+    init(user: User?, unreadMessageCount: Int, requestURL: String) throws {
         if let user = user {
-            self.user = UserViewModel(user)
+            self.user = try UserViewModel(user)
         } else {
             self.user = nil
         }

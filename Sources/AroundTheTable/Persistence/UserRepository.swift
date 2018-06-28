@@ -1,3 +1,5 @@
+import BSON
+
 /**
  Persistence methods related to users.
  */
@@ -6,13 +8,18 @@ extension Persistence {
     /**
      Adds a new user to the database.
      
-     - Throws: ServerError.persistedEntity if a user with this ID already exists.
+     - Throws: ServerError.persistedEntity if the user already has an ID or a user with this Facebook ID already exists.
+               Use `update(_:)` to update an existing user.
      */
     func add(_ user: User) throws {
-        guard try self.user(withID: user.id) == nil else {
+        guard user.id == nil,
+              try self.user(withFacebookID: user.facebookID) == nil else {
             throw log(ServerError.persistedEntity)
         }
-        try users.insert(user.document)
+        guard let id = try users.insert(user.document) as? ObjectId else {
+            throw log(BSONError.missingField(name: "_id"))
+        }
+        user.id = id
     }
     
     /**
@@ -20,14 +27,29 @@ extension Persistence {
      
      - Returns: A user, or `nil` if there was no user with this ID.
      */
-    func user(withID id: String) throws -> User? {
+    func user(withID id: ObjectId) throws -> User? {
         return try User(users.findOne(["_id": id]))
     }
     
     /**
+     Looks up the user with the given Facebook ID in the database.
+     
+     - Returns: A user, or `nil` if there was no user with this Facebook ID.
+     */
+    func user(withFacebookID id: String) throws -> User? {
+        return try User(users.findOne(["facebookID": id]))
+    }
+    
+    /**
      Updates the given user in the database.
+     
+     - Throws: ServerError.unpersistedEntity if the user hasn't been persisted yet.
+               Use `add(_:)` to add new users to the database.
      */
     func update(_ user: User) throws {
-        try users.update(["_id": user.id], to: user.document)
+        guard let id = user.id else {
+            throw log(ServerError.unpersistedEntity)
+        }
+        try users.update(["_id": id], to: user.document)
     }
 }

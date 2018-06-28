@@ -28,14 +28,24 @@ class ActivityTests: XCTestCase {
         ]
     }
     
-    private let id = try! ObjectId("594d5bef819a5360829a5360")
-    private let host = User(id: "1", name: "Host")
-    private let player = User(id: "2", name: "Player")
+    private let id = ObjectId("594d5bef819a5360829a5360")!
     private let picture = URL(string: "https://cf.geekdo-images.com/original/img/ME73s_0dstlA4qLpLEBvPyvq8gE=/0x0/pic3090929.jpg")!
     private let thumbnail = URL(string: "https://cf.geekdo-images.com/thumb/img/7X5vG9KruQ9CmSMVZ3rmiSSqTCM=/fit-in/200x150/pic3090929.jpg")!
     private let now = Date()
     private let location = Location(coordinates: Coordinates(latitude: 50, longitude: 2),
                                     address: "Street 1", city: "City", country: "Country")
+    
+    private var host: User {
+        let user = User(facebookID: "1", name: "Host")
+        user.id = ObjectId("594d5ccd819a5360859a5360")!
+        return user
+    }
+    
+    private var player: User {
+        let user = User(facebookID: "2", name: "Player")
+        user.id = ObjectId("594d65bd819a5360869a5360")!
+        return user
+    }
     
     private var game: Game {
         return Game(id: 1, name: "Game", names: ["Game"],
