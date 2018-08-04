@@ -33,7 +33,7 @@ class ActivityRepositoryTests: XCTestCase {
     let persistence = try! Persistence()
     
     func testAddActivity() throws {
-        guard let alice = try persistence.user(withFacebookID: "1"),
+        guard let alice = try persistence.user(withID: ObjectId("594d5ccd819a5360859a5360")),
               let location = alice.location else {
             return XCTFail()
         }
@@ -74,7 +74,7 @@ class ActivityRepositoryTests: XCTestCase {
     }
     
     func testAvailableActivitiesWithHostException() throws {
-        guard let charlie = try persistence.user(withFacebookID: "3") else {
+        guard let charlie = try persistence.user(withID: ObjectId("594d5c76819a5360839a5360")) else {
             return XCTFail()
         }
         XCTAssert(try persistence.numberOfActivities(notHostedBy: charlie) == 2)
@@ -90,7 +90,7 @@ class ActivityRepositoryTests: XCTestCase {
     }
     
     func testNewestActivitiesWithHostException() throws {
-        guard let charlie = try persistence.user(withFacebookID: "3") else {
+        guard let charlie = try persistence.user(withID: ObjectId("594d5c76819a5360839a5360")) else {
             return XCTFail()
         }
         let result = try persistence.newestActivities(notHostedBy: charlie, measuredFrom: .default, startingFrom: 0, limitedTo: 10)
@@ -110,7 +110,7 @@ class ActivityRepositoryTests: XCTestCase {
     }
     
     func testUpcomingActivitiesWithHostException() throws {
-        guard let charlie = try persistence.user(withFacebookID: "3") else {
+        guard let charlie = try persistence.user(withID: ObjectId("594d5c76819a5360839a5360")) else {
             return XCTFail()
         }
         let result = try persistence.upcomingActivities(notHostedBy: charlie, measuredFrom: .default, startingFrom: 0, limitedTo: 10)
@@ -121,7 +121,7 @@ class ActivityRepositoryTests: XCTestCase {
     }
     
     func testActivitiesNearUser() throws {
-        guard let bob = try persistence.user(withFacebookID: "2") else {
+        guard let bob = try persistence.user(withID: ObjectId("594d65bd819a5360869a5360")) else {
             return XCTFail()
         }
         let result = try persistence.activitiesNear(user: bob, startingFrom: 0, limitedTo: 10)
@@ -133,7 +133,7 @@ class ActivityRepositoryTests: XCTestCase {
     }
     
     func testActivitiesNearUserIncludesHostException() throws {
-        guard let charlie = try persistence.user(withFacebookID: "3") else {
+        guard let charlie = try persistence.user(withID: ObjectId("594d5c76819a5360839a5360")) else {
             return XCTFail()
         }
         let result = try persistence.activitiesNear(user: charlie, startingFrom: 0, limitedTo: 10)
@@ -144,7 +144,7 @@ class ActivityRepositoryTests: XCTestCase {
     }
     
     func testActivitiesNearUserWithoutLocation() throws {
-        guard let bob = try persistence.user(withFacebookID: "2") else {
+        guard let bob = try persistence.user(withID: ObjectId("594d65bd819a5360869a5360")) else {
             return XCTFail()
         }
         bob.location = nil
@@ -159,7 +159,7 @@ class ActivityRepositoryTests: XCTestCase {
     }
     
     func testActivitiesHostedBy() throws {
-        guard let alice = try persistence.user(withFacebookID: "1"),
+        guard let alice = try persistence.user(withID: ObjectId("594d5ccd819a5360859a5360")),
               let location = alice.location else {
             return XCTFail()
         }
@@ -185,8 +185,8 @@ class ActivityRepositoryTests: XCTestCase {
     }
     
     func testActivitiesJoinedBy() throws {
-        guard let alice = try persistence.user(withFacebookID: "1"),
-              let bob = try persistence.user(withFacebookID: "2"),
+        guard let alice = try persistence.user(withID: ObjectId("594d5ccd819a5360859a5360")),
+              let bob = try persistence.user(withID: ObjectId("594d65bd819a5360869a5360")),
               let location = alice.location else {
             return XCTFail()
         }
@@ -228,7 +228,7 @@ class ActivityRepositoryTests: XCTestCase {
     }
     
     func testUpdateUnpersistedActivity() throws {
-        guard let alice = try persistence.user(withFacebookID: "1"),
+        guard let alice = try persistence.user(withID: ObjectId("594d5ccd819a5360859a5360")),
               let location = alice.location else {
             return XCTFail()
         }

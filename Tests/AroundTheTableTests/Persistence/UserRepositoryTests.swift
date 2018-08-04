@@ -11,9 +11,7 @@ class UserRepositoryTests: XCTestCase {
     static var allTests: [(String, (UserRepositoryTests) -> () throws -> Void)] {
         return [
             ("testAddUser", testAddUser),
-            ("testAddDuplicateUser", testAddDuplicateUser),
             ("testReadUser", testReadUser),
-            ("testReadFacebookUser", testReadFacebookUser),
             ("testUpdateUser", testUpdateUser)
         ]
     }
@@ -21,17 +19,11 @@ class UserRepositoryTests: XCTestCase {
     let persistence = try! Persistence()
     
     func testAddUser() throws {
-        let david = User(facebookID: "4", name: "David")
+        let david = User(name: "David")
         try persistence.add(david)
         XCTAssertNotNil(david.id)
-        XCTAssertNotNil(try persistence.user(withFacebookID: "4"))
         // Clean-up
-        try persistence.users.remove(["facebookID": "4"])
-    }
-    
-    func testAddDuplicateUser() {
-        let alsoAlice = User(facebookID: "1", name: "Also Alice")
-        XCTAssertThrowsError(try persistence.add(alsoAlice))
+        try persistence.users.remove(["name": "David"])
     }
     
     func testReadUser() throws {
@@ -42,20 +34,14 @@ class UserRepositoryTests: XCTestCase {
         }
     }
     
-    func testReadFacebookUser() throws {
-        for id in ["1", "2", "3"] {
-            XCTAssertNotNil(try persistence.user(withFacebookID: id))
-        }
-    }
-    
     func testUpdateUser() throws {
-        guard let charlie = try persistence.user(withFacebookID: "3") else {
+        guard let charlie = try persistence.user(withID: ObjectId("594d5c76819a5360839a5360")) else {
             return XCTFail()
         }
         XCTAssert(charlie.name == "Charlie")
         charlie.name = "Charlie Chaplin"
         try persistence.update(charlie)
-        XCTAssert(try persistence.user(withFacebookID: "3")?.name == "Charlie Chaplin")
+        XCTAssert(try persistence.user(withID: ObjectId("594d5c76819a5360839a5360"))?.name == "Charlie Chaplin")
         // Clean-up
         charlie.name = "Charlie"
         try persistence.update(charlie)

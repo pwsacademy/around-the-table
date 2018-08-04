@@ -4,7 +4,7 @@
 
 {% block additional-head %}
 <style>
-#signin {
+#facebook {
     background-color: #29487d;
     border-color: #29487d;
 }
@@ -12,11 +12,41 @@
 {% endblock %}
 
 {% block content %}
-<h2>Welkom</h2>
+<h2>Aanmelden met Facebook</h2>
 <p>
-    Deze site maakt gebruik van Facebook om je aan te melden.
-    Wanneer je voor het eerst aanmeldt zal er een account worden aangemaakt.
-    Deze account wordt gekoppeld aan je profiel op Facebook. Je hoeft dus geen aparte gebruikersnaam of wachtwoord te kiezen.
+    Als je een Facebook-profiel hebt, is dit de makkelijkste optie.
 </p>
-<a id="signin" class="btn btn-primary mb-3" href="/authentication/signin"><i class="fa fa-facebook"></i> Aanmelden met Facebook</a>
+<p>
+    Met de knop hieronder ga je naar Facebook, waar je ons toestemming kan geven om je aan te melden.
+    Er wordt dan vanzelf een account aangemaakt die wordt gekoppeld aan je Facebook-profiel.
+    Je hoeft dus geen wachtwoord te kiezen.
+</p>
+<a id="facebook" class="btn btn-primary mb-3" href="/authentication/facebook">
+    <i class="fa fa-facebook"></i> Aanmelden met Facebook
+</a>
+<h2>Aanmelden met je e-mailadres</h2>
+<p>
+    Als je geen Facebook-profiel hebt, dan kan je ook aanmelden met je e-mailadres en een zelfgekozen wachtwoord.
+</p>
+<p>
+    Hiervoor dien je eerst een <a href="/authentication/signup">account aan te maken</a>.
+</p>
+<form method="post" action="/authentication/welcome">
+    <div class="form-group">
+        <label>E-mailadres:</label>
+        <input class="form-control" name="email" type="email" required>
+    </div>
+    <div class="form-group">
+        <label>Wachtwoord:</label>
+        <input class="form-control" name="password" type="password" required>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Aanmelden</button>
+    </div>
+    {% if error %}
+        <div class="alert alert-danger">
+            Deze combinatie van e-mailadres en wachtwoord is ongeldig.
+        </div>
+    {% endif %}
+</form>
 {% endblock %}

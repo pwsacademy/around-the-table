@@ -36,13 +36,13 @@ class ActivityTests: XCTestCase {
                                     address: "Street 1", city: "City", country: "Country")
     
     private var host: User {
-        let user = User(facebookID: "1", name: "Host")
+        let user = User(name: "Host")
         user.id = ObjectId("594d5ccd819a5360859a5360")!
         return user
     }
     
     private var player: User {
-        let user = User(facebookID: "2", name: "Player")
+        let user = User(name: "Player")
         user.id = ObjectId("594d65bd819a5360869a5360")!
         return user
     }

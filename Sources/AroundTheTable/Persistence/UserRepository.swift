@@ -8,12 +8,11 @@ extension Persistence {
     /**
      Adds a new user to the database.
      
-     - Throws: ServerError.persistedEntity if the user already has an ID or a user with this Facebook ID already exists.
+     - Throws: ServerError.persistedEntity if the user already has an ID.
                Use `update(_:)` to update an existing user.
      */
     func add(_ user: User) throws {
-        guard user.id == nil,
-              try self.user(withFacebookID: user.facebookID) == nil else {
+        guard user.id == nil else {
             throw log(ServerError.persistedEntity)
         }
         guard let id = try users.insert(user.document) as? ObjectId else {
@@ -29,15 +28,6 @@ extension Persistence {
      */
     func user(withID id: ObjectId) throws -> User? {
         return try User(users.findOne(["_id": id]))
-    }
-    
-    /**
-     Looks up the user with the given Facebook ID in the database.
-     
-     - Returns: A user, or `nil` if there was no user with this Facebook ID.
-     */
-    func user(withFacebookID id: String) throws -> User? {
-        return try User(users.findOne(["facebookID": id]))
     }
     
     /**

@@ -85,13 +85,16 @@ public class Routes {
     }
     
     /**
-     Creates a `Credentials` middleware for Facebook Web Login.
+     Creates a `Credentials` middleware.
+     
+     This middleware redirects unauthenticated users to the welcome page.
+     From there, they can either sign in with Facebook or an email credential.
      */
     private func makeCredentials() -> Credentials {
         let credentials = Credentials()
         let facebook = CredentialsFacebook(clientId: Settings.facebook.app,
                                            clientSecret: Settings.facebook.secret,
-                                           callbackUrl: "\(Settings.url)/authentication/signin/callback",
+                                           callbackUrl: "\(Settings.url)/authentication/facebook/callback",
                                            options: ["fields": "name,picture.type(large)", "scope": ["public_profile"]])
         credentials.register(plugin: facebook)
         credentials.options["failureRedirect"] = "/authentication/welcome"
@@ -99,11 +102,21 @@ public class Routes {
     }
     
     /**
+     Returns the currently authenticated user, if any.
+     */
+    func authenticatedUser(for request: RouterRequest) throws -> User? {
+        guard let profile = request.userProfile else {
+            return nil
+        }
+        let lookup = profile.provider == "Facebook" ? persistence.userWith(facebookID:) : persistence.userWith(email:)
+        return try lookup(profile.id)
+    }
+    
+    /**
      Creates a `BaseViewModel` based on the given request.
      */
     func baseViewModel(for request: RouterRequest) throws -> BaseViewModel {
-        guard let id = request.userProfile?.id,
-              let user = try persistence.user(withFacebookID: id) else {
+        guard let user = try authenticatedUser(for: request) else {
             return try BaseViewModel(user: nil, unreadMessageCount: 0, requestURL: request.originalURL)
         }
         let unreadMessageCount = try persistence.unreadMessageCount(for: user)

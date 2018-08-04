@@ -13,9 +13,6 @@ final class User {
     /// Never set this yourself!
     var id: ObjectId?
     
-    /// The user's Facebook ID.
-    let facebookID: String
-    
     /// The user's display name.
     var name: String
     
@@ -32,11 +29,10 @@ final class User {
     /**
      Initializes a `User`.
      
-     Only `facebookID` and `name` are required parameters.
+     Only `name` is required.
      `lastSignIn` is set to the current date and time.
      */
-    init(facebookID: String, name: String, picture: URL? = nil, location: Location? = nil) {
-        self.facebookID = facebookID
+    init(name: String, picture: URL? = nil, location: Location? = nil) {
         self.name = name
         self.picture = picture
         self.location = location
@@ -46,9 +42,8 @@ final class User {
     /**
      Full initializer, only used when decoding from BSON.
      */
-    init(id: ObjectId, facebookID: String, name: String, picture: URL?, location: Location?, lastSignIn: Date) {
+    init(id: ObjectId, name: String, picture: URL?, location: Location?, lastSignIn: Date) {
         self.id = id
-        self.facebookID = facebookID
         self.name = name
         self.picture = picture
         self.location = location
@@ -82,7 +77,6 @@ extension User: Primitive {
     /// Optional properties are included only when they are not `nil`.
     var document: Document {
         var document: Document = [
-            "facebookID": facebookID,
             "name": name,
             "lastSignIn": lastSignIn
         ]
@@ -118,9 +112,6 @@ extension User: Primitive {
         guard let id = ObjectId(bson["_id"]) else {
             throw log(BSONError.missingField(name: "_id"))
         }
-        guard let facebookID = String(bson["facebookID"]) else {
-            throw log(BSONError.missingField(name: "facebookID"))
-        }
         guard let name = String(bson["name"]) else {
             throw log(BSONError.missingField(name: "name"))
         }
@@ -130,7 +121,6 @@ extension User: Primitive {
         let picture = try URL(bson["picture"])
         let location = try Location(bson["location"])
         self.init(id: id,
-                  facebookID: facebookID,
                   name: name,
                   picture: picture,
                   location: location,

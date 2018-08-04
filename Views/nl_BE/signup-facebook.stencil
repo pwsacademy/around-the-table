@@ -1,0 +1,29 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Account aanmaken{% endblock %}
+
+{% block content %}
+<h2>Account aanmaken</h2>
+{% include "snippets/terms-of-use.stencil" %}
+<form method="post" action="/authentication/facebook/signup">
+    <div class="form-group">
+        <div class="form-check">
+            <input id="agree" class="form-check-input" type="checkbox">
+            <label class="form-check-label">Ik ga akkoord</label>
+        </div>
+    </div>
+    <button id="submit" class="btn btn-primary" type="submit" disabled>Account aanmaken</button>
+</form>
+{% endblock %}
+
+{% block additional-body %}
+<script>
+$("#agree").on("change", function() {
+    if (this.checked) {
+        $("#submit").removeAttr("disabled");
+    } else {
+        $("#submit").attr("disabled", "disabled");
+    }
+});
+</script>
+{% endblock %}

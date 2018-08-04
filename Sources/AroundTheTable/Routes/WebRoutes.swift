@@ -21,33 +21,31 @@ extension Routes {
         router.get("upcoming-games", handler: upcomingActivities)
         router.get("games-near-me", handler: activitiesNearMe)
         
-        let authentication = AuthenticationMiddleware(persistence: persistence)
-        
         // Create an activity.
         router.get("host", handler: host)
         router.get("host-game-select", handler: selectGame)
-        router.all("host-game", middleware: [credentials, authentication])
+        router.all("host-game", middleware: [credentials])
         router.get("host-game", handler: createActivity)
         router.post("host-game", handler: submitActivity)
         
         // View and edit activities.
         router.get("game/:id", handler: activity)
-        router.get("game/:id/edit", middleware: [credentials, authentication])
+        router.get("game/:id/edit", middleware: [credentials])
         router.get("game/:id/edit", handler: editActivity)
         router.post("game/:id/edit", handler: submitEditActivity)
         
         // Submit and edit registrations.
-        router.post("game/:id/registrations", middleware: [credentials, authentication])
+        router.post("game/:id/registrations", middleware: [credentials])
         router.post("game/:id/registrations", handler: submitRegistration)
-        router.post("game/:id/registrations/:player", middleware: [credentials, authentication])
+        router.post("game/:id/registrations/:player", middleware: [credentials])
         router.post("game/:id/registrations/:player", handler: editRegistration)
         
         // Pages from the user's personal menu.
-        router.all("my-games", middleware: [credentials, authentication])
+        router.all("my-games", middleware: [credentials])
         router.get("my-games", handler: myActivities)
-        router.get("messages", middleware: [credentials, authentication])
+        router.get("messages", middleware: [credentials])
         router.get("messages", handler: conversations)
-        router.all("settings", middleware: [credentials, authentication])
+        router.all("settings", middleware: [credentials])
         router.get("settings", handler: settings)
         router.post("settings", handler: editSettings)
     }
@@ -74,15 +72,7 @@ extension Routes {
      Shows a selection of new activities, upcoming activities and activities near the user.
      */
     private func activities(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        let user: User?
-        if let id = request.userProfile?.id {
-            guard let existingUser = try persistence.user(withFacebookID: id) else {
-                throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
-            }
-            user = existingUser
-        } else {
-            user = nil
-        }
+        let user = try authenticatedUser(for: request)
         let coordinates = user?.location?.coordinates ?? .default
         let newest = try persistence.newestActivities(notHostedBy: user, measuredFrom: coordinates, startingFrom: 0, limitedTo: 4)
         let upcoming = try persistence.upcomingActivities(notHostedBy: user, measuredFrom: coordinates, startingFrom: 0, limitedTo: 4)
@@ -104,15 +94,7 @@ extension Routes {
             response.status(.badRequest)
             return next()
         }
-        let user: User?
-        if let id = request.userProfile?.id {
-            guard let existingUser = try persistence.user(withFacebookID: id) else {
-                throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
-            }
-            user = existingUser
-        } else {
-            user = nil
-        }
+        let user = try authenticatedUser(for: request)
         let coordinates = user?.location?.coordinates ?? .default
         let pageSize = 8
         let activities = try persistence.newestActivities(notHostedBy: user,
@@ -138,15 +120,7 @@ extension Routes {
             response.status(.badRequest)
             return next()
         }
-        let user: User?
-        if let id = request.userProfile?.id {
-            guard let existingUser = try persistence.user(withFacebookID: id) else {
-                throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
-            }
-            user = existingUser
-        } else {
-            user = nil
-        }
+        let user = try authenticatedUser(for: request)
         let coordinates = user?.location?.coordinates ?? .default
         let pageSize = 8
         let activities = try persistence.upcomingActivities(notHostedBy: user,
@@ -173,8 +147,7 @@ extension Routes {
             return next()
         }
         let base = try baseViewModel(for: request)
-        guard let id = request.userProfile?.id,
-              let user = try persistence.user(withFacebookID: id),
+        guard let user = try authenticatedUser(for: request),
               user.location != nil else {
             try response.render("games-page", with: ActivitiesPageViewModel(base: base,
                                                                             type: .nearMe,
@@ -243,11 +216,8 @@ extension Routes {
      After selecting a game to host, the user is presented with this form to create an activity.
      */
     private func createActivity(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        guard let userID = request.userProfile?.id else {
+        guard try authenticatedUser(for: request) != nil else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
-        }
-        guard try persistence.user(withFacebookID: userID) != nil else {
-            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let idString = request.queryParameters["id"], let id = Int(idString) else {
             response.status(.badRequest)
@@ -274,11 +244,8 @@ extension Routes {
      Processes the form submitted to host an activity.
      */
     private func submitActivity(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        guard let userID = request.userProfile?.id else {
+        guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
-        }
-        guard let user = try persistence.user(withFacebookID: userID) else {
-            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let form = try? request.read(as: ActivityForm.self), form.isValid else {
             response.status(.badRequest)
@@ -359,15 +326,7 @@ extension Routes {
      Gives detailed information about an activity, including its approved and pending registrations.
      */
     private func activity(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        let user: User?
-        if let id = request.userProfile?.id {
-            guard let existingUser = try persistence.user(withFacebookID: id) else {
-                throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
-            }
-            user = existingUser
-        } else {
-            user = nil
-        }
+        let user = try authenticatedUser(for: request)
         guard let id = request.parameters["id"],
               let activity = try persistence.activity(with: ObjectId(id),
                                                       measuredFrom: user?.location?.coordinates ?? .default) else {
@@ -385,11 +344,8 @@ extension Routes {
      Editable view of an activity.
      */
     private func editActivity(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        guard let userID = request.userProfile?.id else {
+        guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
-        }
-        guard let user = try persistence.user(withFacebookID: userID) else {
-            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let id = request.parameters["id"],
               let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
@@ -409,11 +365,8 @@ extension Routes {
      Processes the form submitted to edit or cancel an activity.
      */
     private func submitEditActivity(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        guard let userID = request.userProfile?.id else {
+        guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
-        }
-        guard let user = try persistence.user(withFacebookID: userID) else {
-            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let id = request.parameters["id"],
               let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
@@ -514,11 +467,8 @@ extension Routes {
      Submit a registration.
      */
     private func submitRegistration(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        guard let userID = request.userProfile?.id else {
+        guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
-        }
-        guard let user = try persistence.user(withFacebookID: userID) else {
-            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let id = request.parameters["id"],
               let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
@@ -550,11 +500,8 @@ extension Routes {
      Approve or cancel a registration.
      */
     private func editRegistration(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        guard let userID = request.userProfile?.id else {
+        guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
-        }
-        guard let user = try persistence.user(withFacebookID: userID) else {
-            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let id = request.parameters["id"],
               let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
@@ -621,11 +568,8 @@ extension Routes {
      Shows an overview of the activities the user is hosting and the activities the user has joined.
      */
     private func myActivities(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        guard let userID = request.userProfile?.id else {
+        guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
-        }
-        guard let user = try persistence.user(withFacebookID: userID) else {
-            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         let hosted = try persistence.activities(hostedBy: user)
         let joined = try persistence.activities(joinedBy: user)
@@ -640,11 +584,8 @@ extension Routes {
      Shows the current user's active conversations.
      */
     private func conversations(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        guard let userID = request.userProfile?.id else {
+        guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
-        }
-        guard let user = try persistence.user(withFacebookID: userID) else {
-            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         let conversations = try persistence.conversations(for: user)
         let base = try baseViewModel(for: request)
@@ -666,11 +607,8 @@ extension Routes {
      Shows the user's settings.
      */
     private func settings(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        guard let userID = request.userProfile?.id else {
+        guard try authenticatedUser(for: request) != nil else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
-        }
-        guard try persistence.user(withFacebookID: userID) != nil else {
-            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         let base = try baseViewModel(for: request)
         try response.render("settings", with: SettingsViewModel(base: base, saved: false))
@@ -681,11 +619,8 @@ extension Routes {
      Processes the form submitted to change the user's settings.
      */
     private func editSettings(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        guard let userID = request.userProfile?.id else {
+        guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
-        }
-        guard let user = try persistence.user(withFacebookID: userID) else {
-            throw log(ServerError.missingMiddleware(type: AuthenticationMiddleware.self))
         }
         guard let form = try? request.read(as: EditSettingsForm.self) else {
             response.status(.badRequest)

@@ -11,7 +11,6 @@ class UserTests: XCTestCase {
             ("testDecode", testDecode),
             ("testDecodeNotADocument", testDecodeNotADocument),
             ("testDecodeMissingID", testDecodeMissingID),
-            ("testDecodeMissingFacebookID", testDecodeMissingFacebookID),
             ("testDecodeMissingName", testDecodeMissingName),
             ("testDecodeMissingLastSignIn", testDecodeMissingLastSignIn)
         ]
@@ -24,10 +23,9 @@ class UserTests: XCTestCase {
     private let now = Date()
     
     func testEncode() {
-        let input = User(facebookID: "123", name: "User", picture: url, location: location)
+        let input = User(name: "User", picture: url, location: location)
         input.lastSignIn = now
         let expected: Document = [
-            "facebookID": "123",
             "name": "User",
             "picture": url,
             "location": location,
@@ -38,10 +36,9 @@ class UserTests: XCTestCase {
     }
     
     func testEncodeSkipsNilValues() {
-        let input = User(facebookID: "123", name: "User")
+        let input = User(name: "User")
         input.lastSignIn = now
         let expected: Document = [
-            "facebookID": "123",
             "name": "User",
             "lastSignIn": now
         ]
@@ -52,7 +49,6 @@ class UserTests: XCTestCase {
     func testDecode() throws {
         let input: Document = [
             "_id": id,
-            "facebookID": "123",
             "name": "User",
             "picture": url,
             "location": location,
@@ -62,7 +58,6 @@ class UserTests: XCTestCase {
             return XCTFail()
         }
         XCTAssert(result.id == id)
-        XCTAssert(result.facebookID == "123")
         XCTAssert(result.name == "User")
         XCTAssert(result.picture == url)
         XCTAssert(result.location == location)
@@ -77,16 +72,6 @@ class UserTests: XCTestCase {
     
     func testDecodeMissingID() {
         let input: Document = [
-            "facebookID": "123",
-            "name": "User",
-            "lastSignIn": now
-        ]
-        XCTAssertThrowsError(try User(input))
-    }
-    
-    func testDecodeMissingFacebookID() {
-        let input: Document = [
-            "_id": "123",
             "name": "User",
             "lastSignIn": now
         ]
@@ -96,7 +81,6 @@ class UserTests: XCTestCase {
     func testDecodeMissingName() {
         let input: Document = [
             "_id": "123",
-            "facebookID": "123",
             "lastSignIn": now
         ]
         XCTAssertThrowsError(try User(input))
@@ -105,7 +89,6 @@ class UserTests: XCTestCase {
     func testDecodeMissingLastSignIn() {
         let input: Document = [
             "_id": "123",
-            "facebookID": "123",
             "name": "User"
         ]
         XCTAssertThrowsError(try User(input))

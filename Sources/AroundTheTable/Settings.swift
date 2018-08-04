@@ -89,9 +89,6 @@ enum Settings {
     /// The default profile picture for a user.
     static let defaultProfilePicture = settings["ATT:DEFAULT_PROFILE_PICTURE"] as! String
     
-    /// Whether dummy accounts are enabled.
-    static let areDummiesEnabled = (settings["ATT:ENABLE_DUMMIES"] as? String) == "true"
-    
     /**
      Settings related to Facebook Web Login.
      */

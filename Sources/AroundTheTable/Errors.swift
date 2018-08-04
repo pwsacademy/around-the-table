@@ -75,6 +75,9 @@ enum GeekError: Loggable {
  */
 enum ServerError: Loggable {
     
+    /// Conflicting data was detected.
+    case conflict
+    
     /// An invalid state was detected.
     case invalidState
     
@@ -90,6 +93,8 @@ enum ServerError: Loggable {
     /// The message to log when this error is thrown.
     var message: String {
         switch self {
+        case .conflict:
+            return "Server error: conflicting data."
         case .invalidState:
             return "Server error: invalid state."
         case .missingMiddleware(let type):

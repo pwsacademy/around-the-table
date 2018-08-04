@@ -10,17 +10,17 @@ extension Routes {
      Registers the authentication routes on the given router.
      */
     func configureAuthentication(using router: Router, credentials: Credentials) {
-        router.get("welcome", handler: welcome)
-        router.get("signin", handler: credentials.authenticate(credentialsType: "Facebook"))
-        router.get("signin/callback", handler: credentials.authenticate(credentialsType: "Facebook"))
-        router.get("signup", middleware: credentials)
-        router.get("signup", handler: showSignUp)
-        router.post("signup", middleware: [credentials, BodyParser()])
-        router.post("signup", handler: processSignUp)
+        router.get("welcome", handler: showWelcome)
+        router.post("welcome", handler: signInWithEmail)
+        router.get("signup", handler: showSignUpWithEmail)
+        router.post("signup", handler: signUpWithEmail)
+        router.get("facebook", handler: credentials.authenticate(credentialsType: "Facebook"))
+        router.get("facebook/callback", handler: credentials.authenticate(credentialsType: "Facebook"))
+        router.get("facebook/signup", middleware: credentials)
+        router.get("facebook/signup", handler: showSignUpWithFacebook)
+        router.post("facebook/signup", middleware: credentials)
+        router.post("facebook/signup", handler: signUpWithFacebook)
         router.get("signout", handler: signOut)
-        if Settings.areDummiesEnabled {
-            router.get("dummy/:id", handler: dummy)
-        }
     }
     
     /**
@@ -28,7 +28,7 @@ extension Routes {
      This page records the `returnTo` address so the user can be redirected back to where he was.
      A new `returnTo` address is then set up to redirect the user to the sign-up page after authenticating with Facebook.
      */
-    private func welcome(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+    private func showWelcome(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
         guard let session = request.session else {
             throw log(ServerError.missingMiddleware(type: Session.self))
         }
@@ -44,24 +44,120 @@ extension Routes {
             }
             session["originalReturnTo"] = returnAddress
         }
-        Credentials.setRedirectingReturnTo("/authentication/signup", for: request)
+        // After authenticating with Facebook, the user needs to sign up to create an account.
+        // This redirect is only used by the Facebook plug-in after a user has authenticated.
+        // This is different from the Credentials middleware's failure redirect,
+        // which redirects an unauthenticated user to the welcome page.
+        Credentials.setRedirectingReturnTo("/authentication/facebook/signup", for: request)
         let base = try baseViewModel(for: request)
-        try response.render("welcome", with: base, forKey: "base")
+        try response.render("welcome", with: WelcomeViewModel(base: base, error: false))
         next()
     }
     
     /**
-     Presents the user with a sign-up form.
+     Processes the sign-in form submitted on the welcome page.
      */
-    private func showSignUp(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+    private func signInWithEmail(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let session = request.session else {
+            throw log(ServerError.missingMiddleware(type: Session.self))
+        }
+        guard let form = try? request.read(as: SignInForm.self) else {
+            response.status(.badRequest)
+            return next()
+        }
+        // Check the email address and password.
+        guard let user = try persistence.userWith(email: form.email, password: form.password) else {
+            let base = try baseViewModel(for: request)
+            try response.render("welcome", with: WelcomeViewModel(base: base, error: true))
+            return next()
+        }
+        // Add a userProfile key to the session.
+        // The Credentials middleware will use this to set the RouterRequest.userProfile property.
+        // This effectively signs the user in.
+        session["userProfile"] = [
+            "id": form.email,
+            "displayName": user.name,
+            "provider": "Email"
+        ]
+        user.lastSignIn = Date()
+        try persistence.update(user)
+        // Redirect the user back to where he was (or to the home page).
+        if let returnAddress = session["originalReturnTo"] as? String, !returnAddress.contains("authentication") {
+            session.remove(key: "originalReturnTo")
+            try response.redirect(returnAddress)
+        } else {
+            try response.redirect("/web/home")
+        }
+    }
+    
+    /**
+     Shows the sign-up page where the user can create an account with email credentials.
+     */
+    private func showSignUpWithEmail(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        let base = try baseViewModel(for: request)
+        try response.render("signup-email", with: base, forKey: "base")
+        next()
+    }
+    
+    /**
+     Processes the sign-up form and creates an account with email credentials.
+     */
+    private func signUpWithEmail(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let session = request.session else {
+            throw log(ServerError.missingMiddleware(type: Session.self))
+        }
+        guard let form = try? request.read(as: SignUpForm.self) else {
+            response.status(.badRequest)
+            return next()
+        }
+        // Check that the email address isn't already used.
+        guard try persistence.userWith(email: form.email) == nil else {
+            let base = try baseViewModel(for: request)
+            try response.render("signup-email", with: SignUpViewModel(base: base,
+                                                                      name: form.name,
+                                                                      email: form.email,
+                                                                      error: true))
+            return next()
+        }
+        let user = User(name: form.name)
+        try persistence.add(user)
+        try persistence.addEmailCredential(for: user, email: form.email, password: form.password)
+        // Add a userProfile key to the session.
+        // The Credentials middleware will use this to set the RouterRequest.userProfile property.
+        // This effectively signs the user in.
+        session["userProfile"] = [
+            "id": form.email,
+            "displayName": form.name,
+            "provider": "Email"
+        ]
+        // Redirect the user back to where he was (or to the home page).
+        if let returnAddress = session["originalReturnTo"] as? String, !returnAddress.contains("authentication") {
+            session.remove(key: "originalReturnTo")
+            try response.redirect(returnAddress)
+        } else {
+            try response.redirect("/web/home")
+        }
+        next()
+    }
+    
+    /**
+     After authenticating with Facebook, the user needs to sign up to create an account.
+     */
+    private func showSignUpWithFacebook(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
         guard let session = request.session else {
             throw log(ServerError.missingMiddleware(type: Session.self))
         }
         guard let profile = request.userProfile else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        if let user = try persistence.user(withFacebookID: profile.id) {
-            // Update the user's data.
+        // Verify the user went through Facebook sign-in.
+        // A user could sign in with email credentials and then try to execute this route, which isn't intended.
+        guard profile.provider == "Facebook" else {
+            response.status(.badRequest)
+            return next()
+        }
+        if let user = try persistence.userWith(facebookID: profile.id) {
+            // For an existing user, update the user's data.
             user.name = profile.displayName
             var pictureChanged = false
             if let picture = profile.photos?.first?.value {
@@ -73,7 +169,7 @@ extension Routes {
             if pictureChanged {
                 try storePicture(for: user)
             }
-            // Skip the sign-up page because the user has already signed up.
+            // Skip the sign-up page and redirect the user to where he was (or to the home page).
             if let returnAddress = session["originalReturnTo"] as? String, !returnAddress.contains("authentication") {
                 session.remove(key: "originalReturnTo")
                 try response.redirect(returnAddress)
@@ -81,36 +177,39 @@ extension Routes {
                 try response.redirect("/web/home")
             }
         } else {
+            // For a new user, send the user to the sign-up page.
             let base = try baseViewModel(for: request)
-            try response.render("signup", with: base, forKey: "base")
+            try response.render("signup-facebook", with: base, forKey: "base")
             next()
         }
     }
     
     /**
-     Processes the sign-up form and adds the user to the database.
+     Processes the sign-up form and creates an account with Facebook credentials for the user.
      */
-    private func processSignUp(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        guard let body = request.body?.asURLEncoded,
-              body["agree"] == "on" else {
-            response.status(.badRequest)
-            return next()
-        }
+    private func signUpWithFacebook(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
         guard let session = request.session else {
             throw log(ServerError.missingMiddleware(type: Session.self))
         }
         guard let profile = request.userProfile else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        let user = User(facebookID: profile.id, name: profile.displayName)
+        // Verify the user went through Facebook sign-in.
+        // A user could sign in with email credentials and then try to execute this route, which isn't intended.
+        guard profile.provider == "Facebook" else {
+            response.status(.badRequest)
+            return next()
+        }
+        let user = User(name: profile.displayName)
         if let picture = profile.photos?.first?.value {
             user.picture = URL(string: picture)
         }
         try persistence.add(user)
+        try persistence.addFacebookCredential(for: user, facebookID: profile.id)
         if user.picture != nil {
             try storePicture(for: user)
         }
-        // Redirect the user back to where he/she was (or to the home page).
+        // Redirect the user back to where he was (or to the home page).
         if let returnAddress = session["originalReturnTo"] as? String, !returnAddress.contains("authentication") {
             session.remove(key: "originalReturnTo")
             try response.redirect(returnAddress)
@@ -157,31 +256,6 @@ extension Routes {
                 Log.error(error.description)
             }
         }
-        try response.redirect("/web/home")
-    }
-    
-    /**
-     Signs in with a dummy Facebook account.
-     This should only be enabled in development.
-     */
-    private func dummy(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        guard let id = request.parameters["id"] else {
-            response.status(.badRequest)
-            return next()
-        }
-        guard let session = request.session else {
-            throw log(ServerError.missingMiddleware(type: Session.self))
-        }
-        var dummy = try persistence.user(withFacebookID: id)
-        if dummy == nil {
-            dummy = User(facebookID: id, name: "Dummy \(id)")
-            try persistence.add(dummy!)
-        }
-        session["userProfile"] = [
-            "id": dummy!.facebookID,
-            "displayName": dummy!.name,
-            "provider": "Dummy"
-        ]
         try response.redirect("/web/home")
     }
 }

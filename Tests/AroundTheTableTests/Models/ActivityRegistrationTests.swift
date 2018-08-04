@@ -21,7 +21,7 @@ class ActivityRegistrationTests: XCTestCase {
     private let now = Date()
     
     private var player: User {
-        let user = User(facebookID: "1", name: "Player")
+        let user = User(name: "Player")
         user.id = ObjectId("594d5ccd819a5360859a5360")!
         return user
     }

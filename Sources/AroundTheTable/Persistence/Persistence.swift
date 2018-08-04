@@ -21,6 +21,9 @@ public class Persistence {
     /// The `conversations` collection.
     let conversations: MongoKitten.Collection
     
+    /// The `credentials` collection.
+    let credentials: MongoKitten.Collection
+    
     /// The `games` collection.
     let games: MongoKitten.Collection
     
@@ -50,6 +53,7 @@ public class Persistence {
         let server = try Server(settings)
         database = server[Settings.database.name]
         activities = database["activities"]
+        credentials = database["credentials"]
         conversations = database["conversations"]
         games = database["games"]
         users = database["users"]
