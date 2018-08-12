@@ -81,7 +81,7 @@ class ActivityRepositoryTests: XCTestCase {
     }
     
     func testNewestActivities() throws {
-        let result = try persistence.newestActivities(measuredFrom: .default, startingFrom: 0, limitedTo: 10)
+        let result = try persistence.newestActivities(measuredFrom: .default, startingFrom: 0, limitedTo: .max)
         XCTAssert(result.map { $0.id } == [
             ObjectId("5af5abdd0c92b55f601b043f")!,
             ObjectId("5af69d330c92b55f601b1ad0")!,
@@ -93,7 +93,7 @@ class ActivityRepositoryTests: XCTestCase {
         guard let charlie = try persistence.user(withID: ObjectId("594d5c76819a5360839a5360")) else {
             return XCTFail()
         }
-        let result = try persistence.newestActivities(notHostedBy: charlie, measuredFrom: .default, startingFrom: 0, limitedTo: 10)
+        let result = try persistence.newestActivities(notHostedBy: charlie, measuredFrom: .default, startingFrom: 0, limitedTo: .max)
         XCTAssert(result.map { $0.id } == [
             ObjectId("5af69d330c92b55f601b1ad0")!,
             ObjectId("5af5b9fb0c92b55f601b064b")!
@@ -101,7 +101,7 @@ class ActivityRepositoryTests: XCTestCase {
     }
     
     func testUpcomingActivities() throws {
-        let result = try persistence.upcomingActivities(measuredFrom: .default, startingFrom: 0, limitedTo: 10)
+        let result = try persistence.upcomingActivities(measuredFrom: .default, startingFrom: 0, limitedTo: .max)
         XCTAssert(result.map { $0.id } == [
             ObjectId("5af5abdd0c92b55f601b043f")!,
             ObjectId("5af5b9fb0c92b55f601b064b")!,
@@ -113,7 +113,7 @@ class ActivityRepositoryTests: XCTestCase {
         guard let charlie = try persistence.user(withID: ObjectId("594d5c76819a5360839a5360")) else {
             return XCTFail()
         }
-        let result = try persistence.upcomingActivities(notHostedBy: charlie, measuredFrom: .default, startingFrom: 0, limitedTo: 10)
+        let result = try persistence.upcomingActivities(notHostedBy: charlie, measuredFrom: .default, startingFrom: 0, limitedTo: .max)
         XCTAssert(result.map { $0.id } == [
             ObjectId("5af5b9fb0c92b55f601b064b")!,
             ObjectId("5af69d330c92b55f601b1ad0")!
@@ -124,7 +124,7 @@ class ActivityRepositoryTests: XCTestCase {
         guard let bob = try persistence.user(withID: ObjectId("594d65bd819a5360869a5360")) else {
             return XCTFail()
         }
-        let result = try persistence.activitiesNear(user: bob, startingFrom: 0, limitedTo: 10)
+        let result = try persistence.activitiesNear(user: bob, startingFrom: 0, limitedTo: .max)
         XCTAssert(result.map { $0.id } == [
             ObjectId("5af5b9fb0c92b55f601b064b")!,
             ObjectId("5af69d330c92b55f601b1ad0")!,
@@ -136,7 +136,7 @@ class ActivityRepositoryTests: XCTestCase {
         guard let charlie = try persistence.user(withID: ObjectId("594d5c76819a5360839a5360")) else {
             return XCTFail()
         }
-        let result = try persistence.activitiesNear(user: charlie, startingFrom: 0, limitedTo: 10)
+        let result = try persistence.activitiesNear(user: charlie, startingFrom: 0, limitedTo: .max)
         XCTAssert(result.map { $0.id } == [
             ObjectId("5af5b9fb0c92b55f601b064b")!,
             ObjectId("5af69d330c92b55f601b1ad0")!
@@ -148,7 +148,7 @@ class ActivityRepositoryTests: XCTestCase {
             return XCTFail()
         }
         bob.location = nil
-        XCTAssertThrowsError(try persistence.activitiesNear(user: bob, startingFrom: 0, limitedTo: 10))
+        XCTAssertThrowsError(try persistence.activitiesNear(user: bob, startingFrom: 0, limitedTo: .max))
     }
     
     func testActivitiesWithStartAndLimit() throws {

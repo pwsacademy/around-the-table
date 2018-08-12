@@ -193,8 +193,7 @@ extension Persistence {
         return try activities(matching: ["host": id, "date": ["$gt": yesterday], "isCancelled": false],
                               measuredFrom: .default,
                               sortedBy: ["date": .ascending],
-                              startingFrom: 0,
-                              limitedTo: try activities.count())
+                              startingFrom: 0, limitedTo: .max)
     }
     
     /**
@@ -215,8 +214,7 @@ extension Persistence {
                                          "isCancelled": false],
                               measuredFrom: player.location?.coordinates ?? .default,
                               sortedBy: ["date": .ascending],
-                              startingFrom: 0,
-                              limitedTo: try activities.count())
+                              startingFrom: 0, limitedTo: .max)
     }
 
     /**
