@@ -90,10 +90,21 @@
                 margin-top: 0.5rem;
             }
         }
-        /* Messages */
-        a.media {
+        /* Conversations and messages */
+        a.conversation {
+            display: flex;
             color: inherit;
             text-decoration: none;
+        }
+        a.conversation .body {
+            display: flex;
+            flex-direction: column;
+            margin-left: 1rem;
+        }
+        @media(min-width:768px) {
+            .messages {
+                margin-left: 2rem;
+            }
         }
         /* Margins for icons */
         .fa-calendar, .fa-clock-o, .fa-envelope, .fa-hourglass-o, .fa-map-marker, .fa-user, .fa-users {

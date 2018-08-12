@@ -15,8 +15,8 @@
 {% include "snippets/activity-players.stencil" %}
 <!-- General registration information -->
 {% include "snippets/activity-general-registration.stencil" %}
-<!-- Request seats -->
 {% if base.user %}
+    <!-- User has a pending registration -->
     {% if userIsPending %}
         <p><i class="fa fa-hourglass-o fa-lg"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
         <!-- Cancel the pending registration -->
@@ -26,6 +26,7 @@
                 <i class="fa fa-times"></i> Aanvraag annuleren
             </button>
         </form>
+    <!-- Request seats -->
     {% elif not activity.deadlineHasPassed and not userIsPlayer %}
         <form class="form-inline mb-3" method="post" action="/web/activity/{{ activity.id }}/registrations">
             <select id="seats" class="custom-select mr-3" name="seats" style="width: auto">
@@ -46,6 +47,22 @@
             </div>
         {% endif %}
     {% endif %}
+    <!-- Contact the host -->
+    <h3>Stel een vraag</h3>
+    <p>
+        Voor meer informatie over dit spel kan je contact opnemen met de organisator.
+    </p>
+    <form method="post" action="/web/user/messages">
+        <input name="topic" type="hidden" value="{{ activity.id }}">
+        <input name="sender" type="hidden" value="{{ base.user.id }}">
+        <input name="recipient" type="hidden" value="{{ activity.host.id }}">
+        <div class="form-group">
+            <input class="form-control" name="text" type="text" placeholder="Jouw bericht">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit">Verzenden</button>
+        </div>
+    </form>
 {% endif %}
 {% endblock %}
 

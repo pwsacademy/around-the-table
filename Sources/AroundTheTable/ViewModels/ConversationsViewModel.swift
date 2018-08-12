@@ -14,10 +14,15 @@ struct ConversationsViewModel: Codable {
         
         struct UserViewModel: Codable {
             
+            let id: String
             let name: String
             let picture: String
             
-            init(_ user: User) {
+            init(_ user: User) throws {
+                guard let id = user.id else {
+                    throw log(ServerError.unpersistedEntity)
+                }
+                self.id = id.hexString
                 self.name = user.name
                 self.picture = user.picture?.absoluteString ?? Settings.defaultProfilePicture
             }
@@ -55,10 +60,10 @@ struct ConversationsViewModel: Codable {
             picture = conversation.topic.thumbnail?.absoluteString ?? Settings.defaultGameThumbnail
             if user == conversation.sender {
                 userIsSender = true
-                other = UserViewModel(conversation.recipient)
+                other = try UserViewModel(conversation.recipient)
             } else if user == conversation.recipient {
                 userIsSender = false
-                other = UserViewModel(conversation.sender)
+                other = try UserViewModel(conversation.sender)
             } else {
                 throw log(ServerError.invalidState)
             }

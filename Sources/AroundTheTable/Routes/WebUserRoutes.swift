@@ -1,3 +1,4 @@
+import BSON
 import Credentials
 import Kitura
 
@@ -10,6 +11,7 @@ extension Routes {
         router.all(middleware: credentials)
         router.get("activities", handler: activities)
         router.get("messages", handler: conversations)
+        router.post("messages", handler: sendMessage)
         router.get("settings", handler: settings)
         router.post("settings", handler: editSettings)
     }
@@ -56,6 +58,39 @@ extension Routes {
             try persistence.update(conversation)
         }
         next()
+    }
+    
+    /**
+     Adds a message to a conversation.
+     Creates a new conversation if one doesn't exist.
+     */
+    private func sendMessage(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let user = try authenticatedUser(for: request) else {
+            throw log(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        guard let form = try? request.read(as: MessageForm.self),
+              let sender = try persistence.user(withID: ObjectId(form.sender)),
+              sender == user,
+              let recipient = try persistence.user(withID: ObjectId(form.recipient)),
+              let topic = try persistence.activity(with: ObjectId(form.topic), measuredFrom: .default) else {
+            response.status(.badRequest)
+            return next()
+        }
+        if let conversation = try persistence.conversation(between: sender, recipient, regarding: topic) {
+            let direction = sender == conversation.sender ? Conversation.Message.Direction.outgoing : .incoming
+            conversation.messages.append(Conversation.Message(direction: direction, text: form.text))
+            try persistence.update(conversation)
+        } else {
+            // A message is sent from a visitor/player to an activity's host.
+            guard recipient == topic.host else {
+                response.status(.badRequest)
+                return next()
+            }
+            let conversation = Conversation(topic: topic, sender: sender, recipient: recipient)
+            conversation.messages.append(Conversation.Message(direction: .outgoing, text: form.text))
+            try persistence.add(conversation)
+        }
+        try response.redirect("/web/user/messages")
     }
     
     /**

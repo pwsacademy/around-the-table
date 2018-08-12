@@ -11,101 +11,67 @@
 {% if conversations %}
     {% for conversation in conversations %}
         <!-- Header -->
-        <a class="media mt-3" href="/web/activity/{{ conversation.activity }}">
-            <img class="mr-3" width="75px" src="{{ conversation.picture }}">
-            <div class="media-body">
+        <a class="conversation" href="/web/activity/{{ conversation.activity }}">
+            <img class="align-self-start" width="75px" src="{{ conversation.picture }}">
+            <div class="body">
                 <h5>{{ conversation.title }}</h5>
-                <p>{{ conversation.other.name }}</p>
-                {% for message in conversation.messages %}
-                    <!-- Nested messages for md -->
-                    <div class="media d-none d-md-flex mt-3">
-                        <!-- Message from the other user -->
-                        {% if conversation.userIsSender and message.direction == "incoming" or 
-                           not conversation.userIsSender and message.direction == "outgoing" %}
-                            <img class="avatar rounded-circle mr-3" src="{{ conversation.other.picture }}" title="{{ conversation.other.name }}">
-                            <div class="media-body">
-                                <h6 class="text-muted">
-                                    {{ message.longDate }} om {{ message.time }}
-                                    {% if not message.isRead %}
-                                        <i class="fa fa-asterisk text-danger"></i>
-                                    {% endif %}
-                                </h6>
-                                {{ message.text }}
-                            </div>
-                        <!-- Message from the current user -->
-                        {% else %}
-                            <img class="avatar rounded-circle mr-3" src="{{ base.user.picture }}" title="{{ base.user.name }}">
-                            <div class="media-body">
-                                <h6 class="text-muted">
-                                    {{ message.longDate }} om {{ message.time }}
-                                </h6>
-                                {{ message.text }}
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-                <!-- <form class="d-none d-md-flex mt-3" method="post">
-                    <div class="form-group w-100">
-                        <div class="input-group">
-                            <input class="form-control" type="text" name="reply" placeholder="Verstuur een reactie">
-                            <div class="input-group-append">
-                                <button class="btn btn-secondary" type="button">
-                                    <i class="fa fa-reply"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form> -->
+                {{ conversation.other.name }}
             </div>
         </a>
-        <!-- Collapsed messages for xs and sm -->
-        {% for message in conversation.messages %}
-            <div class="media d-md-none mt-3">
-                <!-- Message from the other user -->
-                {% if conversation.userIsSender and message.direction == "incoming" or 
-                   not conversation.userIsSender and message.direction == "outgoing" %}
-                    <img class="avatar rounded-circle mr-3" src="{{ conversation.other.picture }}" title="{{ conversation.other.name }}">
-                    <div class="media-body">
-                        <h6 class="text-muted">
-                            <!-- xs shows abbreviated weekday -->
-                            <span class="d-sm-none">{{ message.shortDate }}</span>
-                            <!-- sm shows the full weekday -->
-                            <span class="d-none d-sm-inline">{{ message.longDate }}</span>
-                            om {{ message.time }}
-                            {% if not message.isRead %}
-                                <i class="fa fa-asterisk text-danger"></i>
-                            {% endif %}
-                        </h6>
-                        {{ message.text }}
-                    </div>
-                <!-- Message from the current user -->
-                {% else %}
-                    <img class="avatar rounded-circle mr-3" src="{{ base.user.picture }}" title="{{ base.user.name }}">
-                    <div class="media-body">
-                        <h6 class="text-muted">
-                            <!-- xs shows abbreviated weekday -->
-                            <span class="d-sm-none">{{ message.shortDate }}</span>
-                            <!-- sm shows the full weekday -->
-                            <span class="d-none d-sm-inline">{{ message.longDate }}</span>
-                            om {{ message.time }}
-                        </h6>
-                        {{ message.text }}
-                    </div>
-                {% endif %}
-            </div>
-        {% endfor %}
-        <!-- <form class="d-md-none mt-3" method="post">
-            <div class="form-group">
-                <div class="input-group">
-                    <input class="form-control" type="text" name="reply" placeholder="Verstuur een reactie">
-                    <div class="input-group-append">
-                        <button class="btn btn-secondary" type="button">
-                            <i class="fa fa-reply"></i>
-                        </button>
+        <!-- Messages -->
+        <div class="messages">
+            {% for message in conversation.messages %}
+                <div class="media mt-3">
+                    <!-- Message from the other user -->
+                    {% if conversation.userIsSender and message.direction == "incoming" or 
+                       not conversation.userIsSender and message.direction == "outgoing" %}
+                        <img class="avatar rounded-circle mr-3" src="{{ conversation.other.picture }}" title="{{ conversation.other.name }}">
+                        <div class="media-body">
+                            <h6 class="text-muted">
+                                <!-- xs shows abbreviated weekday -->
+                                <span class="d-sm-none">{{ message.shortDate }}</span>
+                                <!-- sm shows the full weekday -->
+                                <span class="d-none d-sm-inline">{{ message.longDate }}</span>
+                                om {{ message.time }}
+                                {% if not message.isRead %}
+                                    <i class="fa fa-asterisk text-danger"></i>
+                                {% endif %}
+                            </h6>
+                            {{ message.text }}
+                        </div>
+                    <!-- Message from the current user -->
+                    {% else %}
+                        <img class="avatar rounded-circle mr-3" src="{{ base.user.picture }}" title="{{ base.user.name }}">
+                        <div class="media-body">
+                            <h6 class="text-muted">
+                                <!-- xs shows abbreviated weekday -->
+                                <span class="d-sm-none">{{ message.shortDate }}</span>
+                                <!-- sm shows the full weekday -->
+                                <span class="d-none d-sm-inline">{{ message.longDate }}</span>
+                                om {{ message.time }}
+                            </h6>
+                            {{ message.text }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <!-- Send a reply -->
+            <form class="mt-3 mb-5" method="post" action="/web/user/messages">
+                <input name="topic" type="hidden" value="{{ conversation.activity }}">
+                <input name="sender" type="hidden" value="{{ base.user.id }}">
+                <input name="recipient" type="hidden" value="{{ conversation.other.id }}">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input class="form-control" name="text" type="text" placeholder="Verstuur een reactie">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fa fa-reply"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form> -->
+            </form>
+        </div>
     {% endfor %}
 {% else %}
     <p>Je hebt momenteel geen berichten.</p>
