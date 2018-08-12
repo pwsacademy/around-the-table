@@ -19,6 +19,13 @@
 {% if base.user %}
     {% if userIsPending %}
         <p><i class="fa fa-hourglass-o fa-lg"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
+        <!-- Cancel the pending registration -->
+        <form method="post" action="/web/activity/{{ activity.id }}/registrations/{{ base.user.id }}">
+            <input type="hidden" name="cancelled" value="true">
+            <button class="btn btn-danger" type="submit">
+                <i class="fa fa-times"></i> Aanvraag annuleren
+            </button>
+        </form>
     {% elif not activity.deadlineHasPassed and not userIsPlayer %}
         <form class="form-inline mb-3" method="post" action="/web/activity/{{ activity.id }}/registrations">
             <select id="seats" class="custom-select mr-3" name="seats" style="width: auto">
@@ -51,6 +58,20 @@ $("#seats").on("change", function() {
         $("#seatsText").text("plaats");
     } else {
         $("#seatsText").text("plaatsen");
+    }
+});
+// Add a confirmation step to the cancel button.
+$(".btn-danger").on("click", function() {
+    if ($(this).attr("data-confirmed") !== "confirmed") {
+        if ($(this).is(".responsive")) {
+            // Buttons where the text is responsive.
+            $(this).html("<i class='fa fa-trash-o'></i><span class='d-none d-md-inline'> Bevestigen</span>");
+        } else {
+            // Buttons where the text is always shown.
+            $(this).html("<i class='fa fa-trash-o'></i> Bevestigen");
+        }
+        $(this).attr("data-confirmed", "confirmed");
+        return false;
     }
 });
 </script>
