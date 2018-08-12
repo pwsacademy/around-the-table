@@ -20,7 +20,7 @@
     <link href="/public/css/font-awesome.min.css" rel="stylesheet">
     <link href="/public/css/pikaday.min.css" rel="stylesheet">
     <style>
-        .navbar {
+        .navbar, .btn-primary {
             background-color: #2185D0;
         }
         h2, h3 {
