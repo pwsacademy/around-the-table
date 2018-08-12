@@ -118,6 +118,15 @@
     <!-- Collapsed navbar -->
     <nav class="d-md-none navbar navbar-dark">
         <a class="navbar-brand" href="/web/home">Rond De Tafel</a>
+        <ul class="navbar-nav ml-auto mr-3">
+            {% if base.unreadMessageCount > 0 %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/web/user/messages">
+                        <i class="fa fa-envelope"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -185,7 +194,12 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
                         <a class="dropdown-item" href="/web/user/activities?view=grid">Mijn spellen</a>
-                        <a class="dropdown-item" href="/web/user/messages">Berichten</a>
+                        <a class="dropdown-item" href="/web/user/messages">
+                            Berichten
+                            {% if base.unreadMessageCount > 0 %}
+                                ({{ base.unreadMessageCount }})
+                            {% endif %}
+                        </a>
                         <a class="dropdown-item" href="/web/user/settings">Instellingen</a>
                         <a class="dropdown-item" href="/authentication/signout">Afmelden</a>
                     </div>
