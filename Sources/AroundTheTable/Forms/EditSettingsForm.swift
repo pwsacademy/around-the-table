@@ -1,5 +1,5 @@
 /**
- Form submitted to edit the user's settings.
+ Form for editing the user's settings.
  */
 struct EditSettingsForm: Codable {
     
@@ -11,6 +11,7 @@ struct EditSettingsForm: Codable {
     
     var location: Location? {
         guard let address = address, let city = city, let country = country,
+              ![address, city, country].map({ $0.isEmpty }).contains(true),
               let latitude = latitude, let longitude = longitude else {
             return nil
         }

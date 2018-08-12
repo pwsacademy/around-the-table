@@ -1,20 +1,26 @@
-<h3>Gebruiksvoorwaarden</h3>
+<!--
+    Snippet for the terms of use.
+-->
 <ul>
-    <li>Deze site is en blijft gratis in gebruik voor zowel spelers als organisatoren.</li>
-    <li>
-        Het doel van deze site is louter om spelers en organisatoren samen te brengen.
-        Elke gebruiker is zelf verantwoordelijk voor de spellen die hij/zij organiseert of waaraan hij/zij deelneemt.
-    </li>
+    <li>Het doel van deze site is om spelers en organisatoren samen te brengen.</li>
+    <li>De site is en blijft gratis in gebruik voor zowel spelers als organisatoren.</li>
+    <li>Elke gebruiker is zelf verantwoordelijk voor de spellen die hij/zij organiseert of waaraan hij/zij deelneemt.</li>
+    <li>Minderjarigen mogen de site enkel gebruiken mits medeweten en toestemming van een ouder of voogd.</li>
     <li>
         De integratie met Facebook dient enkel om je te aan te melden.
-        Er worden geen berichten geplaatst op je tijdlijn.
+        Hierbij worden enkel je publieke naam en profielfoto opgevraagd.
     </li>
-    <li>Minderjarigen mogen deze site enkel gebruiken mits medeweten en toestemming van een ouder of voogd.</li>
+    <li>
+        De site houdt enkel die minimale gegevens bij die nodig zijn voor haar werking.
+        Deze gegevens worden niet gedeeld met derden en worden verwijderd bij het verwijderen van je account.
+    </li>
+    <li>
+        Als gebruiker dien je de volgende gedragsregels te respecteren.
+        Het niet naleven van deze regels leidt tot een verwijdering van je account.
+        <ul>
+            <li>Respecteer elkaar en elkaars eigendom.</li>
+            <li>Respecteer de huisregels van elke organisator.</li>
+            <li>Discriminatie op basis van afkomst, geaardheid, geslacht, leeftijd of uiterlijk wordt niet getolereerd.</li>
+        </ul>
+    </li>
 </ul>
-<h3>Gedragsregels</h3>
-<ul>
-    <li>Respecteer elkaar en elkaars eigendom.</li>
-    <li>Respecteer de huisregels van elke organisator.</li>
-    <li>Discriminatie op basis van afkomst, geaardheid, geslacht, leeftijd of uiterlijk wordt niet getolereerd.</li>
-</ul>
-<p>Het niet naleven van deze regels leidt tot een verwijdering en blokkering van je account.</p>

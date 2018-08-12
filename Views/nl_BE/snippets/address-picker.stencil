@@ -1,0 +1,190 @@
+<!-- 
+    An address picker component that consists of:
+    - An autocompleted address field.
+    - A map showing a marker of the selected address.
+    - An optional checkbox to skip the address picker and use the user's saved location instead.
+
+    This component has two configuration options. These variables should be defined before the component is included:
+    - addressPickerEnablesSubmit:
+        If true, an address is required and the component will enable/disable the #submit button accordingly.
+        Because the submit button is probably defined after this component, its initial state cannot be set.
+        Remember to do this yourself.
+    - addressPickerIncludesPrefillCheckbox:
+        If true, a checkbox is included that lets the user skip the address picker and use his saved location instead.
+        If included, the checkbox is checked by default.
+
+    Caution: As this is simply an included file, there is no encapsulation whatsoever.
+    Please make sure you're not reusing any of the ids, input names, variables or functions defined here.
+-->
+<!-- The component will store its results in these five fields. -->
+<input id="address" name="address" type="hidden">
+<input id="city" name="city" type="hidden">
+<input id="country" name="country" type="hidden">
+<input id="latitude" name="latitude" type="hidden">
+<input id="longitude" name="longitude" type="hidden">
+<!-- The saved location checkbox. This will be hidden when not used. -->
+{% if base.user.location %}
+    <div id="prefill" class="form-group">
+        <div class="form-check">
+            <input id="use-saved-location" class="form-check-input" type="checkbox" checked>
+            <label for="use-saved-location" class="form-check-label">
+                Gebruik mijn opgeslagen adres: {{ base.user.location.address }}.
+            </label>
+        </div>
+    </div>
+{% endif %}
+<!-- The actual address picker. -->
+<div id="address-picker" class="form-group">
+    <!-- The autocompleted address field. -->
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text">
+                <i class="fa fa-map-marker"></i> 
+            </span>
+        </div>
+        <input id="autocomplete" class="form-control" type="text" placeholder="Adres">
+        <div class="input-group-append">
+            <button id="clear" class="btn btn-danger" type="button"><i class="fa fa-times"></i></button>
+        </div>
+    </div>
+    <p class="form-text text-muted">
+        Maak gebruik van de automatische aanvulling en kies een adres uit de voorgestelde opties.
+        Er zal een aanduiding verschijnen op de kaart wanneer je adres correct is ingegeven.
+    </p>
+    <!-- The map. -->
+    <div id="map"></div>
+</div>
+<script>
+// Set up the map.
+var map;
+var marker;
+function loadMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: {
+            lat: {{ base.coordinates.latitude }},
+            lng: {{ base.coordinates.longitude }}
+        },
+        zoom: 15
+    });
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ base.google.key }}&amp;libraries=places&amp;callback=loadMap"></script>
+<script>
+// Set up the autocompleted address field.
+var autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocomplete"), {
+    componentRestrictions: {
+        country: {{ base.google.countries }}
+    }
+});
+// Don't submit the form when the user presses enter to select a place.
+$("#autocomplete").on("keydown", function(event) {
+    if (event.keyCode === 13 && $('.pac-container:visible').length > 0) {
+        event.preventDefault();
+    }
+});
+$("#clear").on("click", clearLocation);
+// Helper function to clear the address picker.
+function clearLocation() {
+    $("#autocomplete").val("");
+    $("#address").val("");
+    $("#city").val("");
+    $("#country").val("");
+    $("#latitude").val("");
+    $("#longitude").val("");
+    if (marker) {
+        marker.setMap(null);
+        marker = null;
+    }
+    if (addressPickerEnablesSubmit) {
+        $("#submit").attr("disabled", "disabled");
+    }
+}
+// Helper function to set the address picker to the user's saved location.
+{% if base.user.location %}
+    function setSavedLocation() {
+        $("#autocomplete").val("{{ base.user.location.address }}");
+        $("#address").val("{{ base.user.location.address }}");
+        $("#city").val("{{ base.user.location.city }}");
+        $("#country").val("{{ base.user.location.country }}");
+        $("#latitude").val("{{ base.user.location.coordinates.latitude }}");
+        $("#longitude").val("{{ base.user.location.coordinates.longitude }}");
+        var coordinates = {
+            lat: {{ base.user.location.coordinates.latitude }},
+            lng: {{ base.user.location.coordinates.longitude }}
+        };
+        if (!marker) {
+            marker = new google.maps.Marker({
+                position: coordinates,
+                map: map
+            });
+        } else {
+            marker.setPosition(coordinates);
+        }
+        map.setCenter(coordinates);
+        if (addressPickerEnablesSubmit) {
+            $("#submit").removeAttr("disabled");
+        }
+    }
+{% endif %}
+// Adjust the map and set a marker when the user enters an address.
+autocomplete.addListener("place_changed", function() {
+    var place = autocomplete.getPlace();
+    var cityComponent = place.address_components.find(function(component) {
+        return component.types.indexOf("locality") != -1;
+    });
+    var countryComponent = place.address_components.find(function(component) {
+        return component.types.indexOf("country") != -1;
+    });
+    // Make sure the location has both a city and a country.
+    if (!cityComponent || !countryComponent) {
+        clearLocation();
+        return
+    }
+    $("#address").val($("#autocomplete").val());
+    var city = cityComponent.long_name;
+    var country = countryComponent.short_name;
+    var coordinates = place.geometry.location;
+    $("#city").val(city);
+    $("#country").val(country);
+    $("#latitude").val(coordinates.lat);
+    $("#longitude").val(coordinates.lng);
+    if (!marker) {
+        marker = new google.maps.Marker({
+            position: coordinates,
+            map: map
+        });
+    } else {
+        marker.setPosition(coordinates);
+    }
+    map.setCenter(coordinates);
+    if (addressPickerEnablesSubmit) {
+        $("#submit").removeAttr("disabled");
+    }
+});
+// Set up the saved location checkbox.
+{% if base.user.location %}
+    $("#use-saved-location").on("change", function() {
+        if (!this.checked) {
+            clearLocation();
+            $("#address-picker").show();
+            // These next two statements make sure the map renders properly.
+            // The map won't render properly when the address picker is hidden.
+            google.maps.event.trigger(map, "resize");
+            map.setCenter({
+                lat: {{ base.user.location.coordinates.latitude }},
+                lng: {{ base.user.location.coordinates.longitude }}
+            });
+        } else {
+            setSavedLocation();
+            $("#address-picker").hide();
+        }
+    });
+    // Check if the checkbox needs to be included.
+    if (addressPickerIncludesPrefillCheckbox) {
+        setSavedLocation();
+        $("#address-picker").hide();
+    } else {
+        $("#prefill").hide();
+    }
+{% endif %}
+</script>

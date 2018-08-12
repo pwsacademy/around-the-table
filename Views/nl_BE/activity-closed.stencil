@@ -1,0 +1,25 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - {{ activity.name }}{% endblock %}
+
+{% block opengraph %}
+<meta property="og:title" content="{{ activity.name }}">
+<meta property="og:image" content="{{ activity.picture }}">
+{% endblock %}
+
+{% block content %}
+<!-- General information -->
+{% include "snippets/activity-general.stencil" %}
+<!-- Host and player information -->
+<h2>Spelers</h2>
+{% include "snippets/activity-players.stencil" %}
+{% if activity.isCancelled %}
+    <div class="alert alert-danger">
+        Dit spel is geannuleerd.
+    </div>
+{% elif activity.isOver %}
+    <div class="alert alert-warning">
+        Dit spel is afgelopen.
+    </div>
+{% endif %}
+{% endblock %}

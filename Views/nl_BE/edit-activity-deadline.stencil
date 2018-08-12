@@ -1,0 +1,13 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Deadline aanpassen{% endblock %}
+
+{% block content %}
+<h2>Deadline aanpassen</h2>
+<form method="post" action="/web/activity/{{ id }}/edit/deadline">
+    {% include "snippets/deadline-options.stencil" %}
+    <div class="form-group">
+        <button id="submit" class="btn btn-primary" type="submit">Aanpassingen opslaan</button>
+    </div>
+</form>
+{% endblock %}

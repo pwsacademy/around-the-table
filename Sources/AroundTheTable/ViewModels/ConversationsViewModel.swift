@@ -1,20 +1,9 @@
 /**
- View model for **messages.stencil**.
+ View model for **user-conversations.stencil**.
  */
 struct ConversationsViewModel: Codable {
     
     let base: BaseViewModel
-    
-    struct UserViewModel: Codable {
-        
-        let name: String
-        let picture: String
-        
-        init(_ user: User) {
-            self.name = user.name
-            self.picture = user.picture?.absoluteString ?? Settings.defaultProfilePicture
-        }
-    }
     
     struct ConversationViewModel: Codable {
         
@@ -22,19 +11,33 @@ struct ConversationsViewModel: Codable {
         let title: String
         let picture: String
         let userIsSender: Bool
+        
+        struct UserViewModel: Codable {
+            
+            let name: String
+            let picture: String
+            
+            init(_ user: User) {
+                self.name = user.name
+                self.picture = user.picture?.absoluteString ?? Settings.defaultProfilePicture
+            }
+        }
+        
         let other: UserViewModel
         
         struct MessageViewModel: Codable {
             
             let direction: String
-            let date: String
+            let longDate: String
+            let shortDate: String
             let time: String
             let text: String
             let isRead: Bool
             
             init(_ message: Conversation.Message) {
                 self.direction = message.direction.rawValue
-                self.date = message.timestamp.formatted(format: "EEEE d MMMM")
+                self.longDate = message.timestamp.formatted(format: "EEEE d MMMM")
+                self.shortDate = message.timestamp.formatted(format: "E d MMMM") // abbreviated weekday
                 self.time = message.timestamp.formatted(timeStyle: .short)
                 self.text = message.text
                 self.isRead = message.isRead

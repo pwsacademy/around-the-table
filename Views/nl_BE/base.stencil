@@ -18,44 +18,88 @@
     <link href="/public/img/favicon.png" rel="icon" type="image/png">
     <link href="/public/css/bootstrap.min.css" rel="stylesheet">
     <link href="/public/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/public/css/pikaday.min.css" rel="stylesheet">
     <style>
         .navbar {
             background-color: #2185D0;
         }
-        h2 {
+        h2, h3 {
             margin-bottom: 1rem;
         }
         img.avatar {
             width: 40px;
             height: 40px;
         }
-        img.avatar-large {
-            width: 75px;
-            height: 75px;
+        /* Pagination, used for sort and view options. */
+        .page-link {
+            color: #2185D0;
         }
-        .card {
+        .page-item.active .page-link {
+            background-color: #2185D0;
+            border-color: #2185D0;
+        }
+        /* Activity cards, used in grid view. */
+        a.card {
             width: 100%;
+            color: inherit;
+            text-decoration: none;
         }
-        .card.green {
+        a.card.green {
             box-shadow: 0 1px 0 0 #21BA45;
         }
-        .card.yellow {
+        a.card.yellow {
             box-shadow: 0 1px 0 0 #FBBD08;
         }
-        .card.red {
+        a.card.red {
             box-shadow: 0 1px 0 0 #DB2828;
         }
-        .card-subtitle {
-            font-size: 0.9rem; 
+        a.card .card-body {
+            line-height: 2em;
         }
-        .card-footer {
-            font-size: 0.85rem;
+        /* Activity items, used in list view. */
+        a.item {
+            display: flex;
+            color: inherit;
+            text-decoration: none;
+            border-radius: 0.25rem;
+            margin-bottom: 1rem;
+        }
+        a.item:focus, a.item:hover {
+            background-color: #f8f9fa;
+        }
+        a.item.green {
+            box-shadow: 1px 0 0 0 #21BA45;
+        }
+        a.item.yellow {
+            box-shadow: 1px 0 0 0 #FBBD08;
+        }
+        a.item.red {
+            box-shadow: 1px 0 0 0 #DB2828;
+        }
+        a.item .body {
+            display: flex;
+            flex-direction: column;
+            margin-left: 1rem;
+            line-height: 2em;
+        }
+        @media(min-width:768px) {
+            a.item.autoborder {
+                border: 1px solid rgba(0, 0, 0, 0.125);
+            }
+            a.item.autoborder .body {
+                margin-top: 0.5rem;
+            }
+        }
+        /* Messages */
+        a.media {
+            color: inherit;
+            text-decoration: none;
         }
         /* Margins for icons */
-        .fa-angle-left, .fa-calendar, .fa-clock-o, .fa-envelope, .fa-hourglass-o, .fa-map-marker, .fa-user  {
+        .fa-calendar, .fa-clock-o, .fa-envelope, .fa-hourglass-o, .fa-map-marker, .fa-user, .fa-users {
             margin-right: 0.25rem;
         }
-        .fa-angle-right, .fa-home {
+        .fa-home {
             margin-left: 0.25rem;
         }
         /* Don't use margins in input groups or buttons */
@@ -66,6 +110,8 @@
             color: #29487d;
         }
     </style>
+    <!-- jQuery is included in head because it's used by included components in body. -->
+    <script src="/public/js/jquery.min.js"></script>
     {% block additional-head %}{% endblock %}
 </head>
 <body>
@@ -78,17 +124,17 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="/web/games">Spellen</a>
+                    <a class="nav-link" href="/web/activities?view=list">Spellen</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/web/host">Organiseer</a>
                 </li>
                 {% if base.user %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/web/my-games">Mijn spellen</a>
+                        <a class="nav-link" href="/web/user/activities?view=list">Mijn spellen</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/web/messages">
+                        <a class="nav-link" href="/web/user/messages">
                             Berichten
                             {% if base.unreadMessageCount > 0 %}
                                 ({{ base.unreadMessageCount }})
@@ -96,7 +142,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/web/settings">Instellingen</a>
+                        <a class="nav-link" href="/web/user/settings">Instellingen</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/authentication/signout">Afmelden</a>
@@ -118,7 +164,7 @@
         <a class="navbar-brand" href="/web/home">Rond De Tafel</a>
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/web/games">Spellen</a>
+                <a class="nav-link" href="/web/activities?view=grid">Spellen</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/web/host">Organiseer</a>
@@ -128,7 +174,7 @@
             {% if base.user %}
                 {% if base.unreadMessageCount > 0 %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/web/messages">
+                        <a class="nav-link" href="/web/user/messages">
                             <i class="fa fa-envelope"></i>
                         </a>
                     </li>
@@ -137,10 +183,10 @@
                     <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
                         {{ base.user.name }}
                     </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/web/my-games">Mijn spellen</a>
-                        <a class="dropdown-item" href="/web/messages">Berichten</a>
-                        <a class="dropdown-item" href="/web/settings">Instellingen</a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="/web/user/activities?view=grid">Mijn spellen</a>
+                        <a class="dropdown-item" href="/web/user/messages">Berichten</a>
+                        <a class="dropdown-item" href="/web/user/settings">Instellingen</a>
                         <a class="dropdown-item" href="/authentication/signout">Afmelden</a>
                     </div>
                 </li>
@@ -168,7 +214,6 @@
         Broncode beschikbaar op <a href="https://github.com/svanimpe/around-the-table.git" target="_blank">GitHub</a> <i class="fa fa-github"></i>
     </footer>
     <!-- Scripts -->
-    <script src="/public/js/jquery.min.js"></script>
     <script src="/public/js/popper.min.js"></script>
     <script src="/public/js/bootstrap.min.js"></script>
     <script>

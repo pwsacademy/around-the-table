@@ -1,7 +1,7 @@
 /**
- View model for **game-selection.stencil**.
+ View model for **host-game-selection.stencil**.
  */
-struct GameSelectionViewModel: Codable {
+struct HostGameSelectionViewModel: Codable {
     
     let base: BaseViewModel
     

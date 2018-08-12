@@ -1,0 +1,54 @@
+<!--
+    Snippet that includes the list of players for an activity.
+    This information is included in every version of the activity page, except for the host version.
+-->
+<!-- Host -->
+<p>
+    <img class="avatar rounded-circle mr-2" src="{{ activity.host.picture }}">
+    {{ activity.host.name }}
+    {% if activity.prereservedSeats == 0 %}
+        (neemt zelf niet deel)
+    {% elif activity.prereservedSeats == 2 %}
+        en 1 extra persoon
+    {% elif activity.prereservedSeats > 2 %}
+        en {{ activity.prereservedSeats|previous }} extra personen
+    {% endif %}
+    <i class="fa fa-home"></i>
+</p>
+<!-- Players -->
+{% for registration in approvedRegistrations %}
+    <!-- Players can cancel their own registration -->
+    {% if not activity.isCancelled and not activity.isOver and base.user and base.user.id == registration.player.id %}
+        <form method="post" action="/web/activity/{{ activity.id }}/registrations/{{ registration.player.id }}" style="float: right">
+            <input type="hidden" name="cancelled" value="true">
+            <button class="btn btn-danger responsive" type="submit">
+                <i class="fa fa-times"></i><span class="d-none d-md-inline"> Annuleren</span>
+            </button>
+        </form>
+    {% endif %}
+    <p>
+        <img class="avatar rounded-circle mr-2" src="{{ registration.player.picture }}">
+        {{ registration.player.name }}</a>
+        {% if registration.seats == 2 %}
+            en 1 extra speler
+        {% elif registration.seats > 2 %}
+            en {{ registration.seats|previous }} extra spelers
+        {% endif %}
+    </p>
+{% endfor %}
+<script>
+// Add a confirmation step to the cancel button.
+$(".btn-danger").on("click", function() {
+    if ($(this).attr("data-confirmed") !== "confirmed") {
+        if ($(this).is(".responsive")) {
+            // Buttons where the text is responsive.
+            $(this).html("<i class='fa fa-trash-o'></i><span class='d-none d-md-inline'> Bevestigen</span>");
+        } else {
+            // Buttons where the text is always shown.
+            $(this).html("<i class='fa fa-trash-o'></i> Bevestigen");
+        }
+        $(this).attr("data-confirmed", "confirmed");
+        return false;
+    }
+});
+</script>

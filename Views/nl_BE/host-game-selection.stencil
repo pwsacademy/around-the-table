@@ -1,0 +1,29 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Kies een spel{% endblock %}
+
+{% block content %}
+<h2>Kies een spel</h2>
+<p>Kies het spel dat je wenst te spelen uit de onderstaande lijst.</p>
+{% for game in results %}
+    <a class="item" href="/web/host/activity?game={{ game.id }}">
+        <img class="align-self-start" width="75" src="{{ game.picture }}">
+        <div class="body">
+            <h5>{{ game.name }}</h5>
+            <p>
+                <span class="text-muted">{{ game.yearPublished }}</span><br>
+                {% if game.playerCount.lowerBound == game.playerCount.upperBound %}
+                    <i class="fa fa-users"></i> {{ game.playerCount.lowerBound }}<br>
+                {% else %}
+                    <i class="fa fa-users"></i> {{ game.playerCount.lowerBound }} - {{ game.playerCount.upperBound }}<br>
+                {% endif %}
+                {% if game.playingTime.lowerBound == game.playingTime.upperBound %}
+                    <i class="fa fa-clock-o"></i> {{ game.playingTime.lowerBound }}
+                {% else %}
+                    <i class="fa fa-clock-o"></i> {{ game.playingTime.lowerBound }} - {{ game.playingTime.upperBound }}}
+                {% endif %}
+            </p>
+        </div>
+    </a>
+{% endfor %}
+{% endblock %}

@@ -35,11 +35,12 @@
             Wachtwoorden zijn niet gelijk.
         </div>
     </div>
+    <h3>Gebruiksvoorwaarden</h3>
     {% include "snippets/terms-of-use.stencil" %}
     <div class="form-group">
         <div class="form-check">
             <input id="agree" class="form-check-input" type="checkbox">
-            <label class="form-check-label">Ik ga akkoord</label>
+            <label for="agree" class="form-check-label">Ik ga akkoord</label>
         </div>
     </div>
     <button id="submit" class="btn btn-primary" type="submit" disabled>Account aanmaken</button>
@@ -48,10 +49,11 @@
 
 {% block additional-body %}
 <script>
+// Remove eerror message when the user makes a change.
 $("#email").on("keyup", function() {
     $("#email").removeClass("is-invalid");
 });
-
+// Check password confirmation.
 function checkPasswords() {
     var first = $("#password1").val();
     var second = $("#password2").val();
@@ -63,7 +65,7 @@ function checkPasswords() {
 }
 $("#password1").on("keyup", checkPasswords);
 $("#password2").on("keyup", checkPasswords);
-
+// Enable the submit button only when the user agrees to the terms of use.
 $("#agree").on("change", function() {
     if (this.checked) {
         $("#submit").removeAttr("disabled");

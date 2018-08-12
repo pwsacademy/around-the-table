@@ -6,39 +6,38 @@
 <h2>Berichten</h2>
 <p>
     Op deze pagina verschijnen de berichten die je verstuurt of ontvangt.
-    Deze berichten verdwijnen automatisch van zodra de activiteit waarover ze gaan is afgelopen.
+    Deze berichten verdwijnen automatisch van zodra het spel waarover ze gaan is afgelopen.
 </p>
 {% if conversations %}
     {% for conversation in conversations %}
-        <div class="media mt-3">
-            <a href="/web/game/{{ conversation.activity }}">
-                <img class="avatar-large mr-3" src="{{ conversation.picture }}">
-            </a>
+        <!-- Header -->
+        <a class="media mt-3" href="/web/activity/{{ conversation.activity }}">
+            <img class="mr-3" width="75px" src="{{ conversation.picture }}">
             <div class="media-body">
-                <h5 class="mt-0">{{ conversation.title }}</h5>
-                <p>
-                    Gesprek met {{ conversation.other.name }}
-                </p>
+                <h5>{{ conversation.title }}</h5>
+                <p>{{ conversation.other.name }}</p>
                 {% for message in conversation.messages %}
-                    <!-- Nested version for everything except mobile -->
+                    <!-- Nested messages for md -->
                     <div class="media d-none d-md-flex mt-3">
+                        <!-- Message from the other user -->
                         {% if conversation.userIsSender and message.direction == "incoming" or 
                            not conversation.userIsSender and message.direction == "outgoing" %}
-                            <img class="avatar rounded-circle mr-3" src="{{ conversation.other.picture }}">
+                            <img class="avatar rounded-circle mr-3" src="{{ conversation.other.picture }}" title="{{ conversation.other.name }}">
                             <div class="media-body">
                                 <h6 class="text-muted">
-                                    {{ message.date }} om {{ message.time }}
+                                    {{ message.longDate }} om {{ message.time }}
                                     {% if not message.isRead %}
                                         <i class="fa fa-asterisk text-danger"></i>
                                     {% endif %}
                                 </h6>
                                 {{ message.text }}
                             </div>
+                        <!-- Message from the current user -->
                         {% else %}
-                            <img class="avatar rounded-circle mr-3" src="{{ base.user.picture }}">
+                            <img class="avatar rounded-circle mr-3" src="{{ base.user.picture }}" title="{{ base.user.name }}">
                             <div class="media-body">
                                 <h6 class="text-muted">
-                                    {{ message.date }} om {{ message.time }}
+                                    {{ message.longDate }} om {{ message.time }}
                                 </h6>
                                 {{ message.text }}
                             </div>
@@ -58,27 +57,37 @@
                     </div>
                 </form> -->
             </div>
-        </div>
-        <!-- Collapsed version for mobile -->
+        </a>
+        <!-- Collapsed messages for xs and sm -->
         {% for message in conversation.messages %}
             <div class="media d-md-none mt-3">
+                <!-- Message from the other user -->
                 {% if conversation.userIsSender and message.direction == "incoming" or 
                    not conversation.userIsSender and message.direction == "outgoing" %}
-                    <img class="avatar rounded-circle mr-3" src="{{ conversation.other.picture }}">
+                    <img class="avatar rounded-circle mr-3" src="{{ conversation.other.picture }}" title="{{ conversation.other.name }}">
                     <div class="media-body">
                         <h6 class="text-muted">
-                            {{ message.date }} om {{ message.time }}
+                            <!-- xs shows abbreviated weekday -->
+                            <span class="d-sm-none">{{ message.shortDate }}</span>
+                            <!-- sm shows the full weekday -->
+                            <span class="d-none d-sm-inline">{{ message.longDate }}</span>
+                            om {{ message.time }}
                             {% if not message.isRead %}
                                 <i class="fa fa-asterisk text-danger"></i>
                             {% endif %}
                         </h6>
                         {{ message.text }}
                     </div>
+                <!-- Message from the current user -->
                 {% else %}
-                    <img class="avatar rounded-circle mr-3" src="{{ base.user.picture }}">
+                    <img class="avatar rounded-circle mr-3" src="{{ base.user.picture }}" title="{{ base.user.name }}">
                     <div class="media-body">
                         <h6 class="text-muted">
-                            {{ message.date }} om {{ message.time }}
+                            <!-- xs shows abbreviated weekday -->
+                            <span class="d-sm-none">{{ message.shortDate }}</span>
+                            <!-- sm shows the full weekday -->
+                            <span class="d-none d-sm-inline">{{ message.longDate }}</span>
+                            om {{ message.time }}
                         </h6>
                         {{ message.text }}
                     </div>
@@ -98,32 +107,6 @@
             </div>
         </form> -->
     {% endfor %}
-        <!-- <div class="media alert" data-category="{{ message.category }}" {% if message.category != "hostCancelledGame" %} data-link="{{ message.link }}" {% endif %}>
-            <i class="fa"></i>
-            <div class="media-body">
-                <h6 class="alert-heading">
-                    {{ message.creationDate }}
-                    {% if not message.isRead %}
-                        <i class="fa fa-asterisk text-danger"></i>
-                    {% endif %}
-                </h6>
-                {% if message.category == "requestReceived" %}
-                    {{ message.sender.name }} wenst deel te nemen aan {{ message.game.name }} op {{ message.game.date }}.
-                {% elif message.category == "requestApproved" %}
-                    {{ message.sender.name }} heeft je aanvraag om deel te te nemen aan {{ message.game.name }} op {{ message.game.date }} goedgekeurd.
-                {% elif message.category == "hostCancelledRequest" %}
-                    {{ message.sender.name }} heeft je deelname aan {{ message.game.name }} op {{ message.game.date }} geannuleerd.
-                {% elif message.category == "playerCancelledRequest" %}
-                    {{ message.sender.name }} zal niet deelnemen aan {{ message.game.name }} op {{ message.game.date }}.
-                {% elif message.category == "hostChangedAddress" %}
-                    {{ message.sender.name }} heeft het adres van {{ message.game.name }} op {{ message.game.date }} aangepast.
-                {% elif message.category == "hostChangedDate" %}
-                    {{ message.sender.name }} heeft het tijdstip van {{ message.game.name }} aangepast.
-                {% elif message.category == "hostCancelledGame" %}
-                    {{ message.sender.name }} heeft het spel {{ message.game.name }} op {{ message.game.date }} geannuleerd.
-                {% endif %}
-            </div>
-        </div> -->
 {% else %}
     <p>Je hebt momenteel geen berichten.</p>
 {% endif %}

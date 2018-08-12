@@ -1,0 +1,30 @@
+<!--
+    Snippet that includes general registration information about an activity.
+    This information is included in every version of the activity page if the activity is not closed.
+-->
+<!-- Minimum player count -->
+{% if not activity.requiredPlayerCountReached %}
+    {% if activity.playerCount.lowerBound == 1 %}
+        <p>Dit spel gaat door vanaf 1 speler.</p>
+    {% else %}
+        <p>Dit spel gaat door vanaf {{ activity.playerCount.lowerBound }} spelers.</p>
+    {% endif %}
+{% endif %}
+<!-- Available seats -->
+{% if activity.availableSeats == 0 %}
+    <p>Dit spel is <strong>volzet</strong>.</p>
+{% elif activity.availableSeats == 1 %}
+    <p>Er is nog 1 plaats vrij.</p>
+{% else %}
+    <p>Er zijn nog {{ activity.availableSeats }} plaatsen vrij.</p>
+{% endif %}
+<!-- Deadline -->
+{% if activity.deadlineHasPassed %}
+    <p>Inschrijven voor dit spel is niet meer mogelijk.</p>
+{% elif base.user %}
+    <p>Inschrijven is mogelijk tot {{ activity.deadlineDate }} om {{ activity.deadlineTime }}.</p>
+{% else %} 
+    <div class="alert alert-warning">
+        Om in te schrijven moet je eerst <a class="alert-link" href="/authentication/welcome?redirect=%2Fweb%2Factivity%2F{{ activity.id }}">aanmelden</a>.
+    </div>
+{% endif %}

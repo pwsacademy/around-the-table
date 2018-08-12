@@ -1,0 +1,76 @@
+<!--
+    Snippet that includes general information about an activity.
+    This information is included in every version of the activity page.
+
+    Caution: As this is simply an included file, there is no encapsulation whatsoever.
+    Please make sure you're not reusing any of the ids, input names, variables or functions defined here.
+-->
+<!-- Header -->
+<div class="d-flex flex-column flex-md-row mb-3">
+    <!-- Image -->
+    <div class="mr-md-3 mb-3 mb-md-0">
+        <a href="https://boardgamegeek.com/boardgame/{{ activity.game }}" target="_blank">
+            <!-- Separate image sizing for xs/sm and md -->
+            <img class="rounded d-md-none w-100" src="{{ activity.picture }}">
+            <img class="rounded d-none d-md-flex" width="250" src="{{ activity.picture }}">
+        </a>
+    </div>
+    <!-- Info -->
+    <div>
+        <h2>{{ activity.name }}</h2>
+        <p><i class="fa fa-users"></i> {{ activity.playerCount.upperBound }}</p>
+        {% if activity.playingTime.lowerBound == activity.playingTime.upperBound %}
+            <p><i class="fa fa-clock-o"></i> {{ activity.playingTime.lowerBound }}</p>
+        {% else %}
+            <p><i class="fa fa-clock-o"></i> {{ activity.playingTime.lowerBound }} - {{ activity.playingTime.upperBound }}</p>
+        {% endif %}
+        <p><i class="fa fa-calendar"></i> {{ activity.date }} om {{ activity.time }}</p>
+        <p>
+            <i class="fa fa-map-marker"></i>
+            {% if userIsPlayer or userIsHost %}
+                <!-- Show the full address. -->
+                <!-- md adds a link to Google Maps. The href is set in code. -->
+                <a id="address" class="d-none d-md-inline" href="#" target="_blank">{{ activity.location.address }}</a>
+                <span class="d-md-none">{{ activity.location.address }}</span>
+            {% else %}
+                <!-- Show only the city. -->
+                {{ activity.location.city }}
+            {% endif %}
+            {% if not userIsHost and base.user.location %}
+                ({{ activity.distance }}km)
+            {% endif %}
+        </p>
+        {% if userIsPlayer or userIsHost %}
+            <!-- sm show the address on a map instead of linking to Google Maps. -->
+            <div id="map" class="d-md-none" style="height: 200px"></div>
+        {% endif %}
+    </div>
+</div>
+<!-- Additional info -->
+{% if activity.info %}
+    <h3>Extra informatie</h3>
+    <p>{{ activity.info }}</p>
+{% endif %}
+<script>
+// Add the href attribute to the address link.
+var googleMapsLink = "https://maps.google.com/?q=" + encodeURIComponent("{{ activity.location.address }}");
+$("#address").attr("href", googleMapsLink);
+// Set up the map.
+var coordinates = {
+    lat: {{ activity.location.coordinates.latitude }},
+    lng: {{ activity.location.coordinates.longitude }}
+};
+function loadMap() {
+    if (document.getElementById("map")) {
+        var map = new google.maps.Map(document.getElementById("map"), {
+            center: coordinates,
+            zoom: 15
+        });
+        new google.maps.Marker({
+            position: coordinates,
+            map: map
+        });
+    }
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ base.google.key }}&amp;callback=loadMap"></script>

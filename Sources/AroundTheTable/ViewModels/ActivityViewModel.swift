@@ -1,7 +1,7 @@
 import Foundation
 
 /**
- View model for **game.stencil**.
+ View model for **activity-closed.stencil**, **activity-host.stencil** and **activity-player.stencil**.
  */
 struct ActivityViewModel: Codable {
     

@@ -1,0 +1,57 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - {{ activity.name }}{% endblock %}
+
+{% block opengraph %}
+<meta property="og:title" content="{{ activity.name }}">
+<meta property="og:image" content="{{ activity.picture }}">
+{% endblock %}
+
+{% block content %}
+<!-- General information -->
+{% include "snippets/activity-general.stencil" %}
+<!-- Host and player information -->
+<h3>Spelers</h3>
+{% include "snippets/activity-players.stencil" %}
+<!-- General registration information -->
+{% include "snippets/activity-general-registration.stencil" %}
+<!-- Request seats -->
+{% if base.user %}
+    {% if userIsPending %}
+        <p><i class="fa fa-hourglass-o fa-lg"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
+    {% elif not activity.deadlineHasPassed and not userIsPlayer %}
+        <form class="form-inline mb-3" method="post" action="/web/activity/{{ activity.id }}/registrations">
+            <select id="seats" class="custom-select mr-3" name="seats" style="width: auto">
+                {% for seat in activity.seatOptions %}
+                    <option value="{{ seat }}">{{ seat }}</option>
+                {% endfor %}
+            </select>
+            <span id="seatsText" class="mr-3">plaats</span>
+            {% if activity.availableSeats == 0 %}
+                <button class="btn btn-warning" type="submit">aanvragen</button>
+            {% else %}
+                <button class="btn btn-primary" type="submit">aanvragen</button>
+            {% endif %}
+        </form>
+        {% if activity.availableSeats == 0 %}
+            <div class="alert alert-warning">
+                <strong>Opgelet:</strong> Dit spel is reeds volzet. Je kan nog plaatsen aanvragen en bent dan beschikbaar als reservespeler.
+            </div>
+        {% endif %}
+    {% endif %}
+{% endif %}
+{% endblock %}
+
+{% block additional-body %}
+<script>
+// Pick the appropriate seatsText for the selected number of seats.
+$("#seats").on("change", function() {
+    var seats = $(this).val();
+    if (seats == 1) {
+        $("#seatsText").text("plaats");
+    } else {
+        $("#seatsText").text("plaatsen");
+    }
+});
+</script>
+{% endblock %}

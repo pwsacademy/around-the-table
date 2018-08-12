@@ -1,5 +1,5 @@
 /**
- Form submitted when signing up using email credentials.
+ Form for signing up using email credentials.
  */
 struct SignUpForm: Codable {
     

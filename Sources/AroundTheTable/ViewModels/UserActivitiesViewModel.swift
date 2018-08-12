@@ -1,9 +1,9 @@
 import Foundation
 
 /**
- View model for **my-games.stencil**.
+ View model for **user-activities.stencil**.
  */
-struct MyActivitiesViewModel: Codable {
+struct UserActivitiesViewModel: Codable {
     
     let base: BaseViewModel
     
@@ -24,8 +24,11 @@ struct MyActivitiesViewModel: Codable {
         let host: UserViewModel
         let name: String
         let picture: String
+        let thumbnail: String
         let availableSeats: Int
-        let date: String
+        let longDate: String
+        let shortDate: String
+        let time: String
         let location: Location
         let distance: Int
         
@@ -38,8 +41,11 @@ struct MyActivitiesViewModel: Codable {
             self.host = UserViewModel(activity.host)
             self.name = activity.name
             self.picture = activity.picture?.absoluteString ?? Settings.defaultGamePicture
+            self.thumbnail = activity.thumbnail?.absoluteString ?? Settings.defaultGameThumbnail
             self.availableSeats = activity.availableSeats
-            self.date = activity.date.formatted(format: "EEEE d MMMM")
+            self.longDate = activity.date.formatted(format: "EEEE d MMMM")
+            self.shortDate = activity.date.formatted(format: "E d MMMM") // abbreviated weekday
+            self.time = activity.deadline.formatted(timeStyle: .short)
             self.location = activity.location
             self.distance = Int(ceil(distance / 1000)) // in km
         }

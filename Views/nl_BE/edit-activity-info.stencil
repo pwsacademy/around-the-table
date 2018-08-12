@@ -1,0 +1,15 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Extra informatie aanpassen{% endblock %}
+
+{% block content %}
+<h2>Extra informatie aanpassen</h2>
+<form method="post" action="/web/activity/{{ id }}/edit/info">
+    <div class="form-group">
+        <textarea class="form-control" name="info" rows="8">{{ info }}</textarea>
+    </div>
+    <div class="form-group">
+        <button id="submit" class="btn btn-primary" type="submit">Aanpassingen opslaan</button>
+    </div>
+</form>
+{% endblock %}

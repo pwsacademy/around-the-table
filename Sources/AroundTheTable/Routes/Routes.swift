@@ -35,7 +35,7 @@ public class Routes {
     /**
      Registers all of the application's routes on the given router.
      
-     This method does a global setup, then delegates to methods defined in extensions to configure the various routes.
+     This method does global setup, then delegates to methods defined in extensions to configure the various routes.
      */
     public func configure(using router: Router) {
         
@@ -56,12 +56,12 @@ public class Routes {
         let credentials = makeCredentials()
         
         // Authentication routes.
-        router.all("/authentication", middleware: [session])
-        configureAuthentication(using: router.route("/authentication"), credentials: credentials)
+        router.all("authentication", middleware: [session])
+        configureAuthenticationRoutes(using: router.route("authentication"), credentials: credentials)
         
         // Web routes.
-        router.all("/web", middleware: session)
-        configureWeb(using: router.route("/web"), credentials: credentials)
+        router.all("web", middleware: session)
+        configureWebRoutes(using: router.route("web"), credentials: credentials)
         
         // Home page.
         router.get("/") {
@@ -70,7 +70,7 @@ public class Routes {
         }
         
         // Registers a health endpoint.
-        router.get("/health") {
+        router.get("health") {
             request, response, next in
             if self.health.status.state == .UP {
                 try response.status(.OK).send(self.health.status).end()
@@ -102,28 +102,6 @@ public class Routes {
     }
     
     /**
-     Returns the currently authenticated user, if any.
-     */
-    func authenticatedUser(for request: RouterRequest) throws -> User? {
-        guard let profile = request.userProfile else {
-            return nil
-        }
-        let lookup = profile.provider == "Facebook" ? persistence.userWith(facebookID:) : persistence.userWith(email:)
-        return try lookup(profile.id)
-    }
-    
-    /**
-     Creates a `BaseViewModel` based on the given request.
-     */
-    func baseViewModel(for request: RouterRequest) throws -> BaseViewModel {
-        guard let user = try authenticatedUser(for: request) else {
-            return try BaseViewModel(user: nil, unreadMessageCount: 0, requestURL: request.originalURL)
-        }
-        let unreadMessageCount = try persistence.unreadMessageCount(for: user)
-        return try BaseViewModel(user: user, unreadMessageCount: unreadMessageCount, requestURL: request.originalURL)
-    }
-    
-    /**
      The global error handler.
      
      Returns a 500 Internal Server Error for API requests.
@@ -151,5 +129,33 @@ public class Routes {
             }
         }
         next()
+    }
+}
+
+/**
+ Utility functions, used by several extensions.
+ */
+extension Routes {
+    
+    /**
+     Returns the currently authenticated user.
+     */
+    func authenticatedUser(for request: RouterRequest) throws -> User? {
+        guard let profile = request.userProfile else {
+            return nil
+        }
+        let lookup = profile.provider == "Facebook" ? persistence.userWith(facebookID:) : persistence.userWith(email:)
+        return try lookup(profile.id)
+    }
+    
+    /**
+     Creates a `BaseViewModel` for the given request.
+     */
+    func baseViewModel(for request: RouterRequest) throws -> BaseViewModel {
+        guard let user = try authenticatedUser(for: request) else {
+            return try BaseViewModel(user: nil, unreadMessageCount: 0, requestURL: request.originalURL)
+        }
+        let unreadMessageCount = try persistence.unreadMessageCount(for: user)
+        return try BaseViewModel(user: user, unreadMessageCount: unreadMessageCount, requestURL: request.originalURL)
     }
 }

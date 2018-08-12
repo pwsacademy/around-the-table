@@ -9,7 +9,7 @@ extension Routes {
     /**
      Registers the authentication routes on the given router.
      */
-    func configureAuthentication(using router: Router, credentials: Credentials) {
+    func configureAuthenticationRoutes(using router: Router, credentials: Credentials) {
         router.get("welcome", handler: showWelcome)
         router.post("welcome", handler: signInWithEmail)
         router.get("signup", handler: showSignUpWithEmail)
@@ -113,10 +113,10 @@ extension Routes {
         // Check that the email address isn't already used.
         guard try persistence.userWith(email: form.email) == nil else {
             let base = try baseViewModel(for: request)
-            try response.render("signup-email", with: SignUpViewModel(base: base,
-                                                                      name: form.name,
-                                                                      email: form.email,
-                                                                      error: true))
+            try response.render("signup-email", with: EmailSignUpViewModel(base: base,
+                                                                           name: form.name,
+                                                                           email: form.email,
+                                                                           error: true))
             return next()
         }
         let user = User(name: form.name)
@@ -179,7 +179,9 @@ extension Routes {
         } else {
             // For a new user, send the user to the sign-up page.
             let base = try baseViewModel(for: request)
-            try response.render("signup-facebook", with: base, forKey: "base")
+            try response.render("signup-facebook", with: FacebookSignUpViewModel(base: base,
+                                                                                 name: profile.displayName,
+                                                                                 picture: profile.photos?.first?.value ?? Settings.defaultProfilePicture))
             next()
         }
     }

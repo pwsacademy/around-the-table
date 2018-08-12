@@ -1,0 +1,133 @@
+{% extends "base.stencil" %}
+
+{% block title %}
+    {% if sort == "new" %}
+        {{ block.super }} - Nieuwste spellen
+    {% elif sort == "upcoming" %}
+        {{ block.super }} - Binnenkort op de agenda
+    {% elif sort == "near-me" %}
+        {{ block.super }} - In mijn buurt
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+    <!-- Sort options -->
+    <ul class="pagination mr-md-5">
+        {% if sort == "new" %}
+            <li class="page-item active">
+                <span class="page-link">
+                    <i class="fa fa-asterisk d-none d-sm-inline"></i> Nieuw
+                </span>
+            </li>
+        {% else %}
+            <li class="page-item">
+                <a class="page-link" href="/web/activities?sort=new&amp;view=list">
+                    <i class="fa fa-asterisk d-none d-sm-inline"></i> Nieuw
+                </a>
+            </li>
+        {% endif %}
+        {% if sort == "upcoming" %}
+            <li class="page-item active">
+                <span class="page-link">
+                    <i class="fa fa-calendar d-none d-sm-inline"></i> Binnenkort
+                </span>
+            </li>
+        {% else %}
+            <li class="page-item">
+                <a class="page-link" href="/web/activities?sort=upcoming&amp;view=list">
+                    <i class="fa fa-calendar d-none d-sm-inline"></i> Binnenkort
+                </a>
+            </li>
+        {% endif %}
+        {% if sort == "near-me" %}
+            <li class="page-item active">
+                <span class="page-link">
+                    <i class="fa fa-map-marker d-none d-sm-inline"></i> Dichtbij
+                </span>
+            </li>
+        {% else %}
+            <li class="page-item">
+                <a class="page-link" href="/web/activities?sort=near-me&amp;view=list">
+                    <i class="fa fa-map-marker d-none d-sm-inline"></i> Dichtbij
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+    <!-- View options, only visible in md and above -->
+    <ul class="pagination d-none d-md-flex">
+        <li class="page-item">
+            <a class="page-link" href="/web/activities?sort={{ sort }}&amp;view=grid">
+                <i class="fa fa-th-large"></i> Raster
+            </a>
+        </li>
+        <li class="page-item active">
+            <span class="page-link">
+                <i class="fa fa-list"></i> Lijst
+            </span>
+        </li>
+    </ul>
+</div>
+<!-- Title -->
+{% if sort == "new" %}
+    <h2>Nieuwste spellen</h2>
+{% elif sort == "upcoming" %}
+    <h2>Binnenkort op de agenda</h2>
+{% elif sort == "near-me" %}
+    <h2>In mijn buurt</h2>
+{% endif %}
+<!-- Link to user activities -->
+{% if base.user %}
+    <div class="alert alert-info">
+        Spellen die je zelf organiseert worden niet getoond op deze pagina.
+        Deze spellen zijn te vinden in je persoonlijk menu, onder <a class="alert-link" href="/web/user/activities?view=list">Mijn spellen</a>.
+    </div>
+{% endif %}
+<!-- Check if a location is set when showing activities near the user -->
+{% if sort == "near-me" and not base.user.location %}
+    <div class="alert alert-warning">
+        {% if base.user %}
+            Om deze functie te activeren moet je een adres ingeven bij <a class="alert-link" href="/web/user/settings">Instellingen</a>.
+        {% else %}
+            Om deze functie te activeren moet je eerst <a class="alert-link" href="/authentication/welcome?redirect=%2Fweb%2Factivities%3Fsort%3Dnear-me%26view%3Dlist">aanmelden</a>.
+            Daarna kan je een adres ingeven bij <a class="alert-link" href="/web/user/settings">Instellingen</a>.
+        {% endif %}
+    </div>
+<!-- Activities -->
+{% elif activities %}
+    {% for activity in activities %}
+        <a class="{% if activity.availableSeats == 0 %} red {% elif activity.availableSeats == 1 %} yellow {% else %} green {% endif %} autoborder item"
+            href="/web/activity/{{ activity.id }}">
+            <!-- Separate image sizing for xs, sm and md -->
+            <img class="d-sm-none align-self-start" width="75" src="{{ activity.thumbnail }}">
+            <img class="d-none d-sm-flex d-md-none align-self-start" width="150" src="{{ activity.picture }}">
+            <img class="d-none d-md-flex align-self-start" width="200" src="{{ activity.picture }}">
+            <div class="body">
+                <h5>{{ activity.name }}</h5>
+                <p>
+                    <i class="fa fa-calendar"></i>
+                    <!-- xs shows abbreviated weekday -->
+                    <span class="d-sm-none">{{ activity.shortDate }}</span>
+                    <!-- sm shows the full weekday -->
+                    <span class="d-none d-sm-inline">{{ activity.longDate }}</span>
+                    <!-- md adds the time -->
+                    <span class="d-none d-md-inline">om {{ activity.time }}</span>
+                    <br>
+                    <!-- Show the time separately in xs and sm -->
+                    <span class="d-md-none">
+                        <i class="fa fa-clock-o"></i> {{ activity.time }}<br>
+                    </span>
+                    <i class="fa fa-user"></i> {{ activity.host.name }}<br>
+                    <i class="fa fa-map-marker"></i> {{ activity.location.city }}
+                    {% if base.user.location %}
+                        ({{ activity.distance }}km)
+                    {% endif %}
+                </p>
+            </div>
+        </a>
+    {% endfor %}
+<!-- Placeholder -->
+{% else %}
+    <p>Geen spellen gepland.</p>
+{% endif %}
+{% endblock %}

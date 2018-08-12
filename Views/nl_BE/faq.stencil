@@ -8,7 +8,7 @@
     Op deze pagina vind je een antwoord op enkele veelgestelde vragen.
     Heb je een andere vraag, dan kan je die altijd stellen via onze <a href="https://www.facebook.com/ronddetafel.be" target="_blank">Facebookpagina</a>.
 </p>
-<h3 class="mb-3">Inhoudstafel</h3>
+<h3>Inhoudstafel</h3>
 <ul>
     <li>
         Gekende problemen
@@ -27,13 +27,12 @@
     <li>
         Facebook
         <ul>
-            <li><a href="#facebook-required">Ik heb geen Facebook. Wat nu?</a></li>
             <li><a href="#facebook-data">Welke gegevens worden opgevraagd bij Facebook?</a></li>
             <li><a href="#facebook-privacy">Worden er gegevens gedeeld met Facebook of andere partijen?</a></li>
         </ul>
     </li>
 </ul>
-<h3 class="mb-3">Gekende problemen</h3>
+<h3>Gekende problemen</h3>
 <a name="no-results"><h5>Ik wil een spel organiseren maar krijg geen zoekresultaten.</h5></a>
 <p>
     Probeer eerst de optie "Enkel exacte resultaten" uit te schakelen.
@@ -61,7 +60,7 @@
 <p>
     Zie het voorgaande probleem.
 </p>
-<h3 class="mb-3">Organiseren</h3>
+<h3>Organiseren</h3>
 <a name="extensions"><h5>Hoe kan ik aangeven met welke uitbreidingen we spelen?</h5></a>
 <p>
     Je kan hiervoor het veld "Extra info" gebruiken.
@@ -76,15 +75,7 @@
     kies dan ofwel een straat in je buurt ofwel de naam van je gemeente.
     Het volledige adres kan je altijd bezorgen via privébericht op Facebook.
 </p>
-<h3 class="mb-3">Facebook</h3>
-<a name="facebook-required"><h5>Ik heb geen Facebook. Wat nu?</h5></a>
-<p>
-    Voorlopig is Facebook vereist om je aan te melden.
-    Het gebruik van Facebook zorgt er voor dat je geen account hoeft aan te maken, wachtwoord hoeft te kiezen of profielfoto hoeft up te loaden.
-    Op termijn zal deze verplichting wegvallen en zal je ook kunnen aanmelden zonder Facebook.
-    In tussentijd kan je altijd vragen aan de organisator van het spel om voor jou een plaatsje te reserveren.
-    Je kan ook samen met een vriend of vriendin inschrijven. Deze persoon kan dan aangeven dat hij of zij een extra speler meebrengt.
-</p>
+<h3>Facebook</h3>
 <a name="facebook-data"><h5>Welke gegevens worden opgevraagd bij Facebook?</h5></a>
 <p>
     Om je aan te melden worden enkel de volgende basisgegevens opgevraagd:

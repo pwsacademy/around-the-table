@@ -1,0 +1,70 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
+
+{% block additional-head %}
+<style>
+#map {
+    height: 400px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Organiseer een spel</h2>
+<p>Vul het onderstaande formulier in om je spel aan te maken.</p>
+<form method="post" action="/web/host/activity">
+    <!-- Name -->
+    <h3>Spel</h3>
+    <input name="game" type="hidden" value="{{ game }}">
+    <div class="form-group">
+        <label>Naam</label>
+        {% if nameOptions|count > 1 %}
+            <select class="form-control custom-select" name="name">
+                {% for name in nameOptions %}
+                    <option value="{{ name }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+        {% else %}
+            <input class="form-control" name="name" type="text" value="{{ nameOptions|first }}" readonly>
+        {% endif %}
+    </div>
+    <!-- Player counts -->
+    {% include "snippets/player-counts.stencil" %}
+    <!-- Date and time -->
+    <h3>Datum en tijdstip</h3>
+    {% include "snippets/datetime-picker.stencil" %}
+    <!-- Deadline -->
+    {% include "snippets/deadline-options.stencil" %}
+    <!-- Address -->
+    <h3>Adres</h3>
+    <p>Deze adresgegevens worden getoond aan de spelers wiens aanvraag jij hebt goedkeurd.</p>
+    <script>
+        var addressPickerEnablesSubmit = true;
+        var addressPickerIncludesPrefillCheckbox = true;
+    </script>
+    {% include "snippets/address-picker.stencil" %}
+    <!-- Additional info -->
+    <h3>Extra informatie</h3>
+    <div class="form-group">
+        <textarea class="form-control" name="info" rows="8">{{ info }}</textarea>
+    </div>
+    <div class="form-group">
+        <!-- The submit button will be disabled when the user needs to enter an address. -->
+        <button id="submit" class="btn btn-primary" type="submit">Spel aanmaken</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block additional-body %}
+<script>
+// Set the submit button's initial state.
+{% if base.user.location %}
+    if (!addressPickerIncludesPrefillCheckbox) {
+        $("#submit").attr("disabled", "disabled");
+    }
+{% else %}
+    $("#submit").attr("disabled", "disabled");
+{% endif %}
+</script>
+{% endblock %}

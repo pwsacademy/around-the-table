@@ -92,6 +92,18 @@ extension Persistence {
         return try user(withID: id)
     }
     
+    /**
+     Returns a user's Facebook ID.
+     */
+    func facebookID(for user: User) throws -> String? {
+        guard let id = user.id,
+              let credential = try credentials.findOne(["_id": id]),
+              let facebookID = String(credential["facebook"]) else {
+            return nil
+        }
+        return facebookID
+    }
+    
     private func encrypt(password: String, salt: String) throws -> String {
         let hash = try PBKDF.deriveKey(fromPassword: password, salt: salt, prf: .sha256, rounds: 100_000, derivedKeyLength: 32)
         return CryptoUtils.hexString(from: hash)

@@ -1,0 +1,23 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Spelersaantal en reservaties aanpassen{% endblock %}
+
+{% block content %}
+<h2>Spelersaantal en reservaties aanpassen</h2>
+<form method="post" action="/web/activity/{{ id }}/edit/players">
+    {% include "snippets/player-counts.stencil" %}
+    <div class="form-group">
+        <button id="submit" class="btn btn-primary" type="submit">Aanpassingen opslaan</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block additional-body %}
+<script>
+// Set the correct default values.
+$("#playerCount").val("{{ playerCount }}");
+$("#minPlayerCount").val("{{ minPlayerCount }}");
+$("#prereservedSeats").val("{{ prereservedSeats }}");
+checkPlayerCounts();
+</script>
+{% endblock %}

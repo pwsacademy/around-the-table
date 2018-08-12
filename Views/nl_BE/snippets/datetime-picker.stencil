@@ -1,0 +1,64 @@
+<!-- 
+    A date and time picker component.
+
+    This component assumes a date variable is present in the context.
+    This variable should contain day, month, year, hour and minute properties.
+    These determine the component's initial value.
+
+    The component stores its result in form fields named day, month, year, hour and minute.
+
+    Caution: As this is simply an included file, there is no encapsulation whatsoever.
+    Please make sure you're not reusing any of the ids, input names, variables or functions defined here.
+-->
+<div class="form-row">
+    <!-- Date -->
+    <div class="form-group col-md-6">
+        <label>Datum</label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <i class="fa fa-calendar"></i> 
+                </span>
+            </div>
+            <input id="datepicker" class="form-control" type="text" readonly required>
+        </div>
+        <input id="day" name="day" type="hidden" value="{{ date.day }}">
+        <input id="month" name="month" type="hidden" value="{{ date.month }}">
+        <input id="year" name="year" type="hidden" value="{{ date.year }}">
+    </div>
+    <!-- Time -->
+    <div class="form-group col-md-3">
+        <label>Uur</label>
+        <input class="form-control" name="hour" type="number" value="{{ date.hour }}" min="0" max="23" required>
+    </div>
+    <div class="form-group col-md-3">
+        <label>Minuut</label>
+        <input class="form-control" name="minute" type="number" value="{{ date.minute }}" min="0" max="59" required>
+    </div>
+</div>
+<script src="/public/js/pikaday.min.js"></script>
+<script>
+// Set up the date picker.
+var picker = new Pikaday({
+    field: document.getElementById("datepicker"),
+    firstDay: 1,
+    minDate: new Date(),
+    defaultDate: new Date({{ date.year }}, {{ date.month }} - 1, {{ date.day }}),
+    setDefaultDate: true,
+    toString(date, format) {
+        return date.toLocaleDateString("nl", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+    },
+    onSelect: function(date) {
+        $("#day").val(date.getDate());
+        $("#month").val(date.getMonth() + 1);
+        $("#year").val(date.getFullYear());
+    },
+    i18n: {
+        previousMonth : "Vorige maand",
+        nextMonth     : "Volgende maand",
+        months        : ["Januari","Februari","Maart","April","Mei","Juni","Juli","Augustus","September","Oktober","November","December"],
+        weekdays      : ["Zondag","Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag"],
+        weekdaysShort : ["Zon","Ma","Di","Woe","Do","Vrij","Zat"]
+    }
+});
+</script>

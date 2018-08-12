@@ -1,0 +1,102 @@
+<!-- 
+    A form component to configure player counts for an activity.
+
+    The component stores its results in the following form fields:
+    - playerCount, which has an initial value equal to the maximum player count.
+    - minPlayerCount, which has an initial value equal to the minimum player count.
+    - prereservedSeats, which has an initial value of 1, or 0 for a single player game.
+
+    Caution: As this is simply an included file, there is no encapsulation whatsoever.
+    Please make sure you're not reusing any of the ids, input names, variables or functions defined here.
+-->
+<div class="form-group">
+    <label>Aantal spelers</label>
+    {% if playerCountOptions|count > 1 %}
+        <select id="playerCount" class="form-control custom-select" name="playerCount">
+            {% for playerCount in playerCountOptions %}
+                {% if playerCount == playerCountOptions|max %}
+                    <option value="{{ playerCount }}" selected>{{ playerCount }}</option>
+                {% else %}
+                    <option value="{{ playerCount }}">{{ playerCount }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+    {% else %}
+        <input class="form-control" name="playerCount" type="text" value="{{ playerCountOptions|first }}" readonly>
+    {% endif %}
+    <p class="form-text text-muted">
+        Dit is het totaal aantal spelers, organisatoren meegerekend.
+    </p>
+</div>
+<div class="form-group">
+    <label>Minimum aantal spelers</label>
+    {% if playerCountOptions|count > 1 %}
+        <select id="minPlayerCount" class="form-control custom-select" name="minPlayerCount">
+            {% for playerCount in playerCountOptions %}
+                <option value="{{ playerCount }}">{{ playerCount }}</option>
+            {% endfor %}
+        </select>
+    {% else %}
+        <input class="form-control" name="minPlayerCount" type="text" value="{{ playerCountOptions|first }}" readonly>
+    {% endif %}        
+    <p class="form-text text-muted">
+        Het minimum aantal spelers dat nodig is om het spel te laten doorgaan.
+    </p>
+</div>
+<div class="form-group">
+    <label>Aantal plaatsen te reserveren voor organisatoren</label>
+    {% if prereservedSeatsOptions|count > 1 %}
+        <select id="prereservedSeats" class="form-control custom-select" name="prereservedSeats">
+            {% for seatCount in prereservedSeatsOptions %}
+                {% if seatCount == 0 %}
+                    <option value="{{ seatCount }}">Geen (ik neem niet deel)</option>
+                {% elif seatCount == 1 %}
+                    <option value="{{ seatCount }}" selected>{{ seatCount }}</option>
+                {% else %}
+                    <option value="{{ seatCount }}">{{ seatCount }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        <p class="form-text text-muted">
+            Dit aantal wordt afgetrokken van het totaal aantal spelers bij het berekenen van het aantal vrije plaatsen.
+        </p>
+    {% else %}
+        <input class="form-control" type="text" value="Geen (ik neem niet deel)" readonly>
+        <input name="prereservedSeats" type="hidden" value="0">
+    {% endif %}
+</div>
+<script>
+// Adjusts minPlayerCount and prereservedSeats when a new playerCount is selected.
+function checkPlayerCounts() {
+    var playerCount = parseInt($("#playerCount").val());
+    var minPlayerCount = parseInt($("#minPlayerCount").val());
+    // If minPlayerCount is now invalid, set it to the new playerCount.
+    if (minPlayerCount > playerCount) {
+        $("#minPlayerCount").val(playerCount);
+    }
+    // Adjust the minPlayerCount options based on the new playerCount.
+    $("#minPlayerCount option").each(function() {
+        var option = parseInt($(this).attr("value"));
+        if (option <= playerCount) {
+            $(this).removeAttr("disabled");
+        } else {
+            $(this).attr("disabled", "disabled");
+        }
+    });
+    // If prereservedSeats is now invalid, set it to the highest valid option.
+    var prereservedSeats = parseInt($("#prereservedSeats").val());
+    if (prereservedSeats >= playerCount) {
+        $("#prereservedSeats").val(playerCount - 1);
+    }
+    // Adjust the prereservedSeats options based on the new playerCount.
+    $("#prereservedSeats option").each(function() {
+        var option = parseInt($(this).attr("value"));
+        if (option < playerCount) {
+            $(this).removeAttr("disabled");
+        } else {
+            $(this).attr("disabled", "disabled");
+        }
+    });
+}
+$("#playerCount").on("change", checkPlayerCounts);
+</script>

@@ -1,7 +1,7 @@
 /**
  View model for **signup-email.stencil**.
  */
-struct SignUpViewModel: Codable {
+struct EmailSignUpViewModel: Codable {
     
     let base: BaseViewModel
     let name: String

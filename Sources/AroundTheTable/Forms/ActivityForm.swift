@@ -17,8 +17,8 @@ struct ActivityForm: Codable {
     let hour: Int
     let minute: Int
     
-    /// The activity's date, based on the form's components.
-    /// Returns `nil` if these components do not represent a valid date.
+    /// The activity's date.
+    /// Returns `nil` if the form's fields do not represent a valid date.
     var date: Date? {
         var components = DateComponents()
         components.calendar = Calendar(identifier: .gregorian)
@@ -37,7 +37,7 @@ struct ActivityForm: Codable {
     
     let deadlineType: String
     
-    /// The activity's deadline, based on the form's deadline type and date.
+    /// The activity's deadline.
     /// Returns `nil` if either the deadline type or date is invalid.
     var deadline: Date? {
         guard let date = date else {
@@ -64,7 +64,7 @@ struct ActivityForm: Codable {
     let latitude: Double
     let longitude: Double
     
-    /// The activity's location, based on the form's components.
+    /// The activity's location.
     var location: Location {
         return Location(coordinates: Coordinates(latitude: latitude, longitude: longitude),
                         address: address,
@@ -74,7 +74,7 @@ struct ActivityForm: Codable {
     
     let info: String
     
-    /// Whether the form's components are valid. Checks:
+    /// Whether the form's fields are valid. Checks:
     /// - if the form does not contain an empty string for a required field,
     /// - if the player count is at least 1,
     /// - if the minimum player count is between 1 and the player count,
@@ -83,6 +83,7 @@ struct ActivityForm: Codable {
     /// - if the deadline is valid and in the future.
     var isValid: Bool {
         let checks = [
+            // TODO: This can be improved using count(where:) once that's added to the Standard Library.
             ![name, address, city, country].map({ $0.isEmpty }).contains(true),
             playerCount >= 1,
             minPlayerCount >= 1 && minPlayerCount <= playerCount,

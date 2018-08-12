@@ -1,0 +1,30 @@
+<!--
+    A form component to select a deadline for an activity.
+
+    The component stores its result in a form field named deadlineType.
+
+    Caution: As this is simply an included file, there is no encapsulation whatsoever.
+    Please make sure you're not reusing any of the ids, input names, variables or functions defined here.
+-->
+<div class="form-group">
+    <label>Deadline voor inschrijving</label>
+    <div class="form-check">
+        <input id="deadline-one-hour" class="form-check-input" type="radio" name="deadlineType" value="one hour" checked>
+        <label for="deadline-one-hour" class="form-check-label">een uur op voorhand</label>
+    </div>
+    <div class="form-check">
+        <input id="deadline-one-day" class="form-check-input" type="radio" name="deadlineType" value="one day">
+        <label for="deadline-one-day" class="form-check-label">een dag op voorhand</label>
+    </div>
+    <div class="form-check">
+        <input id="deadline-two-days" class="form-check-input" type="radio" name="deadlineType" value="two days">
+        <label for="deadline-two-days" class="form-check-label">twee dagen op voorhand</label>
+    </div>
+    <div class="form-check">
+        <input id="deadline-one-week" class="form-check-input" type="radio" name="deadlineType" value="one week">
+        <label for="deadline-one-week" class="form-check-label">een week op voorhand</label>
+    </div>
+    <p class="form-text text-muted">
+        Na het verstrijken van de deadline kan je als organisator nog steeds aanvragen goedkeuren of het spel annuleren.
+    </p>
+</div>

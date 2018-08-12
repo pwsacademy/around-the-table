@@ -1,12 +1,11 @@
 import Foundation
 
 /**
- View model for **host-game.stencil**.
+ View model for **host-activity.stencil**.
  */
 struct HostActivityViewModel: Codable {
     
     let base: BaseViewModel
-    let type: String
     let game: Int
     let nameOptions: [String]
     let playerCountOptions: [Int]
@@ -33,7 +32,6 @@ struct HostActivityViewModel: Codable {
     
     init(base: BaseViewModel, game: Game) {
         self.base = base
-        type = "create"
         self.game = game.id
         nameOptions = game.names
         playerCountOptions = Array(game.playerCount)

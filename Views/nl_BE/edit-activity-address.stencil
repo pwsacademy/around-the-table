@@ -1,0 +1,31 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Adres aanpassen{% endblock %}
+
+{% block content %}
+<h2>Adres aanpassen</h2>
+<form method="post" action="/web/activity/{{ id }}/edit/address">
+    <script>
+        var addressPickerEnablesSubmit = true;
+        var addressPickerIncludesPrefillCheckbox = true;
+    </script>
+    {% include "snippets/address-picker.stencil" %}
+    <div class="form-group">
+        <!-- The submit button will be disabled when the user needs to enter an address. -->
+        <button id="submit" class="btn btn-primary" type="submit">Aanpassingen opslaan</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block additional-body %}
+<script>
+// Set the submit button's initial state.
+{% if base.user.location %}
+    if (!addressPickerIncludesPrefillCheckbox) {
+        $("#submit").attr("disabled", "disabled");
+    }
+{% else %}
+    $("#submit").attr("disabled", "disabled");
+{% endif %}
+</script>
+{% endblock %}

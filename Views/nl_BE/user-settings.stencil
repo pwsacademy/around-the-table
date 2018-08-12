@@ -1,0 +1,53 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Instellingen{% endblock %}
+{% block additional-head %}
+<style>
+#map {
+    height: 400px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% if saved %}
+    <div id="saved" class="alert alert-success">
+        <button type="button" class="close">&times;</button>
+        Je instellingen zijn correct opgeslagen.
+    </div>
+{% endif %}
+<h2>Instellingen</h2>
+<p>
+    <img class="avatar rounded-circle mr-2" src="{{ base.user.picture }}">
+    {{ base.user.name }}
+</p>
+{% if userHasFacebookCredential %}
+    <p class="text-muted">
+        Je gebruikersnaam en profielfoto worden opgehaald bij Facebook tijdens het aanmelden.
+    </p>
+{% endif %}
+<form method="post" action="/web/user/settings">
+    <h3>Adres</h3>
+    <script>
+        var addressPickerEnablesSubmit = false;
+        var addressPickerIncludesPrefillCheckbox = false;
+    </script>
+    {% include "snippets/address-picker.stencil" %}
+    <div class="form-group">
+        <button id="submit" class="btn btn-primary" type="submit">Opslaan</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block additional-body %}
+<script>
+// Set up the close button for the save confirmation.
+$("#saved button.close").on("click", function() {
+    $("#saved").hide();
+});
+// Set the address picker to the user's current location.
+{% if base.user.location %}
+    setSavedLocation();
+{% endif %}
+</script>
+{% endblock %}
