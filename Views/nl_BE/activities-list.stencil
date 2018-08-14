@@ -22,7 +22,7 @@
             </li>
         {% else %}
             <li class="page-item">
-                <a class="page-link" href="/web/activities?sort=new&amp;view=list">
+                <a class="page-link" href="/web/activities?sort=new">
                     <i class="fa fa-asterisk d-none d-sm-inline"></i> Nieuw
                 </a>
             </li>
@@ -35,7 +35,7 @@
             </li>
         {% else %}
             <li class="page-item">
-                <a class="page-link" href="/web/activities?sort=upcoming&amp;view=list">
+                <a class="page-link" href="/web/activities?sort=upcoming">
                     <i class="fa fa-calendar d-none d-sm-inline"></i> Binnenkort
                 </a>
             </li>
@@ -48,7 +48,7 @@
             </li>
         {% else %}
             <li class="page-item">
-                <a class="page-link" href="/web/activities?sort=near-me&amp;view=list">
+                <a class="page-link" href="/web/activities?sort=near-me">
                     <i class="fa fa-map-marker d-none d-sm-inline"></i> Dichtbij
                 </a>
             </li>
@@ -57,7 +57,7 @@
     <!-- View options, only visible in md and above -->
     <ul class="pagination d-none d-md-flex">
         <li class="page-item">
-            <a class="page-link" href="/web/activities?sort={{ sort }}&amp;view=grid">
+            <a class="page-link" href="/web/activities?view=grid">
                 <i class="fa fa-th-large"></i> Raster
             </a>
         </li>
@@ -80,7 +80,7 @@
 {% if base.user %}
     <div class="alert alert-info">
         Spellen die je zelf organiseert worden niet getoond op deze pagina.
-        Deze spellen zijn te vinden in je persoonlijk menu, onder <a class="alert-link" href="/web/user/activities?view=list">Mijn spellen</a>.
+        Deze spellen zijn te vinden in je persoonlijk menu, onder <a class="alert-link" href="/web/user/activities">Mijn spellen</a>.
     </div>
 {% endif %}
 <!-- Check if a location is set when showing activities near the user -->
@@ -89,7 +89,7 @@
         {% if base.user %}
             Om deze functie te activeren moet je een adres ingeven bij <a class="alert-link" href="/web/user/settings">Instellingen</a>.
         {% else %}
-            Om deze functie te activeren moet je eerst <a class="alert-link" href="/authentication/welcome?redirect=%2Fweb%2Factivities%3Fsort%3Dnear-me%26view%3Dlist">aanmelden</a>.
+            Om deze functie te activeren moet je eerst <a class="alert-link" href="/authentication/welcome?redirect=%2Fweb%2Factivities">aanmelden</a>.
             Daarna kan je een adres ingeven bij <a class="alert-link" href="/web/user/settings">Instellingen</a>.
         {% endif %}
     </div>

@@ -1,6 +1,7 @@
 import BSON
 import Credentials
 import Kitura
+import KituraSession
 
 extension Routes {
     
@@ -20,10 +21,21 @@ extension Routes {
      Shows the activities the user is hosting or the user has joined.
      */
     private func activities(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let session = request.session else {
+            throw log(ServerError.missingMiddleware(type: Session.self))
+        }
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        let view = request.queryParameters["view"] ?? "list"
+        let view: String
+        if let viewParameter = request.queryParameters["view"] {
+            // If a view is specified, it is stored in the user's session.
+            view = viewParameter
+            session["preferredUserActivitiesView"] = viewParameter
+        } else {
+            // If no view is specified, either the user's stored (last) view is used, or the default, list.
+            view = session["preferredUserActivitiesView"] as? String ?? "list"
+        }
         guard ["grid", "list"].contains(view) else {
             response.status(.badRequest)
             return next()

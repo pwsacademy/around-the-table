@@ -1,5 +1,6 @@
 import Credentials
 import Kitura
+import KituraSession
 
 extension Routes {
     
@@ -41,8 +42,27 @@ extension Routes {
      Shows the current activities.
      */
     private func activities(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
-        let view = request.queryParameters["view"] ?? "list"
-        let sort = request.queryParameters["sort"] ?? "new"
+        guard let session = request.session else {
+            throw log(ServerError.missingMiddleware(type: Session.self))
+        }
+        let view: String
+        if let viewParameter = request.queryParameters["view"] {
+            // If a view is specified, it is stored in the user's session.
+            view = viewParameter
+            session["preferredActivitiesView"] = viewParameter
+        } else {
+            // If no view is specified, either the user's stored (last) view is used, or the default, list.
+            view = session["preferredActivitiesView"] as? String ?? "list"
+        }
+        let sort: String
+        if let sortParameter = request.queryParameters["sort"] {
+            // If a sort is specified, it is stored in the user's session.
+            sort = sortParameter
+            session["preferredActivitiesSort"] = sortParameter
+        } else {
+            // If no sort is specified, either the user's stored (last) sort is used, or the default, new.
+            sort = session["preferredActivitiesSort"] as? String ?? "new"
+        }
         guard ["grid", "list"].contains(view) && ["new", "upcoming", "near-me"].contains(sort) else {
             response.status(.badRequest)
             return next()
