@@ -1,11 +1,11 @@
 {
   "ATT": {
     "COS": {
-        "BUCKET_URL": "https://s3.eu-geo.objectstorage.softlayer.net/aroundthetable"
+        "BUCKET_URL": "https://s3.eu-geo.objectstorage.softlayer.net/aroundthetable-dev"
     },
     "DATABASE": {
         "URI": "mongodb://localhost:27017/",
-        "NAME": "aroundthetable"
+        "NAME": "aroundthetable-dev"
     },
     "DEFAULT_COORDINATES": {
         "LATITUDE": 51.047546,

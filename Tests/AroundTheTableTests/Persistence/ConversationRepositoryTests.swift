@@ -3,7 +3,7 @@ import XCTest
 @testable import AroundTheTable
 
 /**
- Run these tests against the **att-test** database.
+ Run these tests against the **aroundthetable-test** database.
  Import it from **Tests/AroundTheTable/Fixtures/dump**.
  */
 class ConversationRepositoryTests: XCTestCase {
