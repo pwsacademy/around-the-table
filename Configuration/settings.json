@@ -1,8 +1,5 @@
 {
   "ATT": {
-    "COS": {
-        "BUCKET_URL": "https://s3.eu-geo.objectstorage.softlayer.net/aroundthetable-dev"
-    },
     "DATABASE": {
         "URI": "mongodb://localhost:27017/",
         "NAME": "aroundthetable-dev"
@@ -15,7 +12,8 @@
     "DEFAULT_GAME_THUMBNAIL": "/public/img/game-placeholder-t.png",
     "DEFAULT_PROFILE_PICTURE": "/public/img/user-placeholder.png",
     "FACEBOOK": {
-        "APP": "1154313148030114"
+        "APP": "1154313148030114",
+        "SECRET": "invalid-placeholder"
     },
     "GOOGLE": {
         "COUNTRIES": ["be", "nl"],

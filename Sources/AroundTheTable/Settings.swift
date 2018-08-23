@@ -98,6 +98,8 @@ enum Settings {
         
         /// The Facebook app secret.
         /// This should be provided by an environment variable.
+        /// **settings.json** contains a placeholder so the app will run
+        /// without requiring the environment variable to be set.
         secret: settings["ATT:FACEBOOK:SECRET"] as! String
     )
     
