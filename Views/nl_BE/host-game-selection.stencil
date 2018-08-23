@@ -20,7 +20,7 @@
                 {% if game.playingTime.lowerBound == game.playingTime.upperBound %}
                     <i class="fa fa-clock-o"></i> {{ game.playingTime.lowerBound }}
                 {% else %}
-                    <i class="fa fa-clock-o"></i> {{ game.playingTime.lowerBound }} - {{ game.playingTime.upperBound }}}
+                    <i class="fa fa-clock-o"></i> {{ game.playingTime.lowerBound }} - {{ game.playingTime.upperBound }}
                 {% endif %}
             </p>
         </div>

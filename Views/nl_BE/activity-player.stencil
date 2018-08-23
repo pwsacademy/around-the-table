@@ -20,7 +20,7 @@
     {% if userIsPending %}
         <p><i class="fa fa-hourglass-o fa-lg"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
         <!-- Cancel the pending registration -->
-        <form method="post" action="/web/activity/{{ activity.id }}/registrations/{{ base.user.id }}">
+        <form method="post" class="mb-3" action="/web/activity/{{ activity.id }}/registrations/{{ base.user.id }}">
             <input type="hidden" name="cancelled" value="true">
             <button class="btn btn-danger" type="submit">
                 <i class="fa fa-times"></i> Aanvraag annuleren
