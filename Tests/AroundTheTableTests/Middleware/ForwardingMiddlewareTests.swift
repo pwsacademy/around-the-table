@@ -8,7 +8,8 @@ class ForwardingMiddlewareTests: XCTestCase {
     static var allTests: [(String, (ForwardingMiddlewareTests) -> () throws -> Void)] {
         return [
             ("testForward", testForward),
-            ("testNoForward", testNoForward)
+            ("testNoForwardWithoutDomain", testNoForwardWithoutDomain),
+            ("testHealthException", testHealthException)
         ]
     }
     
@@ -34,7 +35,7 @@ class ForwardingMiddlewareTests: XCTestCase {
         }
     }
     
-    func testNoForward() {
+    func testNoForwardWithoutDomain() {
         let router = Router()
         router.all(middleware: ForwardingMiddleware(domain: nil))
         router.get {
@@ -48,6 +49,33 @@ class ForwardingMiddlewareTests: XCTestCase {
         
         let requestReceived = expectation(description: "request received")
         let request = RestRequest(url: "http://localhost:8081/")
+        request.responseString {
+            response in
+            XCTAssert(response.result == .success("Hello"))
+            requestReceived.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5) {
+            error in
+            Kitura.stop()
+            XCTAssertNil(error)
+        }
+    }
+    
+    func testHealthException() {
+        let router = Router()
+        router.all(middleware: ForwardingMiddleware(domain: "github.com"))
+        router.get("/health") {
+            request, response, next in
+            response.send("Hello")
+            next()
+        }
+        
+        Kitura.addHTTPServer(onPort: 8081, with: router)
+        Kitura.start()
+        
+        let requestReceived = expectation(description: "request received")
+        let request = RestRequest(url: "http://localhost:8081/health")
         request.responseString {
             response in
             XCTAssert(response.result == .success("Hello"))

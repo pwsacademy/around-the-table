@@ -10,6 +10,10 @@ struct ForwardingMiddleware: RouterMiddleware {
     let domain: String?
     
     func handle(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws {
+        // Do not forward the /health endpoint as this will cause it to fail.
+        guard !request.originalURL.contains("/health") else {
+            return next()
+        }
         if let domain = domain, request.hostname != domain {
             try response.redirect("https://\(domain)/")
         } else if let proto = request.headers["X-Forwarded-Proto"], proto == "http" {
