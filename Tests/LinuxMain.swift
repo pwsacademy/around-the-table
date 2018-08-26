@@ -15,11 +15,13 @@ XCTMain([
     testCase(GameTests.allTests),
     testCase(LocationTests.allTests),
     testCase(UserTests.allTests),
+    testCase(SponsorTests.allTests),
     // Persistence
     testCase(ActivityRepositoryTests.allTests),
     testCase(ConversationRepositoryTests.allTests),
     testCase(CredentialsRepositoryTests.allTests),
     testCase(GameRepositoryTests.allTests),
+    testCase(SponsorRepositoryTests.allTests),
     testCase(UserRepositoryTests.allTests),
     // Middleware
     testCase(ForwardingMiddlewareTests.allTests),
