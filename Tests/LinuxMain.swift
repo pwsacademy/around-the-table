@@ -18,6 +18,7 @@ XCTMain([
     // Persistence
     testCase(ActivityRepositoryTests.allTests),
     testCase(ConversationRepositoryTests.allTests),
+    testCase(CredentialsRepositoryTests.allTests),
     testCase(GameRepositoryTests.allTests),
     testCase(UserRepositoryTests.allTests),
     // Middleware
