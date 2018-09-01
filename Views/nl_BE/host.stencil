@@ -3,12 +3,12 @@
 {% block title %}{{ block.super }} - Organiseer een spel{% endblock %}
 
 {% block content %}
+<h2>Organiseer een spel</h2>
 {% if not base.user %}
     <div class="alert alert-warning">
         Om spellen aan te maken moet je eerst <a class="alert-link" href="/authentication/welcome?redirect=%2Fweb%2Fhost">aanmelden</a>.
     </div>
 {% else %}
-    <h2>Organiseer een spel</h2>
     <form method="get" action="/web/host/select">
         <p>
             Geef de naam van een spel in.
