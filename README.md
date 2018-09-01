@@ -1,4 +1,4 @@
-<p style="text-align: center">
+<p align="center">
     <img src="Documentation/README/logo.png" width="150px" alt="logo">
 </p>
 
@@ -36,8 +36,8 @@ We value our privacy and respect yours. We do not store any more information tha
 
 Around The Table is a not-for-profit project. We rely on donations from sponsors and users to fund our work. This lets us keep the platform free of charge and free of ads.
 
-<p style="text-align: center">
-    <img src="Documentation/README/screenshot.png" height="300px" alt="A screenshot from our Flemish/Dutch site">
+<p align="center">
+    <img src="Documentation/README/screenshot.png" alt="A screenshot from our Flemish/Dutch site">
 </p>
 
 ## Show your support
