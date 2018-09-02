@@ -47,7 +47,7 @@ public class Persistence {
            let credentials = configuration.getServiceCreds(spec: service),
            let uri = credentials["uri"] as? String {
             settings = try ClientSettings(uri)
-            // Load the certificate authority required to connect to the Compose for MongoDB service on Bluemix.
+            // Load the certificate authority required to connect to the Compose for MongoDB service on IBM Cloud.
             settings.sslSettings = SSLSettings(enabled: true,
                                                CAFilePath: ConfigurationManager.BasePath.project.path + "/Configuration/CAFile")
         } else {

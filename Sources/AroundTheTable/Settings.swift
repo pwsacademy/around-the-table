@@ -58,7 +58,7 @@ enum Settings {
     static let database = (
         
         /// The name by which the Compose for MongoDB service is connected.
-        /// This setting is optional and is only used when running on Bluemix.
+        /// This setting is optional and is only used when running on IBM Cloud.
         /// When it is defined, it replaces **ATT.DATABASE.URI**.
         service: settings["ATT:DATABASE:SERVICE"] as? String,
         
@@ -71,6 +71,7 @@ enum Settings {
     
     /**
      A default location that is used to calculate distances when a user has not specified his/her location.
+     Also used as a center for empty maps.
      
      This location is also available as `Coordinates.default`.
      */
@@ -108,17 +109,18 @@ enum Settings {
      */
     static let google = (
         
-        /// The countries to which you want to limit Google Maps address autocompletion results.
+        /// The countries to which you want to limit Google Places autocompletion results.
         countries: settings["ATT:GOOGLE:COUNTRIES"] as! [String],
         
-        /// The Google Maps API key.
+        /// The Google Maps and Places API key.
         /// Note that this isn't really a secret, as it is visible in the source code.
-        /// Hence, it should be limited to your domain so it can't be misused.
+        /// Hence, it should be restricted to your domain so it can't be misused.
         /// A default value is provided in **settings.json** for use during development.
         secret: settings["ATT:GOOGLE:SECRET"] as! String
     )
     
     /// The locale used to localize anything that needs it (e.g. views, messages, dates, ...).
+    /// A list of locale identifiers is available as `Locale.availableIdentifiers`.
     static let locale = settings["ATT:LOCALE"] as! String
         
     /// The key used to encrypt the session cookie.
