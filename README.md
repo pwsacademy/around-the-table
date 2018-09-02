@@ -52,4 +52,4 @@ Around The Table is used by the following communities:
 
 * [Rond De Tafel](https://www.rond-de-tafel.be)<br>Dutch-speaking community in Belgium and The Netherlands.
 
-If you're interested in using Around The Table for your gaming community, please contact steven@rond-de-tafel.be.
+If you're interested in using Around The Table for your gaming community, please read our [license information](https://github.com/svanimpe/around-the-table/wiki/License-information) first.
