@@ -5,8 +5,8 @@
         "NAME": "aroundthetable-dev"
     },
     "DEFAULT_COORDINATES": {
-        "LATITUDE": 51.047546,
-        "LONGITUDE": 3.753204
+        "LATITUDE": 51.054724,
+        "LONGITUDE": 3.717554
     },
     "DEFAULT_GAME_PICTURE": "/public/img/game-placeholder.png",
     "DEFAULT_GAME_THUMBNAIL": "/public/img/game-placeholder-t.png",
