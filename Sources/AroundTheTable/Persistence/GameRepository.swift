@@ -128,34 +128,35 @@ extension Persistence {
      Checks if BGG has a medium size (_md) picture for this game.
      If so, the game's picture will be replaced with this medium size one.
      */
-    func checkMediumPicture(for game: Game) {
-        // Do nothing if the game doesn't have a picture or if it already has a medium size one.
-        guard let url = game.picture?.absoluteString,
-              !url.contains("_md") else {
-            return
-        }
-        let urlComponents = url.components(separatedBy: "/")
-        guard urlComponents.count > 1,
-              let file = urlComponents.last,
-              let period = file.index(of: ".") else {
-            Log.warning("Invalid picture URL for #\(game.id).")
-            return
-        }
-        let fileName = file[..<period]
-        let fileExtension = file[period...]
-        let newURL = "https://cf.geekdo-images.com/images/\(fileName)_md\(fileExtension)"
-        let request = RestRequest(method: .head, url: newURL)
-        request.responseVoid {
-            response in
-            guard response.response?.statusCode == 200 else {
-                Log.info("No medium size picture available for #\(game.id)")
-                return
-            }
-            do {
-                try self.games.update(["_id": game.id], to: ["$set": ["picture": newURL]])
-            } catch {
-                Log.warning("Failed to update picture URL for #\(game.id)")
-            }
-        }
-    }
+    // Currently broken (BGG doesn't support _md images anymore).
+//    func checkMediumPicture(for game: Game) {
+//        // Do nothing if the game doesn't have a picture or if it already has a medium size one.
+//        guard let url = game.picture?.absoluteString,
+//              !url.contains("_md") else {
+//            return
+//        }
+//        let urlComponents = url.components(separatedBy: "/")
+//        guard urlComponents.count > 1,
+//              let file = urlComponents.last,
+//              let period = file.index(of: ".") else {
+//            Log.warning("Invalid picture URL for #\(game.id).")
+//            return
+//        }
+//        let fileName = file[..<period]
+//        let fileExtension = file[period...]
+//        let newURL = "https://cf.geekdo-images.com/images/\(fileName)_md\(fileExtension)"
+//        let request = RestRequest(method: .head, url: newURL)
+//        request.responseVoid {
+//            response in
+//            guard response.response?.statusCode == 200 else {
+//                Log.info("No medium size picture available for #\(game.id)")
+//                return
+//            }
+//            do {
+//                try self.games.update(["_id": game.id], to: ["$set": ["picture": newURL]])
+//            } catch {
+//                Log.warning("Failed to update picture URL for #\(game.id)")
+//            }
+//        }
+//    }
 }

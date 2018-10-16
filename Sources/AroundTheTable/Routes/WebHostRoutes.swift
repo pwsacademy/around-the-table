@@ -79,7 +79,7 @@ extension Routes {
                 return next()
             }
             do {
-                self.persistence.checkMediumPicture(for: game)
+//                self.persistence.checkMediumPicture(for: game)
                 let base = try self.baseViewModel(for: request)
                 try response.render("host-activity", with: HostActivityViewModel(base: base, game: game))
             } catch {

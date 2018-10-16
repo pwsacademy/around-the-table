@@ -100,8 +100,8 @@
             href="/web/activity/{{ activity.id }}">
             <!-- Separate image sizing for xs, sm and md -->
             <img class="d-sm-none align-self-start" width="75" src="{{ activity.thumbnail }}">
-            <img class="d-none d-sm-flex d-md-none align-self-start" width="150" src="{{ activity.picture }}">
-            <img class="d-none d-md-flex align-self-start" width="200" src="{{ activity.picture }}">
+            <img class="d-none d-sm-flex d-md-none align-self-start" width="150" src="{{ activity.thumbnail }}">
+            <img class="d-none d-md-flex align-self-start" width="200" src="{{ activity.thumbnail }}">
             <div class="body">
                 <h5>{{ activity.name }}</h5>
                 <p>

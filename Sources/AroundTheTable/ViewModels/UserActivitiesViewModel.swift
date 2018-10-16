@@ -40,7 +40,7 @@ struct UserActivitiesViewModel: Codable {
             self.id = id.hexString
             self.host = UserViewModel(activity.host)
             self.name = activity.name
-            self.picture = activity.picture?.absoluteString ?? Settings.defaultGamePicture
+            self.picture = activity.thumbnail?.absoluteString ?? Settings.defaultGameThumbnail
             self.thumbnail = activity.thumbnail?.absoluteString ?? Settings.defaultGameThumbnail
             self.availableSeats = activity.availableSeats
             self.longDate = activity.date.formatted(format: "EEEE d MMMM")
