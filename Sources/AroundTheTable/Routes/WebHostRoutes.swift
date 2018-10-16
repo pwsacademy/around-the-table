@@ -158,9 +158,9 @@ extension Routes {
         let pictureObject = "activity/\(id)/picture\(pictureExtension)"
         let thumbnailObject = "activity/\(id)/thumbnail\(thumbnailExtension)"
         let cos = CloudObjectStorage()
-        cos.storeImage(at: picture, as: pictureObject) {
+//        cos.storeImage(at: picture, as: pictureObject) {
             cos.storeImage(at: thumbnail, as: thumbnailObject) {
-                activity.picture = URL(string: "\(Settings.cloudObjectStorage.bucketURL!)/\(pictureObject)")
+//                activity.picture = URL(string: "\(Settings.cloudObjectStorage.bucketURL!)/\(pictureObject)")
                 activity.thumbnail = URL(string: "\(Settings.cloudObjectStorage.bucketURL!)/\(thumbnailObject)")
                 do {
                     try self.persistence.update(activity)
@@ -168,6 +168,6 @@ extension Routes {
                     Log.warning("COS warning: failed to persist activity \(id) after update.")
                 }
             }
-        }
+//        }
     }
 }
