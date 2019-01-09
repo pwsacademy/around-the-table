@@ -9,7 +9,7 @@
 <div class="d-flex flex-column flex-md-row mb-3">
     <!-- Image -->
     <div class="mr-md-3 mb-3 mb-md-0">
-        <a href="https://boardgamegeek.com/boardgame/{{ activity.game }}" target="_blank">
+        <a href="https://boardgamegeek.com/boardgame/{{ activity.game }}">
             <!-- Separate image sizing for xs/sm and md -->
             <img class="rounded d-md-none w-100" src="{{ activity.picture }}">
             <img class="rounded d-none d-md-flex" width="250" src="{{ activity.picture }}">
@@ -30,7 +30,7 @@
             {% if userIsPlayer or userIsHost %}
                 <!-- Show the full address. -->
                 <!-- md adds a link to Google Maps. The href is set in code. -->
-                <a id="address" class="d-none d-md-inline" href="#" target="_blank">{{ activity.location.address }}</a>
+                <a id="address" class="d-none d-md-inline" href="#">{{ activity.location.address }}</a>
                 <span class="d-md-none">{{ activity.location.address }}</span>
             {% else %}
                 <!-- Show only the city. -->

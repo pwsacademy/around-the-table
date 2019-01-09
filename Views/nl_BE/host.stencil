@@ -12,7 +12,7 @@
     <form method="get" action="/web/host/select">
         <p>
             Geef de naam van een spel in.
-            Op basis van deze naam zal de bijhorende spelinformatie opgezocht worden bij <a href="https://boardgamegeek.com" target="_blank">BoardGameGeek</a>.
+            Op basis van deze naam zal de bijhorende spelinformatie opgezocht worden bij <a href="https://boardgamegeek.com">BoardGameGeek</a>.
         </p>
         <div class="form-group">
             <div class="input-group">
