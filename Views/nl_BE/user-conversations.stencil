@@ -2,6 +2,16 @@
 
 {% block title %}{{ block.super }} - Berichten{% endblock %}
 
+{% block additional-head %}
+<style>
+    @media(min-width:768px) {
+        .messages {
+            margin-left: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <h2>Berichten</h2>
 <p>
@@ -11,11 +21,13 @@
 {% if conversations %}
     {% for conversation in conversations %}
         <!-- Header -->
-        <a class="conversation" href="/web/activity/{{ conversation.activity }}">
+        <a class="item" href="/web/activity/{{ conversation.activity }}">
             <img class="align-self-start" width="75px" src="{{ conversation.picture }}">
             <div class="body">
                 <h5>{{ conversation.title }}</h5>
-                {{ conversation.other.name }}
+                <p>
+                    {{ conversation.other.name }}
+                </p>
             </div>
         </a>
         <!-- Messages -->

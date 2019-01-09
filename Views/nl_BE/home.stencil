@@ -15,10 +15,21 @@
     Deze spellen zijn privé-initiatieven en gaan door bij de organisator thuis, in een spellenclub of in een spellencafé.
     De organisator voorziet speluitleg. Je hoeft het spel dus niet te kennen om deel te nemen.
 </p>
+<p>
+    Op de pagina van elk spel kan je één of meerdere stoeltjes aanvragen.
+    Wanneer je aanvraag is goedgekeurd, ontvang je een bericht op de <a href="/web/user/messages">berichten-pagina</a>.
+    Het adres wordt dan ook zichtbaar op de pagina van het spel, zodat je weet waar je verwacht wordt.
+</p>
 <h3>Organiseer</h3>
 <p>
     Niet gevonden wat je zoekt? Organiseer dan gewoon zelf een spel!
-    Het duurt maar een minuutje om een spel aan te maken.
 </p>
-<img class="d-block mx-auto" src="/public/img/logo.png" alt="logo">
+<p>
+    Het duurt maar een minuutje om een spel aan te maken.
+    Je kiest gewoon het spel dat je wil spelen en geeft op waar en wanneer het door gaat.
+    Van zodra je spel is aangemaakt, verschijnt het in het overzicht.
+</p>
+<p>
+    Veel spelplezier!
+</p>
 {% endblock %}

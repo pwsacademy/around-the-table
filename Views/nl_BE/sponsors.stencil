@@ -1,0 +1,26 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }}{% endblock %}
+
+{% block content %}
+<h2>Onze sponsors</h2>
+<p>
+    Als non-profit zijn wij afhankelijk van de steun van sponsors om onze kosten te dekken.
+    In het bijzonder wensen wij volgende sponsors te bedanken:
+</p>
+{% for sponsor in sponsors %}
+    <a class="item mb-4" href="{{ sponsor.link }}">
+        <!-- Separate image sizing for xs/sm and md -->
+        <img class="d-md-none align-self-start" width="50" src="{{ sponsor.picture }}">
+        <img class="d-none d-md-flex align-self-start" width="75" src="{{ sponsor.picture }}">
+        <div class="body">
+            <h5>{{ sponsor.name }}</h5>
+            {{ sponsor.description }}
+        </div>
+    </a>
+{% endfor %}
+<p>
+    Heb je interesse om ons te sponsoren, neem dan contact op via <strong>info&#64;rond-de-tafel.be</strong>
+    of onze <a href="https://www.facebook.com/ronddetafel.be">Facebookpagina</a>.
+</p>
+{% endblock %}

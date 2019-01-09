@@ -152,10 +152,11 @@ extension Routes {
      Creates a `BaseViewModel` for the given request.
      */
     func baseViewModel(for request: RouterRequest) throws -> BaseViewModel {
-        guard let user = try authenticatedUser(for: request) else {
-            return try BaseViewModel(user: nil, unreadMessageCount: 0, requestURL: request.originalURL)
-        }
-        let unreadMessageCount = try persistence.unreadMessageCount(for: user)
-        return try BaseViewModel(user: user, unreadMessageCount: unreadMessageCount, requestURL: request.originalURL)
+        let user = try authenticatedUser(for: request)
+        let unreadMessageCount = user != nil ? try persistence.unreadMessageCount(for: user!) : 0
+        return try BaseViewModel(user: user,
+                                 unreadMessageCount: unreadMessageCount,
+                                 sponsor: try persistence.randomSponsor(),
+                                 requestURL: request.originalURL)
     }
 }

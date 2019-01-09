@@ -21,7 +21,7 @@
 <h2>Spellen die ik organiseer</h2>
 {% if hosted %}
     {% for h in hosted %}
-        <a class="{% if h.activity.availableSeats == 0 %} red {% elif h.activity.availableSeats == 1 %} yellow {% else %} green {% endif %} autoborder item"
+        <a class="{% if h.activity.availableSeats == 0 %} red {% elif h.activity.availableSeats == 1 %} yellow {% else %} green {% endif %} autoborder activity item"
            href="/web/activity/{{ h.activity.id }}">
             <!-- Separate image sizing for xs, sm and md -->
             <img class="d-sm-none align-self-start" width="75" src="{{ h.activity.thumbnail }}">
@@ -75,7 +75,7 @@
 <h2>Spellen waaraan ik deelneem</h2>
 {% if joined %}
     {% for j in joined %}
-        <a class="{% if j.activity.availableSeats == 0 %} red {% elif j.activity.availableSeats == 1 %} yellow {% else %} green {% endif %} autoborder item"
+        <a class="{% if j.activity.availableSeats == 0 %} red {% elif j.activity.availableSeats == 1 %} yellow {% else %} green {% endif %} autoborder activity item"
            href="/web/activity/{{ j.activity.id }}">
             <!-- Separate image sizing for xs, sm and md -->
             <img class="d-sm-none align-self-start" width="75" src="{{ j.activity.thumbnail }}">

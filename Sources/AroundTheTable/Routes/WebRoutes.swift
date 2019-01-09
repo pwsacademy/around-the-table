@@ -11,7 +11,10 @@ extension Routes {
         
         // Root pages.
         router.get("home", handler: home)
+        router.get("about", handler: about)
+        router.get("sponsors", handler: sponsors)
         router.get("faq", handler: faq)
+        router.get("terms-of-use", handler: termsOfUse)
         router.get("activities", handler: activities)
         
         // Delegate the host, activity and user categories to subrouters.
@@ -30,11 +33,39 @@ extension Routes {
     }
     
     /**
+     Shows the about page.
+     */
+    private func about(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        let base = try baseViewModel(for: request)
+        try response.render("about", with: base, forKey: "base")
+        next()
+    }
+    
+    /**
+     Shows the sponsors page.
+     */
+    private func sponsors(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        let base = try baseViewModel(for: request)
+        let sponsors = try persistence.allSponsors()
+        try response.render("sponsors", with: SponsorsViewModel(base: base, sponsors: sponsors))
+        next()
+    }
+    
+    /**
      Shows the FAQ.
      */
     private func faq(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
         let base = try baseViewModel(for: request)
         try response.render("faq", with: base, forKey: "base")
+        next()
+    }
+    
+    /**
+     Shows the terms of use.
+     */
+    private func termsOfUse(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        let base = try baseViewModel(for: request)
+        try response.render("terms-of-use", with: base, forKey: "base")
         next()
     }
     

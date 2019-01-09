@@ -20,17 +20,10 @@
     <link href="/public/css/font-awesome.min.css" rel="stylesheet">
     <link href="/public/css/pikaday.min.css" rel="stylesheet">
     <style>
-        .navbar, .btn-primary {
+        /* Primary color */
+        .navbar, .btn-primary, footer {
             background-color: #2185D0;
         }
-        h2, h3 {
-            margin-bottom: 1rem;
-        }
-        img.avatar {
-            width: 40px;
-            height: 40px;
-        }
-        /* Pagination, used for sort and view options. */
         .page-link {
             color: #2185D0;
         }
@@ -38,74 +31,91 @@
             background-color: #2185D0;
             border-color: #2185D0;
         }
-        /* Activity cards, used in grid view. */
+        /* Wrapper to keep the footer at the bottom of the screen */
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        /* Footer */
+        footer {
+            font-size: 0.9rem;
+            line-height: 1.5rem;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        footer, footer a, footer a:hover, footer a:focus {
+            color: white;
+        }
+        /* Headers */
+        h2, h3 {
+            margin-bottom: 1rem;
+        }
+        /* Avatars */
+        img.avatar {
+            width: 40px;
+            height: 40px;
+        }        
+        /* List items (activities, messages, sponsors, ...) */
+        .item {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        .item .body {
+            display: flex;
+            flex-direction: column;
+            margin-left: 1rem;
+        }
+        .item .body p:last-child {
+            margin-bottom: 0;
+        }
+        @media(min-width:768px) {
+            .item.autoborder {
+                border: 1px solid rgba(0, 0, 0, 0.125);
+            }
+            .item.autoborder .body {
+                margin-top: 0.5rem;
+            }
+        }
+        /* Linked list items */
+        a.item {
+            color: inherit;
+            text-decoration: none;
+        }
+        a.item:focus, a.item:hover {
+            background-color: #f8f9fa;
+        }
+        /* Activities (cards and list items) */
         a.card {
             width: 100%;
             color: inherit;
             text-decoration: none;
         }
+        .activity.item {
+            border-radius: 0.25rem;
+        }
         a.card.green {
             box-shadow: 0 1px 0 0 #21BA45;
+        }
+        .activity.item.green {
+            box-shadow: 1px 0 0 0 #21BA45;
         }
         a.card.yellow {
             box-shadow: 0 1px 0 0 #FBBD08;
         }
+        .activity.item.yellow {
+            box-shadow: 1px 0 0 0 #FBBD08;
+        }
         a.card.red {
             box-shadow: 0 1px 0 0 #DB2828;
         }
-        a.card .card-body {
-            line-height: 2em;
-        }
-        /* Activity items, used in list view. */
-        a.item {
-            display: flex;
-            color: inherit;
-            text-decoration: none;
-            border-radius: 0.25rem;
-            margin-bottom: 1rem;
-        }
-        a.item:focus, a.item:hover {
-            background-color: #f8f9fa;
-        }
-        a.item.green {
-            box-shadow: 1px 0 0 0 #21BA45;
-        }
-        a.item.yellow {
-            box-shadow: 1px 0 0 0 #FBBD08;
-        }
-        a.item.red {
+        .activity.item.red {
             box-shadow: 1px 0 0 0 #DB2828;
-        }
-        a.item .body {
-            display: flex;
-            flex-direction: column;
-            margin-left: 1rem;
+        } 
+        a.card .card-body, .activity.item .body {
             line-height: 2em;
-        }
-        @media(min-width:768px) {
-            a.item.autoborder {
-                border: 1px solid rgba(0, 0, 0, 0.125);
-            }
-            a.item.autoborder .body {
-                margin-top: 0.5rem;
-            }
-        }
-        /* Conversations and messages */
-        a.conversation {
-            display: flex;
-            color: inherit;
-            text-decoration: none;
-        }
-        a.conversation .body {
-            display: flex;
-            flex-direction: column;
-            margin-left: 1rem;
-        }
-        @media(min-width:768px) {
-            .messages {
-                margin-left: 2rem;
-            }
-        }
+        } 
         /* Margins for icons */
         .fa-calendar, .fa-clock-o, .fa-envelope, .fa-hourglass-o, .fa-map-marker, .fa-user, .fa-users {
             margin-right: 0.25rem;
@@ -117,81 +127,18 @@
         button > i.fa, .input-group-text > i.fa {
             margin-right: 0;
         }
-        .fa-facebook-official {
-            color: #29487d;
-        }
     </style>
     <!-- jQuery is included in head because it's used by included components in body. -->
     <script src="/public/js/jquery.min.js"></script>
     {% block additional-head %}{% endblock %}
 </head>
 <body>
-    <!-- Collapsed navbar -->
-    <nav class="d-md-none navbar navbar-dark">
-        <a class="navbar-brand" href="/web/home">Rond De Tafel</a>
-        <ul class="navbar-nav ml-auto mr-3">
-            {% if base.unreadMessageCount > 0 %}
-                <li class="nav-item">
-                    <a class="nav-link" href="/web/user/messages">
-                        <i class="fa fa-envelope"></i>
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="/web/activities">Spellen</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/web/host">Organiseer</a>
-                </li>
-                {% if base.user %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/web/user/activities">Mijn spellen</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/web/user/messages">
-                            Berichten
-                            {% if base.unreadMessageCount > 0 %}
-                                ({{ base.unreadMessageCount }})
-                            {% endif %}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/web/user/settings">Instellingen</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/authentication/signout">Afmelden</a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <!-- The href will be set in code -->
-                        <a class="global-signin nav-link" href="#">Aanmelden</a>
-                    </li>
-                {% endif %}
-                <li class="nav-item">
-                    <a class="nav-link" href="/web/faq">Help</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <!-- Full navbar -->
-    <nav class="d-none d-md-flex navbar navbar-expand navbar-dark">
-        <a class="navbar-brand" href="/web/home">Rond De Tafel</a>
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/web/activities">Spellen</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/web/host">Organiseer</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav">
-            {% if base.user %}
+    <!-- Wrapper to keep the footer at the bottom -->
+    <div class="wrapper">
+        <!-- Collapsed navbar -->
+        <nav class="d-md-none navbar navbar-dark">
+            <a class="navbar-brand" href="/web/home">Rond De Tafel</a>
+            <ul class="navbar-nav ml-auto mr-3">
                 {% if base.unreadMessageCount > 0 %}
                     <li class="nav-item">
                         <a class="nav-link" href="/web/user/messages">
@@ -199,45 +146,121 @@
                         </a>
                     </li>
                 {% endif %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
-                        {{ base.user.name }}
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="/web/user/activities">Mijn spellen</a>
-                        <a class="dropdown-item" href="/web/user/messages">
-                            Berichten
-                            {% if base.unreadMessageCount > 0 %}
-                                ({{ base.unreadMessageCount }})
-                            {% endif %}
-                        </a>
-                        <a class="dropdown-item" href="/web/user/settings">Instellingen</a>
-                        <a class="dropdown-item" href="/authentication/signout">Afmelden</a>
-                    </div>
-                </li>
-            {% else %}
+            </ul>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/web/activities">Spellen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/web/host">Organiseer</a>
+                    </li>
+                    {% if base.user %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/web/user/activities">Mijn spellen</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/web/user/messages">
+                                Berichten
+                                {% if base.unreadMessageCount > 0 %}
+                                    ({{ base.unreadMessageCount }})
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/web/user/settings">Instellingen</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/authentication/signout">Afmelden</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <!-- The href will be set in code -->
+                            <a class="global-signin nav-link" href="#">Aanmelden</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+        <!-- Full navbar -->
+        <nav class="d-none d-md-flex navbar navbar-expand navbar-dark">
+            <a class="navbar-brand" href="/web/home">Rond De Tafel</a>
+            <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <!-- The href will be set in code -->
-                    <a class="global-signin nav-link" href="#">Aanmelden</a>
+                    <a class="nav-link" href="/web/activities">Spellen</a>
                 </li>
-            {% endif %}
-            <li class="nav-item">
-                <a class="nav-link" href="/web/faq">
-                    <i class="fa fa-question-circle fa-lg"></i>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <!-- Main content -->
-    <div class="container mt-3">
-        {% block content %}{% endblock %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/web/host">Organiseer</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if base.user %}
+                    {% if base.unreadMessageCount > 0 %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/web/user/messages">
+                                <i class="fa fa-envelope"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                            {{ base.user.name }}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="/web/user/activities">Mijn spellen</a>
+                            <a class="dropdown-item" href="/web/user/messages">
+                                Berichten
+                                {% if base.unreadMessageCount > 0 %}
+                                    ({{ base.unreadMessageCount }})
+                                {% endif %}
+                            </a>
+                            <a class="dropdown-item" href="/web/user/settings">Instellingen</a>
+                            <a class="dropdown-item" href="/authentication/signout">Afmelden</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <!-- The href will be set in code -->
+                        <a class="global-signin nav-link" href="#">Aanmelden</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        <!-- Main content -->
+        <div class="container mt-3 mb-auto">
+            {% block content %}{% endblock %}
+        </div>
+        <!-- Footer -->
+        <footer class="container-fluid">
+            <div class="row align-items-center">
+                <div class="d-none d-md-flex col-auto pr-0">
+                    <img height="75" src="/public/img/logo.png" alt="logo">
+                </div>
+                <div class="col-sm-auto pr-sm-0">
+                    <a href="/web/about">Over Rond De Tafel</a><br>
+                    <a href="/web/sponsors">Onze sponsors</a><br>
+                    <a href="https://www.facebook.com/ronddetafel.be">Like ons op Facebook</a><br>
+                </div>
+                <div class="col-sm-auto pr-sm-0">
+                    <a href="/web/faq">Veelgestelde vragen</a><br>
+                    <a href="/web/terms-of-use">Gebruiksvoorwaarden</a><br>
+                    <a href="https://github.com/svanimpe/around-the-table.git">Open source</a>
+                </div>
+                {% if base.sponsor %}
+                    <!-- Random sponsor -->
+                    <div class="col-sm text-center text-sm-right py-2 py-sm-0 pr-sm-0">
+                        Met de steun van<br><a href="{{ base.sponsor.link }}">{{ base.sponsor.name }}</a>
+                    </div>
+                    <a class="col-sm-auto text-center" href="{{ base.sponsor.link }}">
+                        <img height="75" src="{{ base.sponsor.picture }}">
+                    </a>
+                {% endif %}
+            </div>
+        </footer>
     </div>
-    <!-- Footer -->
-    <footer class="container py-3 text-center">
-        © 2018 - Rond De Tafel<br>
-        Like ons op <a href="https://www.facebook.com/ronddetafel.be" target="_blank">Facebook</a> <i class="fa fa-facebook-official"></i><br>
-        Broncode beschikbaar op <a href="https://github.com/svanimpe/around-the-table.git" target="_blank">GitHub</a> <i class="fa fa-github"></i>
-    </footer>
     <!-- Scripts -->
     <script src="/public/js/popper.min.js"></script>
     <script src="/public/js/bootstrap.min.js"></script>

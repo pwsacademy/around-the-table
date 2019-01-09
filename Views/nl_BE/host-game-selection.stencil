@@ -6,7 +6,7 @@
 <h2>Kies een spel</h2>
 <p>Kies het spel dat je wenst te spelen uit de onderstaande lijst.</p>
 {% for game in results %}
-    <a class="item" href="/web/host/activity?game={{ game.id }}">
+    <a class="activity item" href="/web/host/activity?game={{ game.id }}">
         <img class="align-self-start" width="75" src="{{ game.picture }}">
         <div class="body">
             <h5>{{ game.name }}</h5>

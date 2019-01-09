@@ -1,0 +1,24 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }}{% endblock %}
+
+{% block content %}
+<h2>Over Rond De Tafel</h2>
+<p>
+    Rond De Tafel heeft als doel mensen samen te brengen rond de speltafel.
+</p>
+<p>
+    Deze site ondersteunt het organiseren van spellen en helpt je om spelers te vinden.
+    Zoek je medespelers voor een spel dat maar niet op tafel raakt? Wens je een bepaald spel uit te proberen?
+    Of wil je gewoon wat nieuwe spellen en mensen leren kennen? Hier vind je zeker wat je zoekt!
+</p>
+<p>
+    Wij zijn geen spellenclub. Iedereen kan spellen organiseren en deelnemen aan de spellen op de site.
+    We richten ons voornamelijk tot privé-initiatieven maar hopen op termijn ook
+    de activiteiten van spellenclubs te ondersteunen.
+</p>
+<p>
+    Rond De Tafel is bovendien een <a href="https://github.com/svanimpe/around-the-table.git">open source</a> platform.
+    Dit wil zeggen dat ons werk herbruikbaar is en ook kan gebruikt worden in andere regio's of landen.
+</p>
+{% endblock %}

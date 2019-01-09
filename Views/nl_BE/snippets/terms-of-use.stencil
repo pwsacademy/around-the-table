@@ -1,6 +1,9 @@
 <!--
     Snippet for the terms of use.
 -->
+<p>
+    Als gebruiker van deze site ga je akkoord met de volgende gebruiksvoorwaarden:
+</p>
 <ul>
     <li>Het doel van deze site is om spelers en organisatoren samen te brengen.</li>
     <li>De site is en blijft gratis in gebruik voor zowel spelers als organisatoren.</li>
@@ -14,13 +17,15 @@
         De site houdt enkel die minimale gegevens bij die nodig zijn voor haar werking.
         Deze gegevens worden niet gedeeld met derden en worden verwijderd bij het verwijderen van je account.
     </li>
-    <li>
-        Als gebruiker dien je de volgende gedragsregels te respecteren.
-        Het niet naleven van deze regels leidt tot een verwijdering van je account.
-        <ul>
-            <li>Respecteer elkaar en elkaars eigendom.</li>
-            <li>Respecteer de huisregels van elke organisator.</li>
-            <li>Discriminatie op basis van afkomst, geaardheid, geslacht, leeftijd of uiterlijk wordt niet getolereerd.</li>
-        </ul>
-    </li>
 </ul>
+<p>
+    Als gebruiker van deze site dien je de volgende gedragsregels te respecteren:
+</p>
+<ul>
+    <li>Respecteer elkaar en elkaars eigendom.</li>
+    <li>Respecteer de huisregels van elke organisator.</li>
+    <li>Discriminatie op basis van afkomst, geaardheid, geslacht, leeftijd of uiterlijk wordt niet getolereerd.</li>
+</ul>
+<p>
+    Het niet naleven van deze regels leidt tot een verwijdering van je account.
+</p>

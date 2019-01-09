@@ -27,6 +27,22 @@ struct BaseViewModel: Codable {
     /// The number of unread messages for the current user.
     let unreadMessageCount: Int
     
+    struct SponsorViewModel: Codable {
+        
+        let name: String
+        let picture: String
+        let link: String
+        
+        init(_ sponsor: Sponsor) {
+            self.name = sponsor.name
+            self.picture = sponsor.picture.absoluteString
+            self.link = sponsor.link.absoluteString
+        }
+    }
+    
+    /// A random sponsor
+    let sponsor: SponsorViewModel?
+    
     struct Facebook: Codable {
         let app: String
     }
@@ -56,13 +72,18 @@ struct BaseViewModel: Codable {
     /**
      Initializes a `BaseViewModel` using the given user and request URL.
      */
-    init(user: User?, unreadMessageCount: Int, requestURL: String) throws {
+    init(user: User?, unreadMessageCount: Int, sponsor: Sponsor?, requestURL: String) throws {
         if let user = user {
             self.user = try UserViewModel(user)
         } else {
             self.user = nil
         }
         self.unreadMessageCount = unreadMessageCount
+        if let sponsor = sponsor {
+            self.sponsor = SponsorViewModel(sponsor)
+        } else {
+            self.sponsor = nil
+        }
         self.facebook = Facebook(app: Settings.facebook.app)
         self.opengraph = OpenGraph(url: requestURL, image: "\(Settings.url)/public/img/opengraph.jpg")
         coordinates = .default
