@@ -233,7 +233,7 @@
         <div class="container mt-3 mb-auto">
             {% block content %}{% endblock %}
         </div>
-        <!-- Footer -->
+        <!-- Footer (hidden for now)
         <footer class="container-fluid">
             <div class="row align-items-center">
                 <div class="d-none d-md-flex col-auto pr-0">
@@ -250,7 +250,6 @@
                     <a href="https://github.com/svanimpe/around-the-table.git">Open source</a>
                 </div>
                 {% if base.sponsor %}
-                    <!-- Random sponsor -->
                     <div class="col-sm text-center text-sm-right py-2 py-sm-0 pr-sm-0">
                         Met de steun van<br><a href="{{ base.sponsor.link }}">{{ base.sponsor.name }}</a>
                     </div>
@@ -259,7 +258,7 @@
                     </a>
                 {% endif %}
             </div>
-        </footer>
+        </footer> -->
     </div>
     <!-- Scripts -->
     <script src="/public/js/popper.min.js"></script>
