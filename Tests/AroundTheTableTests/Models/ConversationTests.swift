@@ -19,7 +19,6 @@ class ConversationTests: XCTestCase {
         ]
     }
     
-    private let id = ObjectId("5ac8f06e5027834a5027834a")!
     private let now = Date()
     private let message = Conversation.Message(direction: .outgoing, text: "Hello")
     
@@ -49,6 +48,7 @@ class ConversationTests: XCTestCase {
     
     func testInitializationValues() {
         let conversation = Conversation(topic: activity, sender: player, recipient: host)
+        XCTAssertNil(conversation.id)
         XCTAssert(conversation.messages.isEmpty)
     }
     
@@ -73,15 +73,13 @@ class ConversationTests: XCTestCase {
     }
     
     func testEncode() {
-        let input = Conversation(topic: activity, sender: host, recipient: player)
-        input.id = id
-        input.messages.append(message)
+        let input = Conversation(id: 1, topic: activity, sender: host, recipient: player, messages: [message])
         let expected: Document = [
-            "_id": id,
+            "_id": 1,
             "topic": activity.id,
             "sender": host.id,
             "recipient": player.id,
-            "messages": [ message ]
+            "messages": [message]
         ]
         XCTAssert(input.typeIdentifier == expected.typeIdentifier)
         XCTAssert(input.document == expected)
@@ -89,17 +87,17 @@ class ConversationTests: XCTestCase {
     
     func testDecode() throws {
         var input: Document = [
-            "_id": id,
+            "_id": 1,
             "topic": activity,
             "sender": host,
             "recipient": player,
             "messages": [ message ]
         ]
-        input["topic"]["host"] = host
+        input["topic"]["host"] = host // Denormalize before decoding.
         guard let result = try Conversation(input) else {
             return XCTFail()
         }
-        XCTAssert(result.id == id)
+        XCTAssert(result.id == 1)
         XCTAssert(result.topic == activity)
         XCTAssert(result.sender == host)
         XCTAssert(result.recipient == player)
@@ -129,7 +127,7 @@ class ConversationTests: XCTestCase {
     
     func testDecodeTopicNotDenormalized() throws {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "topic": activity.id,
             "sender": host,
             "recipient": player,
@@ -140,7 +138,7 @@ class ConversationTests: XCTestCase {
     
     func testDecodeSenderNotDenormalized() throws {
         var input: Document = [
-            "_id": id,
+            "_id": 1,
             "topic": activity,
             "sender": host.id,
             "recipient": player,
@@ -152,7 +150,7 @@ class ConversationTests: XCTestCase {
     
     func testDecodeRecipientNotDenormalized() throws {
         var input: Document = [
-            "_id": id,
+            "_id": 1,
             "topic": activity,
             "sender": host,
             "recipient": player.id,
@@ -164,7 +162,7 @@ class ConversationTests: XCTestCase {
     
     func testDecodeMissingMessages() throws {
         var input: Document = [
-            "_id": id,
+            "_id": 1,
             "topic": activity,
             "sender": host,
             "recipient": player

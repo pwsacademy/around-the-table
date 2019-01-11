@@ -101,12 +101,7 @@ class ConversationRepositoryTests: XCTestCase {
             return XCTFail()
         }
         let results = try persistence.conversations(for: bob)
-        XCTAssert(results.map { $0.id } == [
-            ObjectId("5af745fc0c92b55f601b2c65")!,
-            ObjectId("5af743450c92b55f601b2c10")!,
-            ObjectId("5af744430c92b55f601b2c2e")!,
-            conversationID
-        ])
+        XCTAssert(results.map { $0.id } == [4, 2, 3, conversationID])
         // Clean-up
         try persistence.activities.remove(["_id": activityID])
         try persistence.conversations.remove(["_id": conversationID])

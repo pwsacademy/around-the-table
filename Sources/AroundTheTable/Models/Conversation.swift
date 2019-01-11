@@ -6,9 +6,9 @@ import Foundation
  */
 final class Conversation {
     
-    /// The conversation's ID will be set when it is persisted.
-    /// Never set this yourself!
-    var id: ObjectId?
+    /// The conversation's ID.
+    /// If set to nil, an ID is assigned when the instance is persisted.
+    var id: Int?
     
     /// The activity this conversation is about.
     let topic: Activity
@@ -54,20 +54,10 @@ final class Conversation {
         /**
          Initializes a `Message`.
          
-         `timestamp` is set to the current date and time.
-         `isRead` is set to `false`.
+         `timestamp` is set to the current date and time by default.
+         `isRead` is set to `false` by default.
          */
-        init(direction: Direction, text: String) {
-            timestamp = Date()
-            self.direction = direction
-            self.text = text
-            isRead = false
-        }
-        
-        /**
-         Full initializer, only used when decoding from BSON.
-         */
-        private init(timestamp: Date, direction: Direction, text: String, isRead: Bool) {
+        init(timestamp: Date = Date(), direction: Direction, text: String, isRead: Bool = false) {
             self.timestamp = timestamp
             self.direction = direction
             self.text = text
@@ -79,21 +69,12 @@ final class Conversation {
     var messages: [Message]
     
     /**
-     Initializes an empty `Conversation`.
+     Initializes a `Conversation`.
      
-     `messages` is set to empty.
+     `id` should be set to nil for new (unpersisted) instances. This is also its default value.
+     `messages` is set to an empty array by default.
      */
-    init(topic: Activity, sender: User, recipient: User) {
-        self.topic = topic
-        self.sender = sender
-        self.recipient = recipient
-        messages = []
-    }
-    
-    /**
-     Full initializer, only used when decoding from BSON.
-     */
-    private init(id: ObjectId, topic: Activity, sender: User, recipient: User, messages: [Message]) {
+    init(id: Int? = nil, topic: Activity, sender: User, recipient: User, messages: [Message] = []) {
         self.id = id
         self.topic = topic
         self.sender = sender
@@ -237,16 +218,13 @@ extension Conversation: Primitive {
     /// This `Conversation` as a BSON `Document`.
     /// `topic`, `sender` and `recipient` are normalized and stored as references.
     var document: Document {
-        var document: Document = [
+        return [
+            "_id": id,
             "topic": topic.id, // Normalized.
             "sender": sender.id, // Normalized.
             "recipient": recipient.id, // Normalized.
             "messages": messages
         ]
-        if let id = id {
-            document["_id"] = id
-        }
-        return document
     }
     
     /**
@@ -268,7 +246,7 @@ extension Conversation: Primitive {
         guard let bson = bson as? Document else {
             return nil
         }
-        guard let id = ObjectId(bson["_id"]) else {
+        guard let id = Int(bson["_id"]) else {
             throw log(BSONError.missingField(name: "_id"))
         }
         guard let topic = try Activity(bson["topic"]) else {

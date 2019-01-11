@@ -18,10 +18,8 @@ extension Persistence {
         guard conversation.id == nil else {
             throw log(ServerError.persistedEntity)
         }
-        guard let id = try conversations.insert(conversation.document) as? ObjectId else {
-            throw log(BSONError.missingField(name: "_id"))
-        }
-        conversation.id = id
+        conversation.id = try nextID(for: conversations)
+        try conversations.insert(conversation.document) 
     }
     
     /**

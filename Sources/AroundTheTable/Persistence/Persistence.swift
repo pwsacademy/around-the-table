@@ -62,4 +62,14 @@ public class Persistence {
         sponsors = database["sponsors"]
         users = database["users"]
     }
+    
+    func nextID(for collection: MongoKitten.Collection) throws -> Int {
+        guard let result = try collection.find([:], sortedBy: ["_id": .descending], projecting: ["_id": true], limitedTo: 1).next() else {
+            return 1 // If the collection is empty, start with 1.
+        }
+        guard let currentID = Int(result["_id"]) else {
+            throw log(BSONError.invalidField(name: "_id")) // Collection uses a different ID type.
+        }
+        return currentID + 1
+    }
 }
