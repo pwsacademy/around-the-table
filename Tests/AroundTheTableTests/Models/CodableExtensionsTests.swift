@@ -15,11 +15,12 @@ class CodableExtensionsTests: XCTestCase {
     func testEncodeCountableClosedRange() throws {
         let input = 2...4
         let result = try JSONEncoder().encode(input)
-        let expected = try JSONEncoder().encode([
+        let resultAsDictionary = try JSONDecoder().decode([String: Int].self, from: result)
+        let expected = [
             "lowerBound": 2,
             "upperBound": 4
-        ])
-        XCTAssert(result == expected)
+        ]
+        XCTAssert(resultAsDictionary == expected)
     }
     
     func testDecodeCountableClosedRange() throws {
