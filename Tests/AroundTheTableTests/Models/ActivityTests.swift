@@ -53,8 +53,7 @@ class ActivityTests: XCTestCase {
                                 info: "Info")
         XCTAssertNil(activity.id)
         XCTAssertNil(activity.distance)
-        XCTAssert(activity.picture == game.picture)
-        XCTAssert(activity.thumbnail == game.thumbnail)
+        XCTAssert(activity.picture == game.thumbnail)
         XCTAssertFalse(activity.isCancelled)
         XCTAssert(activity.registrations.isEmpty)
     }
@@ -95,8 +94,7 @@ class ActivityTests: XCTestCase {
             "deadline": now,
             "location": location,
             "info": "Info",
-            "picture": game.picture,
-            "thumbnail": game.thumbnail,
+            "picture": game.thumbnail,
             "isCancelled": false,
             "registrations": [registration]
         ]
@@ -146,7 +144,6 @@ class ActivityTests: XCTestCase {
             "distance": 5,
             "info": "Info",
             "picture": picture,
-            "thumbnail": thumbnail,
             "isCancelled": false,
             "registrations": [
                 [
@@ -174,7 +171,6 @@ class ActivityTests: XCTestCase {
         XCTAssert(result.distance == 5)
         XCTAssert(result.info == "Info")
         XCTAssert(result.picture == picture)
-        XCTAssert(result.thumbnail == thumbnail)
         XCTAssertFalse(result.isCancelled)
         XCTAssert(result.registrations.count == 1)
         assertDatesEqual(result.registrations[0].creationDate, now)

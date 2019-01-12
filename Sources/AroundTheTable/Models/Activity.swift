@@ -56,10 +56,6 @@ final class Activity {
     /// If this is `nil`, a default image will be used.
     var picture: URL?
     
-    /// A thumbnail version of the activity's image.
-    /// If this is `nil`, a default image will be used.
-    var thumbnail: URL?
-    
     /// Whether the host has cancelled the activity.
     var isCancelled: Bool
     
@@ -136,7 +132,7 @@ final class Activity {
      `id` should be set to nil for new (unpersisted) instances. This is also its default value.
      `creationDate` is set to the current date and time by default.
      `distance` is set to `nil` by default.
-     If `picture` is `nil` and a headlining game is set, that game's image will be used. `thumbnail` will be set accordingly.
+     If `picture` is `nil` and a headlining game is set, that game's image will be used.
      `isCancelled` is set to `false` by default.
      `registrations` is set to an empty array by default.
      */
@@ -147,7 +143,7 @@ final class Activity {
          date: Date, deadline: Date,
          location: Location, distance: Double? = nil,
          info: String,
-         picture: URL? = nil, thumbnail: URL? = nil,
+         picture: URL? = nil,
          isCancelled: Bool = false,
          registrations: [Registration] = []) {
         self.id = id
@@ -162,8 +158,7 @@ final class Activity {
         self.location = location
         self.distance = distance
         self.info = info
-        self.picture = picture ?? game?.picture
-        self.thumbnail = thumbnail ?? game?.thumbnail
+        self.picture = picture ?? game?.thumbnail
         self.isCancelled = isCancelled
         self.registrations = registrations
     }
@@ -279,9 +274,6 @@ extension Activity: Primitive {
         if let picture = picture {
             document["picture"] = picture
         }
-        if let thumbnail = thumbnail {
-            document["thumbnail"] = thumbnail
-        }
         return document
     }
     
@@ -343,7 +335,6 @@ extension Activity: Primitive {
         let game = try Game(bson["game"])
         let distance = Double(bson["distance"])
         let picture = try URL(bson["picture"])
-        let thumbnail = try URL(bson["thumbnail"])
         self.init(id: id,
                   creationDate: creationDate,
                   host: host,
@@ -357,7 +348,6 @@ extension Activity: Primitive {
                   distance: distance,
                   info: info,
                   picture: picture,
-                  thumbnail: thumbnail,
                   isCancelled: isCancelled,
                   registrations: registrations)
     }

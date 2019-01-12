@@ -59,7 +59,7 @@ struct ActivityViewModel: Codable {
             self.id = id
             self.host = try UserViewModel(activity.host)
             self.name = activity.name
-            self.picture = activity.thumbnail?.absoluteString ?? Settings.defaultGameThumbnail
+            self.picture = activity.picture?.absoluteString ?? Settings.defaultGamePicture
             self.game = activity.game?.id
             self.playingTime = activity.game?.playingTime
             self.playerCount = activity.playerCount

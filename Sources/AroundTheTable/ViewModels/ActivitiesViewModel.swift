@@ -24,7 +24,6 @@ struct ActivitiesViewModel: Codable {
         let host: UserViewModel
         let name: String
         let picture: String
-        let thumbnail: String
         let availableSeats: Int
         let longDate: String
         let shortDate: String
@@ -41,7 +40,6 @@ struct ActivitiesViewModel: Codable {
             self.host = UserViewModel(activity.host)
             self.name = activity.name
             self.picture = activity.picture?.absoluteString ?? Settings.defaultGamePicture
-            self.thumbnail = activity.thumbnail?.absoluteString ?? Settings.defaultGameThumbnail
             self.availableSeats = activity.availableSeats
             self.longDate = activity.date.formatted(format: "EEEE d MMMM") 
             self.shortDate = activity.date.formatted(format: "E d MMMM") // abbreviated weekday

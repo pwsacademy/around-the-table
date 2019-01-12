@@ -79,7 +79,6 @@ extension Routes {
                 return next()
             }
             do {
-//                self.persistence.checkMediumPicture(for: game)
                 let base = try self.baseViewModel(for: request)
                 try response.render("host-activity", with: HostActivityViewModel(base: base, game: game))
             } catch {
@@ -131,13 +130,12 @@ extension Routes {
     }
     
     /**
-     Stores an activity's picture and thumbnail in cloud object storage and updates the links.
+     Stores an activity's picture in cloud object storage and updates the link.
      Does nothing if cloud object storage is not configured.
      */
     private func storeImages(for activity: Activity) {
         guard let id = activity.id,
               let picture = activity.picture,
-              let thumbnail = activity.thumbnail,
               CloudObjectStorage.isConfigured else {
             return
         }
@@ -150,24 +148,19 @@ extension Routes {
             return String(file[period...])
         }
         
-        guard let pictureExtension = getExtension(for: picture),
-              let thumbnailExtension = getExtension(for: thumbnail) else {
-            Log.warning("COS warning: failed to get extensions for \(picture) and/or \(thumbnail).")
+        guard let `extension` = getExtension(for: picture) else {
+            Log.warning("COS warning: failed to get extension for \(picture).")
             return
         }
-        let pictureObject = "activity/\(id)/picture\(pictureExtension)"
-        let thumbnailObject = "activity/\(id)/thumbnail\(thumbnailExtension)"
+        let pictureObject = "activity/\(id)\(`extension`)"
         let cos = CloudObjectStorage()
-//        cos.storeImage(at: picture, as: pictureObject) {
-            cos.storeImage(at: thumbnail, as: thumbnailObject) {
-//                activity.picture = URL(string: "\(Settings.cloudObjectStorage.bucketURL!)/\(pictureObject)")
-                activity.thumbnail = URL(string: "\(Settings.cloudObjectStorage.bucketURL!)/\(thumbnailObject)")
-                do {
-                    try self.persistence.update(activity)
-                } catch {
-                    Log.warning("COS warning: failed to persist activity \(id) after update.")
-                }
+        cos.storeImage(at: picture, as: pictureObject) {
+            activity.picture = URL(string: "\(Settings.cloudObjectStorage.bucketURL!)/\(pictureObject)")
+            do {
+                try self.persistence.update(activity)
+            } catch {
+                Log.warning("COS warning: failed to persist activity \(id) after update.")
             }
-//        }
+        }
     }
 }
