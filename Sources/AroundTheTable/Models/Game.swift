@@ -42,30 +42,10 @@ final class Game {
     /**
      Initializes a `Game`.
      
-     `creationDate` is set to the current date and time.
+     `creationDate` is set to the current date and time by default.
      */
     init(id: Int,
-         name: String, names: [String],
-         yearPublished: Int,
-         playerCount: CountableClosedRange<Int>,
-         playingTime: CountableClosedRange<Int>,
-         picture: URL?, thumbnail: URL?) {
-        self.id = id
-        creationDate = Date()
-        self.name = name
-        self.names = names
-        self.yearPublished = yearPublished
-        self.playerCount = playerCount
-        self.playingTime = playingTime
-        self.picture = picture
-        self.thumbnail = thumbnail
-    }
-    
-    /**
-     Full initializer, only used when decoding from BSON.
-     */
-    init(id: Int,
-         creationDate: Date,
+         creationDate: Date = Date(),
          name: String, names: [String],
          yearPublished: Int,
          playerCount: CountableClosedRange<Int>,
