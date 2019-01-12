@@ -15,10 +15,8 @@ extension Persistence {
         guard user.id == nil else {
             throw log(ServerError.persistedEntity)
         }
-        guard let id = try users.insert(user.document) as? ObjectId else {
-            throw log(BSONError.missingField(name: "_id"))
-        }
-        user.id = id
+        user.id = try nextID(for: users)
+        try users.insert(user.document)
     }
     
     /**
@@ -26,7 +24,7 @@ extension Persistence {
      
      - Returns: A user, or `nil` if there was no user with this ID.
      */
-    func user(withID id: ObjectId) throws -> User? {
+    func user(withID id: Int) throws -> User? {
         return try User(users.findOne(["_id": id]))
     }
     

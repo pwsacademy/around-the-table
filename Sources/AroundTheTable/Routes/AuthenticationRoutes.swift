@@ -225,7 +225,7 @@ extension Routes {
      Does nothing if cloud object storage is not configured.
      */
     private func storePicture(for user: User) throws {
-        guard let id = user.id?.hexString else {
+        guard let id = user.id else {
             throw log(ServerError.unpersistedEntity)
         }
         guard let url = user.picture,

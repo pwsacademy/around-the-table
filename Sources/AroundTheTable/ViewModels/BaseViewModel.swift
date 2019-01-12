@@ -5,7 +5,7 @@ struct BaseViewModel: Codable {
 
     struct UserViewModel: Codable {
         
-        let id: String
+        let id: Int
         let name: String
         let picture: String
         let location: Location?
@@ -14,7 +14,7 @@ struct BaseViewModel: Codable {
             guard let id = user.id else {
                 throw log(ServerError.unpersistedEntity)
             }
-            self.id = id.hexString
+            self.id = id
             self.name = user.name
             self.picture = user.picture?.absoluteString ?? Settings.defaultProfilePicture
             self.location = user.location

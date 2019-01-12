@@ -454,8 +454,9 @@ extension Routes {
             return next()
         }
         // Look up the player whose registration is being edited.
-        guard let playerID = request.parameters["player"],
-              let player = try persistence.user(withID: ObjectId(playerID)) else {
+        guard let playerIDString = request.parameters["player"],
+              let playerID = Int(playerIDString),
+              let player = try persistence.user(withID: playerID) else {
             response.status(.badRequest)
             return next()
         }

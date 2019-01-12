@@ -4,7 +4,7 @@
 struct MessageForm: Codable {
 
     let topic: Int
-    let sender: String
-    let recipient: String
+    let sender: Int
+    let recipient: Int
     let text: String
 }

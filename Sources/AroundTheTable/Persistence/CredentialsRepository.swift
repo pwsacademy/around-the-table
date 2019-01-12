@@ -58,7 +58,7 @@ extension Persistence {
      */
     func userWith(email: String) throws -> User? {
         guard let credential = try credentials.findOne(["email": email]),
-              let id = ObjectId(credential["_id"]) else {
+              let id = Int(credential["_id"]) else {
             return nil
         }
         return try user(withID: id)
@@ -70,7 +70,7 @@ extension Persistence {
      */
     func userWith(email: String, password: String) throws -> User? {
         guard let credential = try credentials.findOne(["email": email]),
-              let id = ObjectId(credential["_id"]),
+              let id = Int(credential["_id"]),
               let hash = String(credential["hash"]),
               let salt = String(credential["salt"]) else {
             return nil
@@ -86,7 +86,7 @@ extension Persistence {
      */
     func userWith(facebookID: String) throws -> User? {
         guard let credential = try credentials.findOne(["facebook": facebookID]),
-              let id = ObjectId(credential["_id"]) else {
+              let id = Int(credential["_id"]) else {
             return nil
         }
         return try user(withID: id)

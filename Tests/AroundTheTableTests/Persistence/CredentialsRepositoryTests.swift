@@ -29,7 +29,7 @@ class CredentialsRepositoryTests: XCTestCase {
     let persistence = try! Persistence()
     
     func testAddEmailCredential() throws {
-        guard let bob = try persistence.user(withID: ObjectId("594d65bd819a5360869a5360")) else {
+        guard let bob = try persistence.user(withID: 2) else {
             return XCTFail()
         }
         try persistence.addEmailCredential(for: bob, email: "bob@dylan.com", password: "supersecret")
@@ -49,14 +49,14 @@ class CredentialsRepositoryTests: XCTestCase {
     }
     
     func testAddConflictingEmailCredential() throws {
-        guard let bob = try persistence.user(withID: ObjectId("594d65bd819a5360869a5360")) else {
+        guard let bob = try persistence.user(withID: 2) else {
             return XCTFail()
         }
         XCTAssertThrowsError(try persistence.addEmailCredential(for: bob, email: "alice@wonderland.com", password: "supersecret"))
     }
     
     func testAddFacebookCredential() throws {
-        guard let bob = try persistence.user(withID: ObjectId("594d65bd819a5360869a5360")) else {
+        guard let bob = try persistence.user(withID: 2) else {
             return XCTFail()
         }
         try persistence.addFacebookCredential(for: bob, facebookID: "2")
@@ -76,14 +76,14 @@ class CredentialsRepositoryTests: XCTestCase {
     }
     
     func testAddConflictingFacebookCredential() throws {
-        guard let bob = try persistence.user(withID: ObjectId("594d65bd819a5360869a5360")) else {
+        guard let bob = try persistence.user(withID: 2) else {
             return XCTFail()
         }
         XCTAssertThrowsError(try persistence.addFacebookCredential(for: bob, facebookID: "1"))
     }
     
     func testUserWithEmail() throws {
-        guard let alice = try persistence.user(withID: ObjectId("594d5ccd819a5360859a5360")) else {
+        guard let alice = try persistence.user(withID: 1) else {
             return XCTFail()
         }
         XCTAssertEqual(alice, try persistence.userWith(email: "alice@wonderland.com"))
@@ -94,7 +94,7 @@ class CredentialsRepositoryTests: XCTestCase {
     }
     
     func testUserWithEmailAndPassword() throws {
-        guard let alice = try persistence.user(withID: ObjectId("594d5ccd819a5360859a5360")) else {
+        guard let alice = try persistence.user(withID: 1) else {
             return XCTFail()
         }
         XCTAssertEqual(alice, try persistence.userWith(email: "alice@wonderland.com", password: "supersecret"))
@@ -109,7 +109,7 @@ class CredentialsRepositoryTests: XCTestCase {
     }
     
     func testUserWithFacebookID() throws {
-        guard let alice = try persistence.user(withID: ObjectId("594d5ccd819a5360859a5360")) else {
+        guard let alice = try persistence.user(withID: 1) else {
             return XCTFail()
         }
         XCTAssertEqual(alice, try persistence.userWith(facebookID: "1"))

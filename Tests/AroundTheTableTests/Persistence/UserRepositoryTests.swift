@@ -27,21 +27,19 @@ class UserRepositoryTests: XCTestCase {
     }
     
     func testReadUser() throws {
-        for id in [ObjectId("594d5ccd819a5360859a5360")!,
-                   ObjectId("594d65bd819a5360869a5360")!,
-                   ObjectId("594d5c76819a5360839a5360")!] {
+        for id in 1...3 {
             XCTAssertNotNil(try persistence.user(withID: id))
         }
     }
     
     func testUpdateUser() throws {
-        guard let charlie = try persistence.user(withID: ObjectId("594d5c76819a5360839a5360")) else {
+        guard let charlie = try persistence.user(withID: 3) else {
             return XCTFail()
         }
         XCTAssert(charlie.name == "Charlie")
         charlie.name = "Charlie Chaplin"
         try persistence.update(charlie)
-        XCTAssert(try persistence.user(withID: ObjectId("594d5c76819a5360839a5360"))?.name == "Charlie Chaplin")
+        XCTAssert(try persistence.user(withID: 3)?.name == "Charlie Chaplin")
         // Clean-up
         charlie.name = "Charlie"
         try persistence.update(charlie)

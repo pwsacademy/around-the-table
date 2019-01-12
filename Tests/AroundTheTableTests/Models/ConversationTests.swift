@@ -21,18 +21,8 @@ class ConversationTests: XCTestCase {
     
     private let now = Date()
     private let message = Conversation.Message(direction: .outgoing, text: "Hello")
-    
-    private var host: User {
-        let user = User(name: "Host")
-        user.id = ObjectId("594d5ccd819a5360859a5360")!
-        return user
-    }
-    
-    private var player: User {
-        let user = User(name: "Player")
-        user.id = ObjectId("594d65bd819a5360869a5360")!
-        return user
-    }
+    private var host = User(id: 1, name: "Host")
+    private var player = User(id: 2, name: "Player")
     
     private var activity: Activity {
         let activity = Activity(id: 1,

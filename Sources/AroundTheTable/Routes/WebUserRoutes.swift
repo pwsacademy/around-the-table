@@ -81,9 +81,9 @@ extension Routes {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
         guard let form = try? request.read(as: MessageForm.self),
-              let sender = try persistence.user(withID: ObjectId(form.sender)),
+              let sender = try persistence.user(withID: form.sender),
               sender == user,
-              let recipient = try persistence.user(withID: ObjectId(form.recipient)),
+              let recipient = try persistence.user(withID: form.recipient),
               let topic = try persistence.activity(withID: form.topic, measuredFrom: .default) else {
             response.status(.badRequest)
             return next()

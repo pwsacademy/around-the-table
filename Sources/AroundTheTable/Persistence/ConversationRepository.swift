@@ -69,7 +69,7 @@ extension Persistence {
                 throw log(BSONError.missingField(name: "registrations"))
             }
             for (index, registration) in registrations.enumerated() {
-                guard let id = ObjectId(registration["player"]),
+                guard let id = Int(registration["player"]),
                       let player = try user(withID: id) else {
                     throw log(BSONError.missingField(name: "player"))
                 }
@@ -126,7 +126,7 @@ extension Persistence {
                 throw log(BSONError.missingField(name: "registrations"))
             }
             for (index, registration) in registrations.enumerated() {
-                guard let id = ObjectId(registration["player"]),
+                guard let id = Int(registration["player"]),
                       let player = try self.user(withID: id) else {
                     throw log(BSONError.missingField(name: "player"))
                 }
