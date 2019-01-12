@@ -35,14 +35,14 @@ class ConversationTests: XCTestCase {
     }
     
     private var activity: Activity {
-        let activity = Activity(host: host,
+        let activity = Activity(id: 1,
+                                host: host,
                                 name: "Game", game: nil,
                                 playerCount: 2...4, prereservedSeats: 1,
                                 date: now, deadline: now,
                                 location: Location(coordinates: Coordinates(latitude: 50, longitude: 2),
                                                    address: "Street 1", city: "City", country: "Country"),
                                 info: "")
-        activity.id = ObjectId("594d5bef819a5360829a5360")!
         return activity
     }
     

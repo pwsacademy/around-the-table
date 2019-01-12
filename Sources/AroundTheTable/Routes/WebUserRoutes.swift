@@ -84,7 +84,7 @@ extension Routes {
               let sender = try persistence.user(withID: ObjectId(form.sender)),
               sender == user,
               let recipient = try persistence.user(withID: ObjectId(form.recipient)),
-              let topic = try persistence.activity(with: ObjectId(form.topic), measuredFrom: .default) else {
+              let topic = try persistence.activity(withID: form.topic, measuredFrom: .default) else {
             response.status(.badRequest)
             return next()
         }

@@ -122,7 +122,7 @@ extension Routes {
                     response.error = ServerError.invalidState
                     return next()
                 }
-                try response.redirect("/web/activity/\(id.hexString)")
+                try response.redirect("/web/activity/\(id)")
             } catch {
                 response.error = error
                 next()
@@ -135,7 +135,7 @@ extension Routes {
      Does nothing if cloud object storage is not configured.
      */
     private func storeImages(for activity: Activity) {
-        guard let id = activity.id?.hexString,
+        guard let id = activity.id,
               let picture = activity.picture,
               let thumbnail = activity.thumbnail,
               CloudObjectStorage.isConfigured else {

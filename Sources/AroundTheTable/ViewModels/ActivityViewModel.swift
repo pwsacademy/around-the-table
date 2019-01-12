@@ -25,7 +25,7 @@ struct ActivityViewModel: Codable {
     
     struct ActivityViewModel: Codable {
         
-        let id: String
+        let id: Int
         let host: UserViewModel
         let name: String
         let picture: String
@@ -56,7 +56,7 @@ struct ActivityViewModel: Codable {
                   let distance = activity.distance else {
                 throw log(ServerError.unpersistedEntity)
             }
-            self.id = id.hexString
+            self.id = id
             self.host = try UserViewModel(activity.host)
             self.name = activity.name
             self.picture = activity.thumbnail?.absoluteString ?? Settings.defaultGameThumbnail

@@ -19,10 +19,8 @@ extension Persistence {
         guard activity.id == nil else {
             throw log(ServerError.persistedEntity)
         }
-        guard let id = try activities.insert(activity.document) as? ObjectId else {
-            throw log(BSONError.missingField(name: "_id"))
-        }
-        activity.id = id
+        activity.id = try nextID(for: activities)
+        try activities.insert(activity.document)
     }
     
     /**
@@ -77,7 +75,7 @@ extension Persistence {
      
      - Returns: An activity, or `nil` if there was no activity with this ID.
      */
-    func activity(with id: ObjectId, measuredFrom coordinates: Coordinates) throws -> Activity? {
+    func activity(withID id: Int, measuredFrom coordinates: Coordinates) throws -> Activity? {
         let results = try activities(matching: ["_id": id],
                                      measuredFrom: coordinates,
                                      sortedBy: ["creationDate": .descending],

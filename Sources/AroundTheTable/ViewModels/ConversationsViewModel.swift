@@ -7,7 +7,7 @@ struct ConversationsViewModel: Codable {
     
     struct ConversationViewModel: Codable {
         
-        let activity: String
+        let activity: Int
         let title: String
         let picture: String
         let userIsSender: Bool
@@ -55,7 +55,7 @@ struct ConversationsViewModel: Codable {
             guard let id = conversation.topic.id else {
                 throw log(ServerError.unpersistedEntity)
             }
-            activity = id.hexString
+            activity = id
             title = conversation.topic.name
             picture = conversation.topic.thumbnail?.absoluteString ?? Settings.defaultGameThumbnail
             if user == conversation.sender {

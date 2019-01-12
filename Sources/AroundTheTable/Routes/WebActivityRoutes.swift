@@ -47,8 +47,9 @@ extension Routes {
      */
     private func activity(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
         let user = try authenticatedUser(for: request)
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id,
                                                       measuredFrom: user?.location?.coordinates ?? .default) else {
             response.status(.badRequest)
             return next()
@@ -77,8 +78,9 @@ extension Routes {
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id, measuredFrom: .default),
               !activity.isCancelled,
               // Past activities cannot be cancelled.
               activity.date.compare(Date()) == .orderedDescending,
@@ -111,8 +113,9 @@ extension Routes {
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
               activity.date.compare(Date()) == .orderedDescending,
               !activity.isCancelled,
@@ -133,8 +136,9 @@ extension Routes {
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
               activity.date.compare(Date()) == .orderedDescending,
               !activity.isCancelled,
@@ -161,8 +165,9 @@ extension Routes {
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
               activity.date.compare(Date()) == .orderedDescending,
               !activity.isCancelled,
@@ -183,8 +188,9 @@ extension Routes {
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
               activity.date.compare(Date()) == .orderedDescending,
               !activity.isCancelled,
@@ -225,8 +231,9 @@ extension Routes {
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
               activity.date.compare(Date()) == .orderedDescending,
               !activity.isCancelled,
@@ -247,8 +254,9 @@ extension Routes {
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
               activity.date.compare(Date()) == .orderedDescending,
               !activity.isCancelled,
@@ -286,8 +294,9 @@ extension Routes {
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
               activity.date.compare(Date()) == .orderedDescending,
               !activity.isCancelled,
@@ -308,8 +317,9 @@ extension Routes {
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
               activity.date.compare(Date()) == .orderedDescending,
               !activity.isCancelled,
@@ -347,8 +357,9 @@ extension Routes {
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
               activity.date.compare(Date()) == .orderedDescending,
               !activity.isCancelled,
@@ -369,8 +380,9 @@ extension Routes {
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
               activity.date.compare(Date()) == .orderedDescending,
               !activity.isCancelled,
@@ -395,8 +407,9 @@ extension Routes {
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // You can't register for past or cancelled activities.
               activity.date.compare(Date()) == .orderedDescending,
               !activity.isCancelled,
@@ -431,8 +444,9 @@ extension Routes {
         guard let user = try authenticatedUser(for: request) else {
             throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
-        guard let id = request.parameters["id"],
-              let activity = try persistence.activity(with: ObjectId(id), measuredFrom: .default),
+        guard let idString = request.parameters["id"],
+              let id = Int(idString),
+              let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // You can't edit registrations for past or cancelled activities.
               activity.date.compare(Date()) == .orderedDescending,
               !activity.isCancelled else {

@@ -4,13 +4,13 @@
 struct EditActivityDeadlineViewModel: Codable {
     
     let base: BaseViewModel
-    let id: String
+    let id: Int
     
     init(base: BaseViewModel, activity: Activity) throws {
         guard let id = activity.id else {
             throw log(ServerError.unpersistedEntity)
         }
         self.base = base
-        self.id = id.hexString
+        self.id = id
     }
 }

@@ -6,7 +6,7 @@ import Foundation
 struct EditActivityDateTimeViewModel: Codable {
     
     let base: BaseViewModel
-    let id: String
+    let id: Int
     
     struct DateViewModel: Codable {
         
@@ -32,7 +32,7 @@ struct EditActivityDateTimeViewModel: Codable {
             throw log(ServerError.unpersistedEntity)
         }
         self.base = base
-        self.id = id.hexString
+        self.id = id
         let components = Calendar(identifier: .gregorian).dateComponents(in: Settings.timeZone, from: activity.date)
         self.date = DateViewModel(components)
     }

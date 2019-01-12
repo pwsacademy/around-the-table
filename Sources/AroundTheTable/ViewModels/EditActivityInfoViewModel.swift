@@ -4,7 +4,7 @@
 struct EditActivityInfoViewModel: Codable {
     
     let base: BaseViewModel
-    let id: String
+    let id: Int
     let info: String
     
     init(base: BaseViewModel, activity: Activity) throws {
@@ -12,7 +12,7 @@ struct EditActivityInfoViewModel: Codable {
             throw log(ServerError.unpersistedEntity)
         }
         self.base = base
-        self.id = id.hexString
+        self.id = id
         self.info = activity.info
     }
 }

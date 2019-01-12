@@ -25,7 +25,7 @@ class ConversationRepositoryTests: XCTestCase {
     let persistence = try! Persistence()
     
     func testAddConversation() throws {
-        guard let activity = try persistence.activity(with: ObjectId("5af5abdd0c92b55f601b043f")!, measuredFrom: .default),
+        guard let activity = try persistence.activity(withID: 1, measuredFrom: .default),
               let alice = try persistence.user(withID: ObjectId("594d5ccd819a5360859a5360")),
               let charlie = try persistence.user(withID: ObjectId("594d5c76819a5360839a5360")) else {
             return XCTFail()
@@ -41,7 +41,7 @@ class ConversationRepositoryTests: XCTestCase {
     }
     
     func testAddPersistedConversation() throws {
-        guard let activity = try persistence.activity(with: ObjectId("5af5abdd0c92b55f601b043f")!, measuredFrom: .default),
+        guard let activity = try persistence.activity(withID: 1, measuredFrom: .default),
               let bob = try persistence.user(withID: ObjectId("594d65bd819a5360869a5360")),
               let charlie = try persistence.user(withID: ObjectId("594d5c76819a5360839a5360")),
               let conversation = try persistence.conversation(between: bob, charlie, regarding: activity) else {
@@ -51,7 +51,7 @@ class ConversationRepositoryTests: XCTestCase {
     }
     
     func testFindConversation() throws {
-        guard let activity = try persistence.activity(with: ObjectId("5af5abdd0c92b55f601b043f")!, measuredFrom: .default),
+        guard let activity = try persistence.activity(withID: 1, measuredFrom: .default),
               let alice = try persistence.user(withID: ObjectId("594d5ccd819a5360859a5360")),
               let bob = try persistence.user(withID: ObjectId("594d65bd819a5360869a5360")),
               let charlie = try persistence.user(withID: ObjectId("594d5c76819a5360839a5360")) else {
@@ -144,7 +144,7 @@ class ConversationRepositoryTests: XCTestCase {
     }
     
     func testUpdateConversation() throws {
-        guard let activity = try persistence.activity(with: ObjectId("5af5abdd0c92b55f601b043f")!, measuredFrom: .default),
+        guard let activity = try persistence.activity(withID: 1, measuredFrom: .default),
               let bob = try persistence.user(withID: ObjectId("594d65bd819a5360869a5360")),
               let charlie = try persistence.user(withID: ObjectId("594d5c76819a5360839a5360")),
               let conversation = try persistence.conversation(between: bob, charlie, regarding: activity) else {
@@ -159,7 +159,7 @@ class ConversationRepositoryTests: XCTestCase {
     }
     
     func testUpdateUnpersistedConversation() throws {
-        guard let activity = try persistence.activity(with: ObjectId("5af5abdd0c92b55f601b043f")!, measuredFrom: .default),
+        guard let activity = try persistence.activity(withID: 1, measuredFrom: .default),
               let alice = try persistence.user(withID: ObjectId("594d5ccd819a5360859a5360")),
               let bob = try persistence.user(withID: ObjectId("594d65bd819a5360869a5360")) else {
             return XCTFail()

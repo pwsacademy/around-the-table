@@ -9,9 +9,9 @@ import Foundation
  */
 final class Activity {
     
-    /// The activity's ID will be set when it is persisted.
-    /// Never set this yourself!
-    var id: ObjectId?
+    /// The activity's ID.
+    /// If set to nil, an ID is assigned when the instance is persisted.
+    var id: Int?
     
     /// The date and time at which the activity was created.
     let creationDate: Date
@@ -89,21 +89,10 @@ final class Activity {
         /**
          Initializes a `Registration`.
          
-         `creationDate` is set to the current date and time.
-         `approved` and `cancelled` are set to `false`.
+         `creationDate` is set to the current date and time by default.
+         `approved` and `cancelled` are set to `false` by default.
          */
-        init(player: User, seats: Int) {
-            creationDate = Date()
-            self.player = player
-            self.seats = seats
-            isApproved = false
-            isCancelled = false
-        }
-        
-        /**
-         Full initializer, only used when decoding from BSON.
-         */
-         private init(creationDate: Date, player: User, seats: Int, isApproved: Bool, isCancelled: Bool) {
+        init(creationDate: Date = Date(), player: User, seats: Int, isApproved: Bool = false, isCancelled: Bool = false) {
             self.creationDate = creationDate
             self.player = player
             self.seats = seats
@@ -144,44 +133,23 @@ final class Activity {
     /**
      Initializes an `Activity`.
      
-     If `picture` is `nil` and a headlining game is set, that game's image will be used.
-     `thumbnail` will be set accordingly.
-     
-     `id` will be set when the activity is persisted.
-     `creationDate` is set to the current date and time.
-     `distance` is set to `nil`.
-     `isCancelled` is set to `false`.
-     `registrations` is set to empty.
+     `id` should be set to nil for new (unpersisted) instances. This is also its default value.
+     `creationDate` is set to the current date and time by default.
+     `distance` is set to `nil` by default.
+     If `picture` is `nil` and a headlining game is set, that game's image will be used. `thumbnail` will be set accordingly.
+     `isCancelled` is set to `false` by default.
+     `registrations` is set to an empty array by default.
      */
-    init(host: User, name: String, game: Game?,
+    init(id: Int? = nil, creationDate: Date = Date(),
+         host: User,
+         name: String, game: Game?,
          playerCount: CountableClosedRange<Int>, prereservedSeats: Int,
-         date: Date, deadline: Date, location: Location, info: String,
-         picture: URL? = nil, thumbnail: URL? = nil) {
-        creationDate = Date()
-        self.host = host
-        self.name = name
-        self.game = game
-        self.playerCount = playerCount
-        self.prereservedSeats = prereservedSeats
-        self.date = date
-        self.deadline = deadline
-        self.location = location
-        distance = nil
-        self.info = info
-        self.picture = picture ?? game?.picture
-        self.thumbnail = thumbnail ?? game?.thumbnail
-        isCancelled = false
-        registrations = []
-    }
-    
-    /**
-     Full initializer, only used when decoding from BSON.
-     */
-    private init(id: ObjectId, creationDate: Date,
-                 host: User, name: String, game: Game?,
-                 playerCount: CountableClosedRange<Int>, prereservedSeats: Int,
-                 date: Date, deadline: Date, location: Location, distance: Double?, info: String,
-                 picture: URL?, thumbnail: URL?, isCancelled: Bool, registrations: [Registration]) {
+         date: Date, deadline: Date,
+         location: Location, distance: Double? = nil,
+         info: String,
+         picture: URL? = nil, thumbnail: URL? = nil,
+         isCancelled: Bool = false,
+         registrations: [Registration] = []) {
         self.id = id
         self.creationDate = creationDate
         self.host = host
@@ -194,8 +162,8 @@ final class Activity {
         self.location = location
         self.distance = distance
         self.info = info
-        self.picture = picture
-        self.thumbnail = thumbnail
+        self.picture = picture ?? game?.picture
+        self.thumbnail = thumbnail ?? game?.thumbnail
         self.isCancelled = isCancelled
         self.registrations = registrations
     }
@@ -292,6 +260,7 @@ extension Activity: Primitive {
     /// `host` and `game` are normalized and stored as references.
     var document: Document {
         var document: Document = [
+            "_id": id,
             "creationDate": creationDate,
             "host": host.id, // Normalized.
             "name": name,
@@ -304,9 +273,6 @@ extension Activity: Primitive {
             "isCancelled": isCancelled,
             "registrations": registrations
         ]
-        if let id = id {
-            document["_id"] = id
-        }
         if let game = game {
             document["game"] = game.id // Normalized.
         }
@@ -338,7 +304,7 @@ extension Activity: Primitive {
         guard let bson = bson as? Document else {
             return nil
         }
-        guard let id = ObjectId(bson["_id"]) else {
+        guard let id = Int(bson["_id"]) else {
             throw log(BSONError.missingField(name: "_id"))
         }
         guard let creationDate = Date(bson["creationDate"]) else {

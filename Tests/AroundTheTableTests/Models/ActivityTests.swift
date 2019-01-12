@@ -28,7 +28,6 @@ class ActivityTests: XCTestCase {
         ]
     }
     
-    private let id = ObjectId("594d5bef819a5360829a5360")!
     private let picture = URL(string: "https://cf.geekdo-images.com/original/img/ME73s_0dstlA4qLpLEBvPyvq8gE=/0x0/pic3090929.jpg")!
     private let thumbnail = URL(string: "https://cf.geekdo-images.com/thumb/img/7X5vG9KruQ9CmSMVZ3rmiSSqTCM=/fit-in/200x150/pic3090929.jpg")!
     private let now = Date()
@@ -62,9 +61,10 @@ class ActivityTests: XCTestCase {
                                 date: now, deadline: now,
                                 location: location,
                                 info: "Info")
+        XCTAssertNil(activity.id)
         XCTAssertNil(activity.distance)
-        XCTAssert(activity.picture == picture)
-        XCTAssert(activity.thumbnail == thumbnail)
+        XCTAssert(activity.picture == game.picture)
+        XCTAssert(activity.thumbnail == game.thumbnail)
         XCTAssertFalse(activity.isCancelled)
         XCTAssert(activity.registrations.isEmpty)
     }
@@ -83,18 +83,19 @@ class ActivityTests: XCTestCase {
     }
     
     func testEncode() {
-        let input = Activity(host: host,
+        let input = Activity(id: 1,
+                             creationDate: now,
+                             host: host,
                              name: "Game", game: game,
                              playerCount: 3...4, prereservedSeats: 2,
                              date: now, deadline: now,
                              location: location,
                              info: "Info")
-        input.id = id
         let registration = Activity.Registration(player: player, seats: 1)
         input.registrations.append(registration)
         let expected: Document = [
-            "_id": id,
-            "creationDate": input.creationDate,
+            "_id": 1,
+            "creationDate": now,
             "host": host.id,
             "name": "Game",
             "game": game.id,
@@ -104,26 +105,27 @@ class ActivityTests: XCTestCase {
             "deadline": now,
             "location": location,
             "info": "Info",
-            "picture": picture,
-            "thumbnail": thumbnail,
+            "picture": game.picture,
+            "thumbnail": game.thumbnail,
             "isCancelled": false,
-            "registrations": [ registration ]
+            "registrations": [registration]
         ]
         XCTAssert(input.typeIdentifier == expected.typeIdentifier)
         XCTAssert(input.document == expected)
     }
     
     func testEncodeSkipsNilValues() {
-        let input = Activity(host: host,
+        let input = Activity(id: 1,
+                             creationDate: now,
+                             host: host,
                              name: "Game", game: nil,
                              playerCount: 3...4, prereservedSeats: 2,
                              date: now, deadline: now,
                              location: location,
                              info: "Info")
-        input.id = id
         let expected: Document = [
-            "_id": id,
-            "creationDate": input.creationDate,
+            "_id": 1,
+            "creationDate": now,
             "host": host.id,
             "name": "Game",
             "playerCount": 3...4,
@@ -141,7 +143,7 @@ class ActivityTests: XCTestCase {
     
     func testDecode() throws {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "creationDate": now,
             "host": host,
             "name": "Game",
@@ -169,7 +171,7 @@ class ActivityTests: XCTestCase {
         guard let result = try Activity(input) else {
             return XCTFail()
         }
-        XCTAssert(result.id == id)
+        XCTAssert(result.id == 1)
         assertDatesEqual(result.creationDate, now)
         XCTAssert(result.host == host)
         XCTAssert(result.name == "Game")
@@ -193,7 +195,7 @@ class ActivityTests: XCTestCase {
     }
     
     func testDecodeNotADocument() throws {
-        let input: Primitive = id
+        let input: Primitive = 1
         let result = try Activity(input)
         XCTAssertNil(result)
     }
@@ -218,7 +220,7 @@ class ActivityTests: XCTestCase {
     
     func testDecodeMissingCreationDate() {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "host": host,
             "name": "Game",
             "game": game,
@@ -236,7 +238,7 @@ class ActivityTests: XCTestCase {
     
     func testDecodeHostNotDenormalized() {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "creationDate": now,
             "host": host.id,
             "name": "Game",
@@ -255,7 +257,7 @@ class ActivityTests: XCTestCase {
     
     func testDecodeMissingName() {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "creationDate": now,
             "host": host,
             "game": game,
@@ -273,7 +275,7 @@ class ActivityTests: XCTestCase {
     
     func testDecodeGameNotDenormalized() throws {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "creationDate": now,
             "host": host,
             "name": "Game",
@@ -295,7 +297,7 @@ class ActivityTests: XCTestCase {
     
     func testDecodeMissingPlayerCount() {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "creationDate": now,
             "host": host,
             "name": "Game",
@@ -313,7 +315,7 @@ class ActivityTests: XCTestCase {
     
     func testDecodeMissingPrereservedSeats() {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "creationDate": now,
             "host": host,
             "name": "Game",
@@ -331,7 +333,7 @@ class ActivityTests: XCTestCase {
     
     func testDecodeMissingDate() {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "creationDate": now,
             "host": host,
             "name": "Game",
@@ -349,7 +351,7 @@ class ActivityTests: XCTestCase {
     
     func testDecodeMissingDeadline() {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "creationDate": now,
             "host": host,
             "name": "Game",
@@ -367,7 +369,7 @@ class ActivityTests: XCTestCase {
     
     func testDecodeMissingLocation() {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "creationDate": now,
             "host": host,
             "name": "Game",
@@ -385,7 +387,7 @@ class ActivityTests: XCTestCase {
     
     func testDecodeMissingInfo() {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "creationDate": now,
             "host": host,
             "name": "Game",
@@ -403,7 +405,7 @@ class ActivityTests: XCTestCase {
     
     func testDecodeMissingIsCancelled() {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "creationDate": now,
             "host": host,
             "name": "Game",
@@ -421,7 +423,7 @@ class ActivityTests: XCTestCase {
     
     func testDecodeMissingRegistrations() {
         let input: Document = [
-            "_id": id,
+            "_id": 1,
             "creationDate": now,
             "host": host,
             "name": "Game",

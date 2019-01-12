@@ -4,7 +4,7 @@
 struct EditActivityPlayerCountViewModel: Codable {
     
     let base: BaseViewModel
-    let id: String
+    let id: Int
     let playerCountOptions: [Int]
     let playerCount: Int
     let minPlayerCount: Int
@@ -17,7 +17,7 @@ struct EditActivityPlayerCountViewModel: Codable {
             throw log(ServerError.unpersistedEntity)
         }
         self.base = base
-        self.id = id.hexString
+        self.id = id
         self.playerCountOptions = Array(activity.game!.playerCount)
         self.playerCount = activity.playerCount.upperBound
         self.minPlayerCount = activity.playerCount.lowerBound
