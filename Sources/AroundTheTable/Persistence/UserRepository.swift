@@ -1,5 +1,3 @@
-import BSON
-
 /**
  Persistence methods related to users.
  */

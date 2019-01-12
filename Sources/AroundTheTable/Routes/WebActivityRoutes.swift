@@ -1,4 +1,3 @@
-import BSON
 import Credentials
 import Foundation
 import Kitura
