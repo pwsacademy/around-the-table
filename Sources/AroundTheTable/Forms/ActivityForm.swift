@@ -83,8 +83,7 @@ struct ActivityForm: Codable {
     /// - if the deadline is valid and in the future.
     var isValid: Bool {
         let checks = [
-            // TODO: This can be improved using count(where:) once that's added to the Standard Library.
-            ![name, address, city, country].map({ $0.isEmpty }).contains(true),
+            ![name, address, city, country].contains { $0.isEmpty },
             playerCount >= 1,
             minPlayerCount >= 1 && minPlayerCount <= playerCount,
             prereservedSeats >= 0 && prereservedSeats < playerCount,

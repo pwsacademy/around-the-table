@@ -1,20 +1,5 @@
 import Foundation
 
-// TODO: This can be removed once we switch to Swift 4.2.
-extension BidirectionalCollection {
-    
-    public func lastIndex(where predicate: (Element) -> Bool) -> Index? {
-        var i = endIndex
-        while i != startIndex {
-            formIndex(before: &i)
-            if predicate(self[i]) {
-                return i
-            }
-        }
-        return nil
-    }
-}
-
 extension Date {
     
     /**

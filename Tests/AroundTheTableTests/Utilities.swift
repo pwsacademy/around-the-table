@@ -20,20 +20,3 @@ func loadFixture(file: String) -> Data? {
     let path = basePath.joined(separator: "/")
     return FileManager.default.contents(atPath: path)
 }
-
-/**
- Adds `Equatable` conformance to `SwiftyRequest.Result` for easier testing.
- */
-extension Result: Equatable where T: Equatable {
-    
-    public static func ==(lhs: Result, rhs: Result) -> Bool {
-        switch (lhs, rhs) {
-        case (.success(let left), .success(let right)) where left == right:
-            return true
-        case (.failure, .failure):
-            return true
-        default:
-            return false
-        }
-    }
-}

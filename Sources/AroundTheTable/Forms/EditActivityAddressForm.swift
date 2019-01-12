@@ -14,8 +14,7 @@ struct EditActivityAddressForm: Codable {
                         address: address, city: city, country: country)
     }
     
-    // TODO: This can be improved using count(where:) once that's added to the Standard Library.
     var isValid: Bool {
-        return ![address, city, country].map({ $0.isEmpty }).contains(true)
+        return ![address, city, country].contains { $0.isEmpty }
     }
 }
