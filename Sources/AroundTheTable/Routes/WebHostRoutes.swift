@@ -139,20 +139,7 @@ extension Routes {
               CloudObjectStorage.isConfigured else {
             return
         }
-        // Helper function to get the file extension (including the leading dot) of an URL.
-        func getExtension(for url: URL) -> String? {
-            guard let file = url.absoluteString.components(separatedBy: "/").last,
-                  let period = file.index(of: ".") else {
-                return nil
-            }
-            return String(file[period...])
-        }
-        
-        guard let `extension` = getExtension(for: picture) else {
-            Log.warning("COS warning: failed to get extension for \(picture).")
-            return
-        }
-        let pictureObject = "activity/\(id)\(`extension`)"
+        let pictureObject = "activity/\(id)\(picture.pathExtension)"
         let cos = CloudObjectStorage()
         cos.storeImage(at: picture, as: pictureObject) {
             activity.picture = URL(string: "\(Settings.cloudObjectStorage.bucketURL!)/\(pictureObject)")
