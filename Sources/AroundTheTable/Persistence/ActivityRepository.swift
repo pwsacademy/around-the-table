@@ -187,8 +187,7 @@ extension Persistence {
         guard let id = host.id else {
             throw log(ServerError.unpersistedEntity)
         }
-        let yesterday = Calendar(identifier: .gregorian).date(byAdding: .day, value: -1, to: Date())!
-        return try activities(matching: ["host": id, "date": ["$gt": yesterday], "isCancelled": false],
+        return try activities(matching: ["host": id, "date": ["$gt": Date().previous], "isCancelled": false],
                               measuredFrom: .default,
                               sortedBy: ["date": .ascending],
                               startingFrom: 0, limitedTo: .max)
@@ -204,11 +203,10 @@ extension Persistence {
         guard let id = player.id else {
             throw log(ServerError.unpersistedEntity)
         }
-        let yesterday = Calendar(identifier: .gregorian).date(byAdding: .day, value: -1, to: Date())!
         return try activities(matching: ["registrations": ["$elemMatch": ["player": id,
                                                                           "isApproved": true,
                                                                           "isCancelled": false]],
-                                         "date": ["$gt": yesterday],
+                                         "date": ["$gt": Date().previous],
                                          "isCancelled": false],
                               measuredFrom: player.location?.coordinates ?? .default,
                               sortedBy: ["date": .ascending],

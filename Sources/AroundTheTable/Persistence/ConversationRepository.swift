@@ -89,7 +89,6 @@ extension Persistence {
         guard let id = user.id else {
             throw log(ServerError.unpersistedEntity)
         }
-        let yesterday = Calendar(identifier: .gregorian).date(byAdding: .day, value: -1, to: Date())
         let results = try conversations.aggregate([
             .match([
                 "$or": [
@@ -101,7 +100,7 @@ extension Persistence {
             .lookup(from: activities, localField: "topic", foreignField: "_id", as: "topic"),
             .unwind("$topic"),
             // Filter only active conversations.
-            .match(["topic.date": ["$gt": yesterday]] as Query),
+            .match(["topic.date": ["$gt": Date().previous]] as Query),
             // Denormalize `topic.host`.
             .lookup(from: users, localField: "topic.host", foreignField: "_id", as: "topic.host"),
             .unwind("$topic.host"),
@@ -146,7 +145,6 @@ extension Persistence {
         guard let id = user.id else {
             throw log(ServerError.unpersistedEntity)
         }
-        let yesterday = Calendar(identifier: .gregorian).date(byAdding: .day, value: -1, to: Date())
         let results = try conversations.aggregate([
             // Find all conversations with unread messages for this user.
             .match([
@@ -165,7 +163,7 @@ extension Persistence {
             .lookup(from: activities, localField: "topic", foreignField: "_id", as: "topic"),
             .unwind("$topic"),
             // Filter only active conversations.
-            .match(["topic.date": ["$gt": yesterday]] as Query),
+            .match(["topic.date": ["$gt": Date().previous]] as Query),
             // Unwind `messages` and filter only unread messages.
             .unwind("$messages"),
             .match([
