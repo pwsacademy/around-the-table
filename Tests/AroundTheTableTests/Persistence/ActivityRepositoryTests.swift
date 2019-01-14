@@ -18,6 +18,7 @@ class ActivityRepositoryTests: XCTestCase {
             ("testUpcomingActivities", testUpcomingActivities),
             ("testActivitiesNearUser", testActivitiesNearUser),
             ("testActivitiesNearUserWithoutLocation", testActivitiesNearUserWithoutLocation),
+            ("testHostsJoinedBy", testHostsJoinedBy),
             ("testActivitiesHostedBy", testActivitiesHostedBy),
             ("testActivitiesJoinedBy", testActivitiesJoinedBy),
             ("testUpdateActivity", testUpdateActivity),
@@ -104,6 +105,15 @@ class ActivityRepositoryTests: XCTestCase {
         }
         bob.location = nil
         XCTAssertThrowsError(try persistence.activitiesNear(user: bob, inWindowFrom: today))
+    }
+    
+    func testHostsJoinedBy() throws {
+        guard let bob = try persistence.user(withID: 2),
+              let charlie = try persistence.user(withID: 3) else {
+            return XCTFail()
+        }
+        let result = try persistence.hostsJoined(by: bob, inWindowFrom: today)
+        XCTAssert(result == [charlie])
     }
     
     func testActivitiesHostedBy() throws {

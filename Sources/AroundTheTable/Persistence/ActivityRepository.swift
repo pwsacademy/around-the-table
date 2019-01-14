@@ -132,6 +132,27 @@ extension Persistence {
     }
     
     /**
+     Returns the hosts of whom the given player has joined an activity in the one-month window.
+     
+     This list can contain duplicates if the player has joined multiple activities of the same host.
+     It is used to determine whether a player's registration should be automatically approved.
+     */
+    func hostsJoined(by player: User, inWindowFrom date: Date = Date()) throws -> [User] {
+        guard let id = player.id else {
+            throw log(ServerError.unpersistedEntity)
+        }
+        let results = try activities(matching: ["registrations": ["$elemMatch": ["player": id,
+                                                                                 "isApproved": true,
+                                                                                 "isCancelled": false]],
+                                                "date": ["$gt": date, "$lt": date.lastDayInWindow],
+                                                "isCancelled": false],
+                                     measuredFrom: player.location?.coordinates ?? .default,
+                                     sortedBy: ["date": .ascending],
+                                     skipping: 0, limitedTo: .max)
+        return results.map { $0.host }
+    }
+    
+    /**
      Returns all activities hosted by the given user.
      
      This includes all activities that aren't cancelled and are less than 24 hours in the past.

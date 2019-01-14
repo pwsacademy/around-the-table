@@ -422,15 +422,29 @@ extension Routes {
             response.status(.badRequest)
             return next()
         }
-        activity.registrations.append(Activity.Registration(player: user, seats: form.seats))
+        var registration = Activity.Registration(player: user, seats: form.seats)
+        // Automatically approve the registration if it's the player's first registration with this host in the one-month window
+        // and there are enough available seats to approve it.
+        let autoApprove = try !persistence.hostsJoined(by: user).contains(activity.host) && activity.availableSeats >= form.seats
+        if autoApprove {
+            registration.isApproved = true
+        }
+        activity.registrations.append(registration)
         try persistence.update(activity)
-        // Inform the host that there is a new registration pending.
+        // Inform the host that there is a new registration
+        // and inform the player if his registration was approved automatically.
         if let conversation = try persistence.conversation(between: user, activity.host, regarding: activity) {
             conversation.playerSentRegistration()
+            if autoApprove {
+                conversation.hostApprovedRegistration()
+            }
             try persistence.update(conversation)
         } else {
             let conversation = Conversation(topic: activity, sender: user, recipient: activity.host)
             conversation.playerSentRegistration()
+            if autoApprove {
+                conversation.hostApprovedRegistration()
+            }
             try persistence.add(conversation)
         }
         try response.redirect("/web/activity/\(id)")
