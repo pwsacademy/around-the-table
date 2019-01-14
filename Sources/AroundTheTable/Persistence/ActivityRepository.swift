@@ -31,7 +31,7 @@ extension Persistence {
     private func activities(matching query: Query,
                             measuredFrom coordinates: Coordinates,
                             sortedBy sort: Sort,
-                            startingFrom start: Int,
+                            skipping skip: Int,
                             limitedTo limit: Int) throws -> [Activity] {
         let results = try activities.aggregate([
             .geoNear(options: GeoNearOptions(
@@ -42,7 +42,7 @@ extension Persistence {
                 query: query
             )),
             .sort(sort),
-            .skip(start),
+            .skip(skip),
             .limit(max(limit, 1)), // Limit must be > 0.
             // Denormalize `host`.
             .lookup(from: users, localField: "host", foreignField: "_id", as: "host"),
@@ -79,102 +79,56 @@ extension Persistence {
         let results = try activities(matching: ["_id": id],
                                      measuredFrom: coordinates,
                                      sortedBy: ["creationDate": .descending],
-                                     startingFrom: 0,
-                                     limitedTo: 1)
+                                     skipping: 0, limitedTo: 1)
         return results.first
     }
     
     /**
-     Returns the number of available activities.
+     Returns the number of visible activities.
      
-     An activity is available if the deadline for registration hasn't passed and the activity isn't cancelled.
+     An activity is visible if its date is within the one-month window and it isn't cancelled.
      
-     - Parameter host: Activities hosted by this user will be excluded from the result.
+     - Parameter from: The start of the window. Default: the current date and time.
      */
-    func numberOfActivities(notHostedBy host: User? = nil) throws -> Int {
-        if let host = host {
-            guard let id = host.id else {
-                throw log(ServerError.unpersistedEntity)
-            }
-            return try activities.count(["host": ["$ne": id], "deadline": ["$gt": Date()], "isCancelled": false])
-        } else {
-            return try activities.count(["deadline": ["$gt": Date()], "isCancelled": false])
-        }
+    func numberOfActivities(inWindowFrom date: Date = Date()) throws -> Int {
+        return try activities.count(["date": ["$gt": date, "$lt": date.lastDayInWindow],
+                                     "isCancelled": false])
     }
     
     /**
-     Returns all available activities, sorted by creation date in descending order.
-     
-     An activity is available if the deadline for registration hasn't passed and the activity isn't cancelled.
-     
-     - Parameter host: Activities hosted by this user will be excluded from the result.
-     - Parameter startingFrom: The number of results to skip.
-     - Parameter limitedTo: The maximum number of results to return.
+     Returns all visible activities, sorted by creation date in descending order.
      */
-    func newestActivities(notHostedBy host: User? = nil, measuredFrom coordinates: Coordinates,
-                          startingFrom start: Int, limitedTo limit: Int) throws -> [Activity] {
-        let query: Query
-        if let host = host {
-            guard let id = host.id else {
-                throw log(ServerError.unpersistedEntity)
-            }
-            query = ["host": ["$ne": id], "deadline": ["$gt": Date()], "isCancelled": false]
-        } else {
-            query = ["deadline": ["$gt": Date()], "isCancelled": false]
-        }
-        return try activities(matching: query,
+    func newestActivities(inWindowFrom date: Date = Date(), measuredFrom coordinates: Coordinates) throws -> [Activity] {
+        return try activities(matching: ["date": ["$gt": date, "$lt": date.lastDayInWindow],
+                                         "isCancelled": false],
                               measuredFrom: coordinates,
                               sortedBy: ["creationDate": .descending],
-                              startingFrom: start, limitedTo: limit)
+                              skipping: 0, limitedTo: .max)
     }
     
     /**
-     Returns all available activities, sorted by date in ascending order.
-     
-     An activity is available if the deadline for registration hasn't passed and the activity isn't cancelled.
-     
-     - Parameter host: Activities hosted by this user will be excluded from the result.
-     - Parameter startingFrom: The number of results to skip.
-     - Parameter limitedTo: The maximum number of results to return.
+     Returns all visible activities, sorted by date in ascending order.
      */
-    func upcomingActivities(notHostedBy host: User? = nil, measuredFrom coordinates: Coordinates,
-                            startingFrom start: Int, limitedTo limit: Int) throws -> [Activity] {
-        let query: Query
-        if let host = host {
-            guard let id = host.id else {
-                throw log(ServerError.unpersistedEntity)
-            }
-            query = ["host": ["$ne": id], "deadline": ["$gt": Date()], "isCancelled": false]
-        } else {
-            query = ["deadline": ["$gt": Date()], "isCancelled": false]
-        }
-        return try activities(matching: query,
+    func upcomingActivities(inWindowFrom date: Date = Date(), measuredFrom coordinates: Coordinates) throws -> [Activity] {
+        return try activities(matching: ["date": ["$gt": date, "$lt": date.lastDayInWindow],
+                                         "isCancelled": false],
                               measuredFrom: coordinates,
                               sortedBy: ["date": .ascending, "distance": .ascending],
-                              startingFrom: start, limitedTo: limit)
+                              skipping: 0, limitedTo: .max)
     }
     
     /**
-     Returns all available activities, sorted by distance to the given user in ascending order.
-     
-     An activity is available if the deadline for registration hasn't passed and the activity isn't cancelled.
-     Activities hosted by the given user are excluded from the result.
-     
-     - Parameter startingFrom: The number of results to skip.
-     - Parameter limitedTo: The maximum number of results to return.
-     - Throws: ServerError.invalidState if the given user doesn't have a saved location.
+     Returns all visible activities, sorted by distance to the given user in ascending order.
      */
-    func activitiesNear(user: User, startingFrom start: Int, limitedTo limit: Int) throws -> [Activity] {
-        guard let id = user.id else {
-            throw log(ServerError.unpersistedEntity)
-        }
+    func activitiesNear(user: User, inWindowFrom date: Date = Date()) throws -> [Activity] {
         guard let coordinates = user.location?.coordinates else {
             throw log(ServerError.invalidState)
         }
-        return try activities(matching: ["host": ["$ne": id], "deadline": ["$gt": Date()], "isCancelled": false],
+        return try activities(matching: ["date": ["$gt": date, "$lt": date.lastDayInWindow],
+                                         "isCancelled": false],
                               measuredFrom: coordinates,
                               sortedBy: ["distance": .ascending, "date": .ascending],
-                              startingFrom: start, limitedTo: limit)
+                              skipping: 0, limitedTo: .max)
     }
     
     /**
@@ -187,10 +141,12 @@ extension Persistence {
         guard let id = host.id else {
             throw log(ServerError.unpersistedEntity)
         }
-        return try activities(matching: ["host": id, "date": ["$gt": Date().previous], "isCancelled": false],
+        return try activities(matching: ["host": id,
+                                         "date": ["$gt": Date().previous],
+                                         "isCancelled": false],
                               measuredFrom: .default,
                               sortedBy: ["date": .ascending],
-                              startingFrom: 0, limitedTo: .max)
+                              skipping: 0, limitedTo: .max)
     }
     
     /**
@@ -210,7 +166,7 @@ extension Persistence {
                                          "isCancelled": false],
                               measuredFrom: player.location?.coordinates ?? .default,
                               sortedBy: ["date": .ascending],
-                              startingFrom: 0, limitedTo: .max)
+                              skipping: 0, limitedTo: .max)
     }
 
     /**

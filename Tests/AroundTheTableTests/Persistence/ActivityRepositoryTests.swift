@@ -13,16 +13,11 @@ class ActivityRepositoryTests: XCTestCase {
             ("testAddActivity", testAddActivity),
             ("testAddPersistedActivity", testAddPersistedActivity),
             ("testReadActivity", testReadActivity),
-            ("testAvailableActivitiesExcludesCancelledAndPast", testAvailableActivitiesExcludesCancelledAndPast),
-            ("testAvailableActivitiesWithHostException", testAvailableActivitiesWithHostException),
+            ("testNumberOfActivitiesInWindow", testNumberOfActivitiesInWindow),
             ("testNewestActivities", testNewestActivities),
-            ("testNewestActivitiesWithHostException", testNewestActivitiesWithHostException),
             ("testUpcomingActivities", testUpcomingActivities),
-            ("testUpcomingActivitiesWithHostException", testUpcomingActivitiesWithHostException),
             ("testActivitiesNearUser", testActivitiesNearUser),
-            ("testActivitiesNearUserIncludesHostException", testActivitiesNearUserIncludesHostException),
             ("testActivitiesNearUserWithoutLocation", testActivitiesNearUserWithoutLocation),
-            ("testActivitiesWithStartAndLimit", testActivitiesWithStartAndLimit),
             ("testActivitiesHostedBy", testActivitiesHostedBy),
             ("testActivitiesJoinedBy", testActivitiesJoinedBy),
             ("testUpdateActivity", testUpdateActivity),
@@ -30,7 +25,23 @@ class ActivityRepositoryTests: XCTestCase {
         ]
     }
     
-    let persistence = try! Persistence()
+    private let persistence = try! Persistence()
+    private let calendar = Calendar(identifier: .gregorian)
+    
+    /*
+     The one-month window for the test database starts on Feb. 1 2100.
+     */
+    private var today: Date {
+        var dateComponents = DateComponents()
+        dateComponents.calendar = calendar
+        dateComponents.day = 1
+        dateComponents.month = 2
+        dateComponents.year = 2100
+        dateComponents.hour = 8
+        dateComponents.minute = 0
+        dateComponents.timeZone = Settings.timeZone
+        return calendar.date(from: dateComponents)!
+    }
     
     func testAddActivity() throws {
         guard let alice = try persistence.user(withID: 1),
@@ -65,57 +76,26 @@ class ActivityRepositoryTests: XCTestCase {
         }
     }
     
-    func testAvailableActivitiesExcludesCancelledAndPast() throws {
-        XCTAssert(try persistence.numberOfActivities() == 3)
-    }
-    
-    func testAvailableActivitiesWithHostException() throws {
-        guard let charlie = try persistence.user(withID: 3) else {
-            return XCTFail()
-        }
-        XCTAssert(try persistence.numberOfActivities(notHostedBy: charlie) == 2)
+    func testNumberOfActivitiesInWindow() throws {
+        XCTAssert(try persistence.numberOfActivities(inWindowFrom: today) == 3)
     }
     
     func testNewestActivities() throws {
-        let result = try persistence.newestActivities(measuredFrom: .default, startingFrom: 0, limitedTo: .max)
-        XCTAssert(result.map { $0.id } == [1, 5, 2])
-    }
-    
-    func testNewestActivitiesWithHostException() throws {
-        guard let charlie = try persistence.user(withID: 3) else {
-            return XCTFail()
-        }
-        let result = try persistence.newestActivities(notHostedBy: charlie, measuredFrom: .default, startingFrom: 0, limitedTo: .max)
-        XCTAssert(result.map { $0.id } == [5, 2])
+        let result = try persistence.newestActivities(inWindowFrom: today, measuredFrom: .default)
+        XCTAssert(result.map { $0.id } == [1, 4, 2])
     }
     
     func testUpcomingActivities() throws {
-        let result = try persistence.upcomingActivities(measuredFrom: .default, startingFrom: 0, limitedTo: .max)
-        XCTAssert(result.map { $0.id } == [1, 2, 5])
-    }
-    
-    func testUpcomingActivitiesWithHostException() throws {
-        guard let charlie = try persistence.user(withID: 3) else {
-            return XCTFail()
-        }
-        let result = try persistence.upcomingActivities(notHostedBy: charlie, measuredFrom: .default, startingFrom: 0, limitedTo: .max)
-        XCTAssert(result.map { $0.id } == [2, 5])
+        let result = try persistence.upcomingActivities(inWindowFrom: today, measuredFrom: .default)
+        XCTAssert(result.map { $0.id } == [1, 2, 4])
     }
     
     func testActivitiesNearUser() throws {
         guard let bob = try persistence.user(withID: 2) else {
             return XCTFail()
         }
-        let result = try persistence.activitiesNear(user: bob, startingFrom: 0, limitedTo: .max)
-        XCTAssert(result.map { $0.id } == [2, 5, 1])
-    }
-    
-    func testActivitiesNearUserIncludesHostException() throws {
-        guard let charlie = try persistence.user(withID: 3) else {
-            return XCTFail()
-        }
-        let result = try persistence.activitiesNear(user: charlie, startingFrom: 0, limitedTo: .max)
-        XCTAssert(result.map { $0.id } == [2, 5])
+        let result = try persistence.activitiesNear(user: bob, inWindowFrom: today)
+        XCTAssert(result.map { $0.id } == [2, 4, 1])
     }
     
     func testActivitiesNearUserWithoutLocation() throws {
@@ -123,12 +103,7 @@ class ActivityRepositoryTests: XCTestCase {
             return XCTFail()
         }
         bob.location = nil
-        XCTAssertThrowsError(try persistence.activitiesNear(user: bob, startingFrom: 0, limitedTo: .max))
-    }
-    
-    func testActivitiesWithStartAndLimit() throws {
-        let result = try persistence.newestActivities(measuredFrom: .default, startingFrom: 1, limitedTo: 1)
-        XCTAssert(result.map { $0.id } == [5])
+        XCTAssertThrowsError(try persistence.activitiesNear(user: bob, inWindowFrom: today))
     }
     
     func testActivitiesHostedBy() throws {
@@ -136,7 +111,7 @@ class ActivityRepositoryTests: XCTestCase {
               let location = alice.location else {
             return XCTFail()
         }
-        let yesterday = Calendar(identifier: .gregorian).date(byAdding: .hour, value: -12, to: Date())!
+        let yesterday = calendar.date(byAdding: .hour, value: -12, to: Date())!
         let activityFromYesterday = Activity(host: alice,
                                              name: "Something we did yesterday", game: nil,
                                              playerCount: 2...4, prereservedSeats: 1,
@@ -148,7 +123,7 @@ class ActivityRepositoryTests: XCTestCase {
             return XCTFail()
         }
         let result = try persistence.activities(hostedBy: alice)
-        XCTAssert(result.map { $0.id } == [id, 2, 5])
+        XCTAssert(result.map { $0.id } == [id, 2, 4, 6])
         // Clean-up
         try persistence.activities.remove(["_id": id])
     }
@@ -159,7 +134,7 @@ class ActivityRepositoryTests: XCTestCase {
               let location = alice.location else {
             return XCTFail()
         }
-        let yesterday = Calendar(identifier: .gregorian).date(byAdding: .hour, value: -12, to: Date())!
+        let yesterday = calendar.date(byAdding: .hour, value: -12, to: Date())!
         let activityFromYesterday = Activity(host: alice,
                                              name: "Something we did yesterday", game: nil,
                                              playerCount: 2...4, prereservedSeats: 1,
@@ -174,7 +149,7 @@ class ActivityRepositoryTests: XCTestCase {
             return XCTFail()
         }
         let result = try persistence.activities(joinedBy: bob)
-        XCTAssert(result.map { $0.id } == [id, 1])
+        XCTAssert(result.map { $0.id } == [id, 1, 6])
         // Clean-up
         try persistence.activities.remove(["_id": id])
     }

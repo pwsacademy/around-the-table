@@ -103,11 +103,11 @@ extension Routes {
         let activities: [Activity]
         switch sort {
         case "new":
-            activities = try persistence.newestActivities(notHostedBy: user, measuredFrom: coordinates, startingFrom: 0, limitedTo: .max)
+            activities = try persistence.newestActivities(measuredFrom: coordinates)
         case "upcoming":
-            activities = try persistence.upcomingActivities(notHostedBy: user, measuredFrom: coordinates, startingFrom: 0, limitedTo: .max)
+            activities = try persistence.upcomingActivities(measuredFrom: coordinates)
         case "near-me":
-            activities = user?.location != nil ? try persistence.activitiesNear(user: user!, startingFrom: 0, limitedTo: .max) : []
+            activities = user?.location != nil ? try persistence.activitiesNear(user: user!) : []
         default:
             throw log(ServerError.invalidState)
         }
