@@ -43,7 +43,7 @@ struct UserActivitiesViewModel: Codable {
             self.availableSeats = activity.availableSeats
             self.longDate = activity.date.formatted(format: "EEEE d MMMM")
             self.shortDate = activity.date.formatted(format: "E d MMMM") // abbreviated weekday
-            self.time = activity.deadline.formatted(timeStyle: .short)
+            self.time = activity.date.formatted(timeStyle: .short)
             self.location = activity.location
             self.distance = Int(ceil(distance / 1000)) // in km
         }
