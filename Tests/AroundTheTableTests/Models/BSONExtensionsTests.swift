@@ -6,20 +6,20 @@ class BSONExtensionsTests: XCTestCase {
     
     static var allTests: [(String, (BSONExtensionsTests) -> () throws -> Void)] {
         return [
-            ("testEncodeCountableClosedRange", testEncodeCountableClosedRange),
-            ("testDecodeCountableClosedRange", testDecodeCountableClosedRange),
-            ("testDecodeCountableClosedRangeNotADocument", testDecodeCountableClosedRangeNotADocument),
-            ("testDecodeCountableClosedRangeMissingLowerBound", testDecodeCountableClosedRangeMissingLowerBound),
-            ("testDecodeCountableClosedRangeMissingUpperBound", testDecodeCountableClosedRangeMissingUpperBound),
+            ("testEncodeClosedRange", testEncodeClosedRange),
+            ("testDecodeClosedRange", testDecodeClosedRange),
+            ("testDecodeClosedRangeNotADocument", testDecodeClosedRangeNotADocument),
+            ("testDecodeClosedRangeMissingLowerBound", testDecodeClosedRangeMissingLowerBound),
+            ("testDecodeClosedRangeMissingUpperBound", testDecodeClosedRangeMissingUpperBound),
             ("testEncodeURL", testEncodeURL),
             ("testDecodeURL", testDecodeURL),
             ("testDecodeURLNotAString", testDecodeURLNotAString)
         ]
     }
     
-    /* CountableClosedRange */
+    /* ClosedRange */
     
-    func testEncodeCountableClosedRange() {
+    func testEncodeClosedRange() {
         let input = 1...10
         let expected: Document = [
             "lowerBound": 1,
@@ -29,33 +29,33 @@ class BSONExtensionsTests: XCTestCase {
         XCTAssert(input.document == expected)
     }
     
-    func testDecodeCountableClosedRange() throws {
+    func testDecodeClosedRange() throws {
         let input: Document = [
             "lowerBound": 1,
             "upperBound": 10
         ]
-        let result = try CountableClosedRange<Int>(input)
+        let result = try ClosedRange<Int>(input)
         XCTAssert(result == 1...10)
     }
     
-    func testDecodeCountableClosedRangeNotADocument() throws {
+    func testDecodeClosedRangeNotADocument() throws {
         let input = "1...10"
-        let result = try CountableClosedRange<Int>(input)
+        let result = try ClosedRange<Int>(input)
         XCTAssertNil(result)
     }
     
-    func testDecodeCountableClosedRangeMissingLowerBound() {
+    func testDecodeClosedRangeMissingLowerBound() {
         let input: Document = [
             "upperBound": 10
         ]
-        XCTAssertThrowsError(try CountableClosedRange<Int>(input))
+        XCTAssertThrowsError(try ClosedRange<Int>(input))
     }
     
-    func testDecodeCountableClosedRangeMissingUpperBound() {
+    func testDecodeClosedRangeMissingUpperBound() {
         let input: Document = [
             "lowerBound": 1
         ]
-        XCTAssertThrowsError(try CountableClosedRange<Int>(input))
+        XCTAssertThrowsError(try ClosedRange<Int>(input))
     }
     
     /* URL */

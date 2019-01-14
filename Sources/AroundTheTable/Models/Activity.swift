@@ -31,7 +31,7 @@ final class Activity {
     /// The possible player counts for the activity.
     /// Neither the lower or upper bound are enforced.
     /// The final decision always lies with the host.
-    var playerCount: CountableClosedRange<Int>
+    var playerCount: ClosedRange<Int>
     
     /// The number of seats pre-reserved by the host.
     var prereservedSeats: Int
@@ -139,7 +139,7 @@ final class Activity {
     init(id: Int? = nil, creationDate: Date = Date(),
          host: User,
          name: String, game: Game?,
-         playerCount: CountableClosedRange<Int>, prereservedSeats: Int,
+         playerCount: ClosedRange<Int>, prereservedSeats: Int,
          date: Date, deadline: Date,
          location: Location, distance: Double? = nil,
          info: String,
@@ -308,7 +308,7 @@ extension Activity: Primitive {
         guard let name = String(bson["name"]) else {
             throw log(BSONError.missingField(name: "name"))
         }
-        guard let playerCount = try CountableClosedRange<Int>(bson["playerCount"]) else {
+        guard let playerCount = try ClosedRange<Int>(bson["playerCount"]) else {
             throw log(BSONError.missingField(name: "playerCount"))
         }
         guard let prereservedSeats = Int(bson["prereservedSeats"]) else {

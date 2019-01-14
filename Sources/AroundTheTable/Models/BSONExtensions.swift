@@ -2,16 +2,16 @@ import BSON
 import Foundation
 
 /**
- Adds `BSON.Primitive` conformance to `CountableClosedRange`.
+ Adds `BSON.Primitive` conformance to `ClosedRange`.
  */
-extension CountableClosedRange: Primitive where Bound: Primitive {
+extension ClosedRange: Primitive where Bound: Primitive {
     
-    /// A `CountableClosedRange` is stored as a BSON `Document`.
+    /// A `ClosedRange` is stored as a BSON `Document`.
     public var typeIdentifier: Byte {
         return Document().typeIdentifier
     }
     
-    /// This `CountableClosedRange` as a BSON `Document`.
+    /// This `ClosedRange` as a BSON `Document`.
     var document: Document {
         return [
             "lowerBound": lowerBound,
@@ -20,14 +20,14 @@ extension CountableClosedRange: Primitive where Bound: Primitive {
     }
     
     /**
-     Returns this `CountableClosedRange` as a BSON `Document` in binary form.
+     Returns this `ClosedRange` as a BSON `Document` in binary form.
      */
     public func makeBinary() -> Bytes {
         return document.makeBinary()
     }
     
     /**
-     Decodes a `CountableClosedRange` from a BSON primitive.
+     Decodes a `ClosedRange` from a BSON primitive.
      
      - Returns: `nil` when the primitive is not a `Document`.
      - Throws: a `BSONError` when the document does not contain all required properties.

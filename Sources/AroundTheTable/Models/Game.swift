@@ -26,10 +26,10 @@ final class Game {
     let yearPublished: Int
     
     /// The player counts the game supports.
-    let playerCount: CountableClosedRange<Int>
+    let playerCount: ClosedRange<Int>
     
     /// An estimate of the duration of play.
-    let playingTime: CountableClosedRange<Int>
+    let playingTime: ClosedRange<Int>
     
     /// A link to a representative image for the game.
     /// If this is `nil`, a default image will be used.
@@ -48,8 +48,8 @@ final class Game {
          creationDate: Date = Date(),
          name: String, names: [String],
          yearPublished: Int,
-         playerCount: CountableClosedRange<Int>,
-         playingTime: CountableClosedRange<Int>,
+         playerCount: ClosedRange<Int>,
+         playingTime: ClosedRange<Int>,
          picture: URL?, thumbnail: URL?) {
         self.id = id
         self.creationDate = creationDate
@@ -104,7 +104,7 @@ extension Game {
             throw log(GeekError.missingElement(name: "maxplayers", id: id))
         }
         // Make sure `playerCount` is a valid range.
-        let playerCount: CountableClosedRange<Int>
+        let playerCount: ClosedRange<Int>
         switch (minPlayerCount, maxPlayerCount) {
         case let (min, max) where min <= 0 && max <= 0:
             throw log(GeekError.invalidElement(name: "minplayers/maxplayers", id: id))
@@ -126,7 +126,7 @@ extension Game {
             throw log(GeekError.missingElement(name: "maxplaytime", id: id))
         }
         // Make sure `playingTime` is a valid range.
-        let playingTime: CountableClosedRange<Int>
+        let playingTime: ClosedRange<Int>
         switch (minPlayingTime, maxPlayingTime) {
         case let (min, max) where min <= 0 && max <= 0:
             throw log(GeekError.invalidElement(name: "minplaytime/maxplaytime", id: id))
@@ -223,10 +223,10 @@ extension Game: Primitive {
         guard let yearPublished = Int(bson["yearPublished"]) else {
             throw log(BSONError.missingField(name: "yearPublished"))
         }
-        guard let playerCount = try CountableClosedRange<Int>(bson["playerCount"]) else {
+        guard let playerCount = try ClosedRange<Int>(bson["playerCount"]) else {
             throw log(BSONError.missingField(name: "playerCount"))
         }
-        guard let playingTime = try CountableClosedRange<Int>(bson["playingTime"]) else {
+        guard let playingTime = try ClosedRange<Int>(bson["playingTime"]) else {
             throw log(BSONError.missingField(name: "playingTime.min"))
         }
         let picture = try URL(bson["picture"])

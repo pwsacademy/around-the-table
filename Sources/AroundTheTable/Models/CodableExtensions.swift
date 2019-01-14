@@ -1,9 +1,9 @@
 /**
- Adds `Codable` conformance to `CountableClosedRange`.
+ Adds `Codable` conformance to `ClosedRange`.
  
- A `CountableClosedRange` is coded by coding the `lowerBound` and `upperBound` properties.
+ A `ClosedRange` is coded by coding the `lowerBound` and `upperBound` properties.
  */
-extension CountableClosedRange: Codable where Bound: Codable {
+extension ClosedRange: Codable where Bound: Codable {
 
     enum CodingKeys: CodingKey {
         case lowerBound

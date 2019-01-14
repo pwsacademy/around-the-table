@@ -31,8 +31,8 @@ struct ActivityViewModel: Codable {
         let picture: String
 
         let game: Int?
-        let playingTime: CountableClosedRange<Int>?
-        let playerCount: CountableClosedRange<Int>
+        let playingTime: ClosedRange<Int>?
+        let playerCount: ClosedRange<Int>
         let prereservedSeats: Int
         let availableSeats: Int
         let requiredPlayerCountReached: Bool

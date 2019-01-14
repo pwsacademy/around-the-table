@@ -10,8 +10,8 @@ struct HostGameSelectionViewModel: Codable {
         let id: Int
         let name: String
         let yearPublished: Int
-        let playerCount: CountableClosedRange<Int>
-        let playingTime: CountableClosedRange<Int>
+        let playerCount: ClosedRange<Int>
+        let playingTime: ClosedRange<Int>
         let picture: String
         
         init(_ game: Game) {
