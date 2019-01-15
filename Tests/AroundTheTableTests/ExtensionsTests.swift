@@ -5,7 +5,8 @@ import XCTest
 class ExtensionsTests: XCTestCase {
     
     /*
-     One test is commented out due to https://bugs.swift.org/browse/SR-1325.
+     testLastDayInWindowWithJumpToSmallerMonth is commented out due to https://bugs.swift.org/browse/SR-9668.
+     testFormattedDateAndTime is commented out due to https://bugs.swift.org/browse/SR-1325.
      */
     static var allTests: [(String, (ExtensionsTests) -> () throws -> Void)] {
         return [
@@ -16,7 +17,7 @@ class ExtensionsTests: XCTestCase {
             ("testPreviousDayWithFirstOfMonth", testPreviousDayWithFirstOfMonth),
             ("testLastDayInWindowWithFirstOfMonth", testLastDayInWindowWithFirstOfMonth),
             ("testLastDayInWindowWithRegularDate", testLastDayInWindowWithRegularDate),
-            ("testLastDayInWindowWithJumpToSmallerMonth", testLastDayInWindowWithJumpToSmallerMonth),
+//            ("testLastDayInWindowWithJumpToSmallerMonth", testLastDayInWindowWithJumpToSmallerMonth),
 //            ("testFormattedDateAndTime", testFormattedDateAndTime),
             ("testFormattedDateAndTimeWithFormat", testFormattedDateAndTimeWithFormat)
         ]

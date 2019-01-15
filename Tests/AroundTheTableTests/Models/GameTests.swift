@@ -5,30 +5,26 @@ import XCTest
 
 class GameTests: XCTestCase {
     
-    /*
-     Some tests are commented out due to https://bugs.swift.org/browse/SR-4628.
-     This should be fixed in Swift 4.2.
-     */
     static var allTests: [(String, (GameTests) -> () throws -> Void)] {
         return [
             ("testParseXML", testParseXML),
-//            ("testParseXMLNoID", testParseXMLNoID),
-//            ("testParseXMLNoName", testParseXMLNoName),
-//            ("testParseXMLZeroYear", testParseXMLZeroYear),
-//            ("testParseXMLNoMinPlayers", testParseXMLNoMinPlayers),
-//            ("testParseXMLNoMaxPlayers", testParseXMLNoMaxPlayers),
-//            ("testParseXMLZeroPlayerCount", testParseXMLZeroPlayerCount),
-//            ("testParseXMLZeroMinPlayers", testParseXMLZeroMinPlayers),
-//            ("testParseXMLZeroMaxPlayers", testParseXMLZeroMaxPlayers),
-//            ("testParseXMLInvertedPlayerCount", testParseXMLInvertedPlayerCount),
-//            ("testParseXMLNoMinPlaytime", testParseXMLNoMinPlaytime),
-//            ("testParseXMLNoMaxPlaytime", testParseXMLNoMaxPlaytime),
-//            ("testParseXMLZeroPlaytime", testParseXMLZeroPlaytime),
-//            ("testParseXMLZeroMinPlaytime", testParseXMLZeroMinPlaytime),
-//            ("testParseXMLZeroMaxPlaytime", testParseXMLZeroMaxPlaytime),
-//            ("testParseXMLInvertedPlaytime", testParseXMLInvertedPlaytime),
-//            ("testParseXMLNoImage", testParseXMLNoImage),
-//            ("testParseXMLNoThumbnail", testParseXMLNoThumbnail),
+            ("testParseXMLNoID", testParseXMLNoID),
+            ("testParseXMLNoName", testParseXMLNoName),
+            ("testParseXMLZeroYear", testParseXMLZeroYear),
+            ("testParseXMLNoMinPlayers", testParseXMLNoMinPlayers),
+            ("testParseXMLNoMaxPlayers", testParseXMLNoMaxPlayers),
+            ("testParseXMLZeroPlayerCount", testParseXMLZeroPlayerCount),
+            ("testParseXMLZeroMinPlayers", testParseXMLZeroMinPlayers),
+            ("testParseXMLZeroMaxPlayers", testParseXMLZeroMaxPlayers),
+            ("testParseXMLInvertedPlayerCount", testParseXMLInvertedPlayerCount),
+            ("testParseXMLNoMinPlaytime", testParseXMLNoMinPlaytime),
+            ("testParseXMLNoMaxPlaytime", testParseXMLNoMaxPlaytime),
+            ("testParseXMLZeroPlaytime", testParseXMLZeroPlaytime),
+            ("testParseXMLZeroMinPlaytime", testParseXMLZeroMinPlaytime),
+            ("testParseXMLZeroMaxPlaytime", testParseXMLZeroMaxPlaytime),
+            ("testParseXMLInvertedPlaytime", testParseXMLInvertedPlaytime),
+            ("testParseXMLNoImage", testParseXMLNoImage),
+            ("testParseXMLNoThumbnail", testParseXMLNoThumbnail),
             ("testEncode", testEncode),
             ("testEncodeSkipsNilValues", testEncodeSkipsNilValues),
             ("testDecode", testDecode),
