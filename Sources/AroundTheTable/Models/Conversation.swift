@@ -81,62 +81,6 @@ final class Conversation {
         self.recipient = recipient
         self.messages = messages
     }
-    
-    /**
-     Adds a message to inform a user that his/her registration was approved.
-     */
-    func hostApprovedRegistration() {
-        messages.append(Message(direction: sender == topic.host ? .outgoing : .incoming,
-                                text: Strings.hostApprovedRegistration(for: topic)))
-    }
-    
-    /**
-     Adds a message to inform a user that the activity was cancelled.
-     */
-    func hostCancelledActivity() {
-        messages.append(Message(direction: sender == topic.host ? .outgoing : .incoming,
-                                text: Strings.hostCancelled(topic)))
-    }
-    
-    /**
-     Adds a message to inform a user that his/her registration was cancelled.
-     */
-    func hostCancelledRegistration() {
-        messages.append(Message(direction: sender == topic.host ? .outgoing : .incoming,
-                                text: Strings.hostCancelledRegistration(for: topic)))
-    }
-    
-    /**
-     Adds a message to inform a user that the address of the activity has changed.
-     */
-    func hostChangedAddress() {
-        messages.append(Message(direction: sender == topic.host ? .outgoing : .incoming,
-                                text: Strings.hostChangedAddress(of: topic)))
-    }
-    
-    /**
-     Adds a message to inform a user that the date of the activity has changed.
-     */
-    func hostChangedDate() {
-        messages.append(Message(direction: sender == topic.host ? .outgoing : .incoming,
-                                text: Strings.hostChangedDate(of: topic)))
-    }
-    
-    /**
-     Adds a message to inform the host that a user cancelled his/her registration.
-     */
-    func playerCancelledRegistration() {
-        messages.append(Message(direction: sender == topic.host ? .incoming : .outgoing,
-                                text: Strings.playerCancelledRegistration(for: topic)))
-    }
-    
-    /**
-     Adds a message to inform the host that a user wishes to join this activity.
-     */
-    func playerSentRegistration() {
-        messages.append(Message(direction: sender == topic.host ? .incoming : .outgoing,
-                                text: Strings.playerSentRegistration(for: topic)))
-    }
 }
 
 /**

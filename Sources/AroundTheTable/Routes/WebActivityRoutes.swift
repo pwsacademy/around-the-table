@@ -92,15 +92,7 @@ extension Routes {
         try persistence.update(activity)
         // Inform the players that the activity is cancelled.
         for player in activity.players {
-            if let conversation = try persistence.conversation(between: user, player, regarding: activity) {
-                conversation.hostCancelledActivity()
-                try persistence.update(conversation)
-            } else {
-                let conversation = Conversation(topic: activity, sender: user, recipient: player)
-                conversation.hostCancelledActivity()
-                try persistence.add(conversation)
-                Log.warning("Created a conversation that should already exist: \(String(describing: conversation.id)).")
-            }
+            try notificationService.notify(player, thatHostCancelled: activity)
         }
         try response.redirect("/web/user/activities")
     }
@@ -210,15 +202,7 @@ extension Routes {
         // Inform the players that the activity's date or time has changed.
         try persistence.update(activity)
         for player in activity.players {
-            if let conversation = try persistence.conversation(between: user, player, regarding: activity) {
-                conversation.hostChangedDate()
-                try persistence.update(conversation)
-            } else {
-                let conversation = Conversation(topic: activity, sender: user, recipient: player)
-                conversation.hostChangedDate()
-                try persistence.add(conversation)
-                Log.warning("Created a conversation that should already exist: \(String(describing: conversation.id)).")
-            }
+            try notificationService.notify(player, thatHostChangedDateFor: activity)
         }
         try response.redirect("/web/activity/\(id)")
     }
@@ -336,15 +320,7 @@ extension Routes {
         try persistence.update(activity)
         // Inform the players that the activity's address has changed.
         for player in activity.players {
-            if let conversation = try persistence.conversation(between: user, player, regarding: activity) {
-                conversation.hostChangedAddress()
-                try persistence.update(conversation)
-            } else {
-                let conversation = Conversation(topic: activity, sender: user, recipient: player)
-                conversation.hostChangedAddress()
-                try persistence.add(conversation)
-                Log.warning("Created a conversation that should already exist: \(String(describing: conversation.id)).")
-            }
+            try notificationService.notify(player, thatHostChangedAddressFor: activity)
         }
         try response.redirect("/web/activity/\(id)")
     }
@@ -431,21 +407,14 @@ extension Routes {
         }
         activity.registrations.append(registration)
         try persistence.update(activity)
-        // Inform the host that there is a new registration
-        // and inform the player if his registration was approved automatically.
-        if let conversation = try persistence.conversation(between: user, activity.host, regarding: activity) {
-            conversation.playerSentRegistration()
-            if autoApprove {
-                conversation.hostApprovedRegistration()
-            }
-            try persistence.update(conversation)
+        if autoApprove {
+            // Inform the host that a player has joined.
+            try notificationService.notify(activity.host, that: user, joined: activity)
+            // Inform the player that his registration was automatically approved.
+            try notificationService.notify(user, ofAutomaticApprovalFor: activity)
         } else {
-            let conversation = Conversation(topic: activity, sender: user, recipient: activity.host)
-            conversation.playerSentRegistration()
-            if autoApprove {
-                conversation.hostApprovedRegistration()
-            }
-            try persistence.add(conversation)
+            // Inform the host of the new registration.
+            try notificationService.notify(activity.host, that: user, sentRegistrationFor: activity)
         }
         try response.redirect("/web/activity/\(id)")
     }
@@ -488,43 +457,19 @@ extension Routes {
             activity.registrations[index].isApproved = true
             try persistence.update(activity)
             // Inform the player that his registration has been approved.
-            if let conversation = try persistence.conversation(between: user, player, regarding: activity) {
-                conversation.hostApprovedRegistration()
-                try persistence.update(conversation)
-            } else {
-                let conversation = Conversation(topic: activity, sender: user, recipient: player)
-                conversation.hostApprovedRegistration()
-                try persistence.add(conversation)
-                Log.warning("Created a conversation that should already exist: \(String(describing: conversation.id)).")
-            }
+            try notificationService.notify(player, thatHostApprovedRegistrationFor: activity)
         // ...or it is cancelled by the player...
         } else if let cancelled = form.cancelled, cancelled, user == player {
             activity.registrations[index].isCancelled = true
             try persistence.update(activity)
             // Inform the host that a registration has been cancelled.
-            if let conversation = try persistence.conversation(between: user, activity.host, regarding: activity) {
-                conversation.playerCancelledRegistration()
-                try persistence.update(conversation)
-            } else {
-                let conversation = Conversation(topic: activity, sender: user, recipient: activity.host)
-                conversation.playerCancelledRegistration()
-                try persistence.add(conversation)
-                Log.warning("Created a conversation that should already exist: \(String(describing: conversation.id)).")
-            }
+            try notificationService.notify(activity.host, that: player, cancelledRegistrationFor: activity)
         // ...or it is cancelled by the host.
         } else if let cancelled = form.cancelled, cancelled, user == activity.host {
             activity.registrations[index].isCancelled = true
             try persistence.update(activity)
             // Inform the player that his registration has been cancelled.
-            if let conversation = try persistence.conversation(between: user, player, regarding: activity) {
-                conversation.hostCancelledRegistration()
-                try persistence.update(conversation)
-            } else {
-                let conversation = Conversation(topic: activity, sender: user, recipient: player)
-                conversation.hostCancelledRegistration()
-                try persistence.add(conversation)
-                Log.warning("Created a conversation that should already exist: \(String(describing: conversation.id)).")
-            }
+            try notificationService.notify(player, thatHostCancelledRegistrationFor: activity)
         }
         try response.redirect("/web/activity/\(id)")
     }

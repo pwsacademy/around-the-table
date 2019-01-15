@@ -14,6 +14,7 @@ XCTMain([
     testCase(CoordinatesTests.allTests),
     testCase(GameTests.allTests),
     testCase(LocationTests.allTests),
+    testCase(NotificationTests.allTests),
     testCase(UserTests.allTests),
     testCase(SponsorTests.allTests),
     // Persistence
@@ -21,6 +22,7 @@ XCTMain([
     testCase(ConversationRepositoryTests.allTests),
     testCase(CredentialsRepositoryTests.allTests),
     testCase(GameRepositoryTests.allTests),
+    testCase(NotificationRepositoryTests.allTests),
     testCase(SponsorRepositoryTests.allTests),
     testCase(UserRepositoryTests.allTests),
     // Middleware

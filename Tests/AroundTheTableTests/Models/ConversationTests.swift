@@ -7,7 +7,6 @@ class ConversationTests: XCTestCase {
     static var allTests: [(String, (ConversationTests) -> () throws -> Void)] {
         return [
             ("testInitializationValues", testInitializationValues),
-            ("testFactoryMethodsAddMessage", testFactoryMethodsAddMessage),
             ("testEncode", testEncode),
             ("testDecode", testDecode),
             ("testDecodeNotADocument", testDecodeNotADocument),
@@ -40,26 +39,6 @@ class ConversationTests: XCTestCase {
         let conversation = Conversation(topic: activity, sender: player, recipient: host)
         XCTAssertNil(conversation.id)
         XCTAssert(conversation.messages.isEmpty)
-    }
-    
-    func testFactoryMethodsAddMessage() {
-        for method in [Conversation.hostApprovedRegistration,
-                       Conversation.hostCancelledActivity,
-                       Conversation.hostCancelledRegistration,
-                       Conversation.hostChangedAddress,
-                       Conversation.hostChangedDate] {
-            let conversation = Conversation(topic: activity, sender: host, recipient: player)
-            method(conversation)()
-            XCTAssert(conversation.messages.count == 1)
-            XCTAssert(conversation.messages[0].direction == .outgoing)
-        }
-        for method in [Conversation.playerCancelledRegistration,
-                       Conversation.playerSentRegistration] {
-            let conversation = Conversation(topic: activity, sender: player, recipient: host)
-            method(conversation)()
-            XCTAssert(conversation.messages.count == 1)
-            XCTAssert(conversation.messages[0].direction == .outgoing)
-        }
     }
     
     func testEncode() {

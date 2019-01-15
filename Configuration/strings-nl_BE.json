@@ -1,9 +1,11 @@
 {
-    "hostApprovedRegistration": "Ik heb je aanvraag om deel te nemen goedgekeurd.",
-    "hostCancelledActivity": "Dit spel is geannuleerd.",
-    "hostCancelledRegistration": "Ik heb je deelname geannuleerd.",
-    "hostChangedAddress": "Het adres is aangepast naar <address>.",
-    "hostChangedDate": "Het tijdstip is aangepast naar <date> om <time>.",
-    "playerCancelledRegistration": "Ik kan niet deelnemen.",
-    "playerSentRegistration": "Ik wens deel te nemen."
+    "hostApprovedRegistration": "Je aanvraag om deel te nemen aan <activity> is goedgekeurd.",
+    "hostCancelledActivity": "<activity> is geannuleerd.",
+    "hostCancelledRegistration": "Je aanvraag om deel te nemen aan <activity> is geannuleerd.",
+    "hostChangedAddress": "Het adres van <activity> is aangepast naar <address>.",
+    "hostChangedDate": "Het tijdstip van <activity> is aangepast naar <date> om <time>.",
+    "playerCancelledRegistration": "<player> zal niet deelnemen aan <activity>.",
+    "playerJoinedActivity": "<player> zal deelnemen aan <activity>.",
+    "playerSentRegistration": "<player> wenst deel te nemen aan <activity>.",
+    "registrationWasAutoApproved": "Je bent ingeschreven voor <activity>."
 }

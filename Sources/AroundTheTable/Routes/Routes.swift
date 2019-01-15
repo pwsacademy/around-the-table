@@ -19,6 +19,9 @@ public class Routes {
     /// The persistence layer.
     let persistence: Persistence
     
+    /// The notification service.
+    let notificationService: NotificationService
+    
     /// The health checker.
     private let health = Health()
     
@@ -30,6 +33,7 @@ public class Routes {
      */
     public init(persistence: Persistence) {
         self.persistence = persistence
+        notificationService = NotificationService(persistence: persistence)
     }
     
     /**
