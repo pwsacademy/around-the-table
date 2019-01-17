@@ -24,6 +24,9 @@ struct BaseViewModel: Codable {
     /// The user who is currently signed in.
     let user: UserViewModel?
     
+    /// The number of unread notifications for the current user.
+    let unreadNotificationCount: Int
+    
     /// The number of unread messages for the current user.
     let unreadMessageCount: Int
     
@@ -72,12 +75,13 @@ struct BaseViewModel: Codable {
     /**
      Initializes a `BaseViewModel` using the given user and request URL.
      */
-    init(user: User?, unreadMessageCount: Int, sponsor: Sponsor?, requestURL: String) throws {
+    init(user: User?, unreadNotificationCount: Int, unreadMessageCount: Int, sponsor: Sponsor?, requestURL: String) throws {
         if let user = user {
             self.user = try UserViewModel(user)
         } else {
             self.user = nil
         }
+        self.unreadNotificationCount = unreadNotificationCount
         self.unreadMessageCount = unreadMessageCount
         if let sponsor = sponsor {
             self.sponsor = SponsorViewModel(sponsor)

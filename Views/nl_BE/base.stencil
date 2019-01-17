@@ -117,7 +117,7 @@
             line-height: 2em;
         } 
         /* Margins for icons */
-        .fa-calendar, .fa-clock-o, .fa-envelope, .fa-hourglass-o, .fa-map-marker, .fa-user, .fa-users {
+        .fa-bell, .fa-calendar, .fa-clock-o, .fa-envelope, .fa-hourglass-o, .fa-map-marker, .fa-user, .fa-users {
             margin-right: 0.25rem;
         }
         .fa-home {
@@ -139,6 +139,13 @@
         <nav class="d-md-none navbar navbar-dark">
             <a class="navbar-brand" href="/web/home">Rond De Tafel</a>
             <ul class="navbar-nav ml-auto mr-3">
+                {% if base.unreadNotificationCount > 0 %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/web/user/notifications">
+                            <i class="fa fa-bell"></i>
+                        </a>
+                    </li>
+                {% endif %}
                 {% if base.unreadMessageCount > 0 %}
                     <li class="nav-item">
                         <a class="nav-link" href="/web/user/conversations">
@@ -161,6 +168,14 @@
                     {% if base.user %}
                         <li class="nav-item">
                             <a class="nav-link" href="/web/user/activities">Mijn spellen</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/web/user/notifications">
+                                Meldingen
+                                {% if base.unreadNotificationCount > 0 %}
+                                    ({{ base.unreadNotificationCount }})
+                                {% endif %}
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/web/user/conversations">
@@ -198,6 +213,13 @@
             </ul>
             <ul class="navbar-nav">
                 {% if base.user %}
+                    {% if base.unreadNotificationCount > 0 %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/web/user/notifications">
+                                <i class="fa fa-bell"></i>
+                            </a>
+                        </li>
+                    {% endif %}
                     {% if base.unreadMessageCount > 0 %}
                         <li class="nav-item">
                             <a class="nav-link" href="/web/user/conversations">
@@ -211,6 +233,12 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="/web/user/activities">Mijn spellen</a>
+                            <a class="dropdown-item" href="/web/user/notifications">
+                                Meldingen
+                                {% if base.unreadNotificationCount > 0 %}
+                                    ({{ base.unreadNotificationCount }})
+                                {% endif %}
+                            </a>
                             <a class="dropdown-item" href="/web/user/conversations">
                                 Berichten
                                 {% if base.unreadMessageCount > 0 %}

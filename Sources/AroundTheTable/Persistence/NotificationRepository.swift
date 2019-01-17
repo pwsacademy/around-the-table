@@ -31,7 +31,7 @@ extension Persistence {
     }
     
     /**
-     Returns all notifications (read or unread) for the given user.
+     Returns all notifications (read or unread) for the given user, sorted by timestamp (descending).
      */
     func notifications(for recipient: User) throws -> [Notification] {
         guard let id = recipient.id else {

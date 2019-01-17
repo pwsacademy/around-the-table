@@ -10,6 +10,8 @@ extension Routes {
     func configureWebUserRoutes(using router: Router, credentials: Credentials) {
         router.all(middleware: credentials)
         router.get("activities", handler: activities)
+        router.get("notifications", handler: notifications)
+        router.post("notifications", handler: clearNotifications)
         router.get("conversations", handler: conversations)
         router.get("conversations/:other", handler: conversation)
         router.post("conversations", handler: sendMessage)
@@ -47,6 +49,35 @@ extension Routes {
                                                                                      hosted: hosted,
                                                                                      joined: joined))
         next()
+    }
+    
+    /**
+     Shows the user's notifications.
+     */
+    private func notifications(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let user = try authenticatedUser(for: request) else {
+            throw log(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        let notifications = try persistence.notifications(for: user)
+        // Mark these notifications as read.
+        if let first = notifications.first {
+            try persistence.markNotificationsAsRead(for: user, upTo: first.timestamp)
+        }
+        let base = try baseViewModel(for: request)
+        try response.render("user-notifications", with: try NotificationsViewModel(base: base,
+                                                                                   notifications: notifications))
+        next()
+    }
+    
+    /**
+     Clears the user's notifications.
+     */
+    private func clearNotifications(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let user = try authenticatedUser(for: request) else {
+            throw log(ServerError.missingMiddleware(type: Credentials.self))
+        }
+        try persistence.removeReadNotifications(for: user)
+        try response.redirect("/web/user/notifications")
     }
     
     /**

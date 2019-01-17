@@ -1,0 +1,60 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Meldingen{% endblock %}
+
+{% block additional-head %}
+<style>
+.item .body {
+    margin-left: 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Meldingen</h2>
+{% if notifications %}
+{% for notification in notifications %}
+    <a class="item" href="/web/{{ notification.link }}">
+        <div class="body">
+            <h6 class="text-muted">
+                <!-- xs shows abbreviated weekday -->
+                <span class="d-sm-none">{{ notification.shortDate }}</span>
+                <!-- sm shows the full weekday -->
+                <span class="d-none d-sm-inline">{{ notification.longDate }}</span>
+                om {{ notification.time }}
+                {% if not notification.isRead %}
+                    <i class="fa fa-asterisk text-danger"></i>
+                {% endif %}
+            </h6>
+            <p>{{ notification.message }}</p>
+        </div>
+    </a>
+{% endfor %}
+<!-- Clear notifications -->
+<form method="post" class="mb-3" action="/web/user/notifications">
+    <button class="btn btn-danger" type="submit">
+        <i class="fa fa-times"></i> Meldingen verwijderen
+    </button>
+</form>
+{% else %}
+    <p>Je hebt geen meldingen.</p>
+{% endif %}
+{% endblock %}
+
+{% block additional-body %}
+<script>
+// Add a confirmation step to the clear button.
+$(".btn-danger").on("click", function() {
+    if ($(this).attr("data-confirmed") !== "confirmed") {
+        if ($(this).is(".responsive")) {
+            // Buttons where the text is responsive.
+            $(this).html("<i class='fa fa-trash-o'></i><span class='d-none d-md-inline'> Bevestigen</span>");
+        } else {
+            // Buttons where the text is always shown.
+            $(this).html("<i class='fa fa-trash-o'></i> Bevestigen");
+        }
+        $(this).attr("data-confirmed", "confirmed");
+        return false;
+    }
+});
+</script>

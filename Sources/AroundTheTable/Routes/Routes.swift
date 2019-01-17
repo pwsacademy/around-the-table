@@ -157,8 +157,10 @@ extension Routes {
      */
     func baseViewModel(for request: RouterRequest) throws -> BaseViewModel {
         let user = try authenticatedUser(for: request)
+        let unreadNotificationCount = user != nil ? try persistence.unreadNotificationCount(for: user!) : 0
         let unreadMessageCount = user != nil ? try persistence.unreadMessageCount(for: user!) : 0
         return try BaseViewModel(user: user,
+                                 unreadNotificationCount: unreadNotificationCount,
                                  unreadMessageCount: unreadMessageCount,
                                  sponsor: try persistence.randomSponsor(),
                                  requestURL: request.originalURL)
