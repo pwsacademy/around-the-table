@@ -100,7 +100,14 @@
             <div class="col-md-6 col-lg-4 col-xl-3 d-flex mb-3">
                 <a class="{% if activity.availableSeats == 0 %} red {% elif activity.availableSeats == 1 %} yellow {% else %} green {% endif %} card"
                     href="/web/activity/{{ activity.id }}">
-                    <img class="card-img-top" src="{{ activity.picture }}">
+                    <div class="badged-image">
+                        {% if activity.userHasJoined %}
+                            <span class="badge badge-light"><i class="fa fa-2x fa-check"></i></span>
+                        {% elif activity.userIsPending %}
+                            <span class="badge badge-light"><i class="fa fa-2x fa-hourglass"></i></span>
+                        {% endif %}
+                        <img class="card-img-top" src="{{ activity.picture }}">
+                    </div>
                     <div class="card-body">
                         <h5>{{ activity.name }}</h5>
                         <p>

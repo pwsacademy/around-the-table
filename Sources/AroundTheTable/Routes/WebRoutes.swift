@@ -112,7 +112,7 @@ extension Routes {
             throw log(ServerError.invalidState)
         }
         let base = try baseViewModel(for: request)
-        try response.render("activities-\(view)", with: ActivitiesViewModel(base: base, sort: sort, activities: activities))
+        try response.render("activities-\(view)", with: ActivitiesViewModel(base: base, sort: sort, activities: activities, for: user))
         next()
     }
 }

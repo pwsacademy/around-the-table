@@ -56,7 +56,16 @@
         img.avatar {
             width: 40px;
             height: 40px;
-        }        
+        }
+        /* Badged images */
+        .badged-image {
+            position: relative;
+        }
+        .badged-image .badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }   
         /* List items (activities, notifications, messages, sponsors, ...) */
         .item {
             display: flex;
@@ -116,7 +125,7 @@
         a.card .card-body, .activity.item .body {
             line-height: 2em;
         } 
-        /* Margins for icons */
+        /* Margins for icons (except fa-check and fa-hourglass, which are only used as badges) */
         .fa-bell, .fa-calendar, .fa-clock-o, .fa-envelope, .fa-hourglass-o, .fa-map-marker, .fa-user, .fa-users {
             margin-right: 0.25rem;
         }

@@ -24,6 +24,8 @@ struct ActivitiesViewModel: Codable {
         let host: UserViewModel
         let name: String
         let picture: String
+        let userHasJoined: Bool
+        let userIsPending: Bool
         let availableSeats: Int
         let longDate: String
         let shortDate: String
@@ -31,20 +33,27 @@ struct ActivitiesViewModel: Codable {
         let location: Location
         let distance: Int
         
-        init(_ activity: Activity) throws {
+        init(_ activity: Activity, for user: User?) throws {
             guard let id = activity.id,
                   let distance = activity.distance else {
                 throw log(ServerError.unpersistedEntity)
             }
             self.id = id
-            self.host = UserViewModel(activity.host)
-            self.name = activity.name
-            self.picture = activity.picture?.absoluteString ?? Settings.defaultGamePicture
-            self.availableSeats = activity.availableSeats
-            self.longDate = activity.date.formatted(format: "EEEE d MMMM") 
-            self.shortDate = activity.date.formatted(format: "E d MMMM") // abbreviated weekday
-            self.time = activity.date.formatted(timeStyle: .short)
-            self.location = activity.location
+            host = UserViewModel(activity.host)
+            name = activity.name
+            picture = activity.picture?.absoluteString ?? Settings.defaultGamePicture
+            if let user = user {
+                userHasJoined = user == activity.host || activity.players.contains(user)
+                userIsPending = activity.pendingRegistrations.contains { $0.player == user }
+            } else {
+                userHasJoined = false
+                userIsPending = false
+            }
+            availableSeats = activity.availableSeats
+            longDate = activity.date.formatted(format: "EEEE d MMMM")
+            shortDate = activity.date.formatted(format: "E d MMMM") // abbreviated weekday
+            time = activity.date.formatted(timeStyle: .short)
+            location = activity.location
             self.distance = Int(ceil(distance / 1000)) // in km
         }
     }
@@ -54,9 +63,9 @@ struct ActivitiesViewModel: Codable {
     /**
      Initializes an `ActivitiesViewModel` with the given activities.
      */
-    init(base: BaseViewModel, sort: String, activities: [Activity]) throws {
+    init(base: BaseViewModel, sort: String, activities: [Activity], for user: User?) throws {
         self.base = base
         self.sort = sort
-        self.activities = try activities.map(ActivityViewModel.init)
+        self.activities = try activities.map { try ActivityViewModel($0, for: user) }
     }
 }
