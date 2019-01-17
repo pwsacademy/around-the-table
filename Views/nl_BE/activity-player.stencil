@@ -52,7 +52,7 @@
     <p>
         Voor meer informatie over dit spel kan je contact opnemen met de organisator.
     </p>
-    <form method="post" action="/web/user/messages">
+    <form method="post" action="/web/user/conversations">
         <input name="topic" type="hidden" value="{{ activity.id }}">
         <input name="sender" type="hidden" value="{{ base.user.id }}">
         <input name="recipient" type="hidden" value="{{ activity.host.id }}">

@@ -2,90 +2,23 @@
 
 {% block title %}{{ block.super }} - Berichten{% endblock %}
 
-{% block additional-head %}
-<style>
-    @media(min-width:768px) {
-        .messages {
-            margin-left: 2rem;
-        }
-    }
-</style>
-{% endblock %}
-
 {% block content %}
 <h2>Berichten</h2>
-<p>
-    Op deze pagina verschijnen de berichten die je verstuurt of ontvangt.
-    Deze berichten verdwijnen automatisch van zodra het spel waarover ze gaan is afgelopen.
-</p>
-{% if conversations %}
-    {% for conversation in conversations %}
-        <!-- Header -->
-        <a class="item" href="/web/activity/{{ conversation.activity }}">
-            <img class="align-self-start" width="75px" src="{{ conversation.picture }}">
-            <div class="body">
-                <h5>{{ conversation.title }}</h5>
-                <p>
-                    {{ conversation.other.name }}
-                </p>
-            </div>
-        </a>
-        <!-- Messages -->
-        <div class="messages">
-            {% for message in conversation.messages %}
-                <div class="media mt-3">
-                    <!-- Message from the other user -->
-                    {% if conversation.userIsSender and message.direction == "incoming" or 
-                       not conversation.userIsSender and message.direction == "outgoing" %}
-                        <img class="avatar rounded-circle mr-3" src="{{ conversation.other.picture }}" title="{{ conversation.other.name }}">
-                        <div class="media-body">
-                            <h6 class="text-muted">
-                                <!-- xs shows abbreviated weekday -->
-                                <span class="d-sm-none">{{ message.shortDate }}</span>
-                                <!-- sm shows the full weekday -->
-                                <span class="d-none d-sm-inline">{{ message.longDate }}</span>
-                                om {{ message.time }}
-                                {% if not message.isRead %}
-                                    <i class="fa fa-asterisk text-danger"></i>
-                                {% endif %}
-                            </h6>
-                            {{ message.text }}
-                        </div>
-                    <!-- Message from the current user -->
-                    {% else %}
-                        <img class="avatar rounded-circle mr-3" src="{{ base.user.picture }}" title="{{ base.user.name }}">
-                        <div class="media-body">
-                            <h6 class="text-muted">
-                                <!-- xs shows abbreviated weekday -->
-                                <span class="d-sm-none">{{ message.shortDate }}</span>
-                                <!-- sm shows the full weekday -->
-                                <span class="d-none d-sm-inline">{{ message.longDate }}</span>
-                                om {{ message.time }}
-                            </h6>
-                            {{ message.text }}
-                        </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-            <!-- Send a reply -->
-            <form class="mt-3 mb-5" method="post" action="/web/user/messages">
-                <input name="topic" type="hidden" value="{{ conversation.activity }}">
-                <input name="sender" type="hidden" value="{{ base.user.id }}">
-                <input name="recipient" type="hidden" value="{{ conversation.other.id }}">
-                <div class="form-group">
-                    <div class="input-group">
-                        <input class="form-control" name="text" type="text" placeholder="Verstuur een reactie">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit">
-                                <i class="fa fa-reply"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </form>
+{% for conversation in conversations %}
+    <a class="item" href="/web/user/conversations/{{ conversation.other.id }}">
+        <img class="align-self-start avatar rounded-circle" src="{{ conversation.other.picture }}">
+        <div class="body">
+            <h5>
+                {{ conversation.other.name }}
+                {% if conversation.hasUnreadMessages %}
+                    <i class="fa fa-asterisk text-danger"></i>
+                {% endif %}
+            </h5>
+            <p>{{ conversation.latestMessage }}</p>
         </div>
-    {% endfor %}
-{% else %}
-    <p>Je hebt momenteel geen berichten.</p>
-{% endif %}
+    </a>
+{% empty %}
+    <p>Je hebt nog geen berichten.</p>
+{% endfor %}
+<p>Om een gesprek te starten, kan je een organisator contacteren via de pagina van een spel.</p>
 {% endblock %}

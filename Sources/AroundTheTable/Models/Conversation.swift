@@ -2,16 +2,13 @@ import BSON
 import Foundation
 
 /**
- A conversation between two users regarding an activity.
+ A conversation between two users.
  */
 final class Conversation {
     
     /// The conversation's ID.
     /// If set to nil, an ID is assigned when the instance is persisted.
     var id: Int?
-    
-    /// The activity this conversation is about.
-    let topic: Activity
     
     /// The user who initiated the conversation.
     let sender: User
@@ -74,9 +71,8 @@ final class Conversation {
      `id` should be set to nil for new (unpersisted) instances. This is also its default value.
      `messages` is set to an empty array by default.
      */
-    init(id: Int? = nil, topic: Activity, sender: User, recipient: User, messages: [Message] = []) {
+    init(id: Int? = nil, sender: User, recipient: User, messages: [Message] = []) {
         self.id = id
-        self.topic = topic
         self.sender = sender
         self.recipient = recipient
         self.messages = messages
@@ -160,11 +156,10 @@ extension Conversation: Primitive {
     }
     
     /// This `Conversation` as a BSON `Document`.
-    /// `topic`, `sender` and `recipient` are normalized and stored as references.
+    /// `sender` and `recipient` are normalized and stored as references.
     var document: Document {
         return [
             "_id": id,
-            "topic": topic.id, // Normalized.
             "sender": sender.id, // Normalized.
             "recipient": recipient.id, // Normalized.
             "messages": messages
@@ -181,7 +176,7 @@ extension Conversation: Primitive {
     /**
      Decodes a `Conversation` from a BSON primitive.
      
-     `topic`, `sender` and `recipient` must be denormalized before decoding.
+     `sender` and `recipient` must be denormalized before decoding.
      
      - Returns: `nil` when the primitive is not a `Document`.
      - Throws: a `BSONError` when the document does not contain all required properties.
@@ -193,9 +188,6 @@ extension Conversation: Primitive {
         guard let id = Int(bson["_id"]) else {
             throw log(BSONError.missingField(name: "_id"))
         }
-        guard let topic = try Activity(bson["topic"]) else {
-            throw log(BSONError.missingField(name: "topic"))
-        }
         guard let sender = try User(bson["sender"]) else {
             throw log(BSONError.missingField(name: "sender"))
         }
@@ -206,7 +198,6 @@ extension Conversation: Primitive {
             throw log(BSONError.missingField(name: "messages"))
         }
         self.init(id: id,
-                  topic: topic,
                   sender: sender,
                   recipient: recipient,
                   messages: messages)

@@ -1,0 +1,47 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Berichten{% endblock %}
+
+{% block content %}
+<h2>Berichten</h2>
+<h4>{{ other.name }}</h4>
+{% for message in messages %}
+    <div class="item">
+        {% if message.direction == "incoming" %}
+            <img class="align-self-start avatar rounded-circle" src="{{ other.picture }}">
+        {% else %}
+            <img class="align-self-start avatar rounded-circle" src="{{ base.user.picture }}">
+        {% endif %}
+        <div class="body">
+            <h6 class="text-muted">
+                <!-- xs shows abbreviated weekday -->
+                <span class="d-sm-none">{{ message.shortDate }}</span>
+                <!-- sm shows the full weekday -->
+                <span class="d-none d-sm-inline">{{ message.longDate }}</span>
+                om {{ message.time }}
+            </h6>
+            <p>{{ message.text }}</p>
+        </div>
+    </div>
+{% endfor %}
+<!-- Send a reply -->
+<form class="mt-3 mb-5" method="post" action="/web/user/conversations">
+    <input name="sender" type="hidden" value="{{ base.user.id }}">
+    <input name="recipient" type="hidden" value="{{ other.id }}">
+    <div class="form-group">
+        <div class="input-group">
+            <input class="form-control" id="text" name="text" type="text" placeholder="Typ een bericht...">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fa fa-reply"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block additional-body %}
+<script>
+    $("#text").focus();
+</script>
+{% endblock %}

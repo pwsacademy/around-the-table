@@ -13,46 +13,37 @@ extension Persistence {
      
      - Throws: ServerError.persistedEntity if the conversation already has an ID.
                Use `update(_:)` to update existing conversations.
+     - Throws: ServerError.conflict if there already is a conversation between the two users.
      */
     func add(_ conversation: Conversation) throws {
         guard conversation.id == nil else {
             throw log(ServerError.persistedEntity)
+        }
+        guard try self.conversation(between: conversation.sender, conversation.recipient) == nil else {
+            throw log(ServerError.conflict)
         }
         conversation.id = try nextID(for: conversations)
         try conversations.insert(conversation.document) 
     }
     
     /**
-     Looks up the conversation between the two given users regarding the given activity.
- 
-     Returns `nil` if such a conversation doesn't exist.
+     Returns the conversation between the two given users or `nil` if no conversation exists.
      
-     - Throws: ServerError.unpersistedEntity if the activity or one of the users hasn't been persisted yet.
+     - Throws: ServerError.unpersistedEntity if one of the users hasn't been persisted yet.
      */
-    func conversation(between first: User, _ second: User, regarding topic: Activity) throws -> Conversation? {
-        guard let id = topic.id,
-              let first = first.id,
+    func conversation(between first: User, _ second: User) throws -> Conversation? {
+        guard let first = first.id,
               let second = second.id else {
             throw log(ServerError.unpersistedEntity)
         }
         let results = try conversations.aggregate([
             .match([
-                "topic": id,
                 "$or": [
                     ["sender": first, "recipient": second],
                     ["sender": second, "recipient": first],
                 ]
             ] as Query),
             .limit(1),
-            // Denormalize `topic`.
-            .lookup(from: activities, localField: "topic", foreignField: "_id", as: "topic"),
-            .unwind("$topic"),
-            // Denormalize `topic.host`.
-            .lookup(from: users, localField: "topic.host", foreignField: "_id", as: "topic.host"),
-            .unwind("$topic.host"),
-            // Denormalize `topic.game`.
-            .lookup(from: games, localField: "topic.game", foreignField: "_id", as: "topic.game"),
-            .unwind("$topic.game", preserveNullAndEmptyArrays: true),
             // Denormalize `sender`.
             .lookup(from: users, localField: "sender", foreignField: "_id", as: "sender"),
             .unwind("$sender"),
@@ -60,29 +51,12 @@ extension Persistence {
             .lookup(from: users, localField: "recipient", foreignField: "_id", as: "recipient"),
             .unwind("$recipient")
         ])
-        return try results.compactMap {
-            // Here we denormalize `topic.registrations[i].player`.
-            // This is quite tricky to do in an aggregation pipeline,
-            // so we use additional queries instead.
-            var document = $0
-            guard let registrations = Array(document["topic"]["registrations"])?.compactMap(Document.init) else {
-                throw log(BSONError.missingField(name: "registrations"))
-            }
-            for (index, registration) in registrations.enumerated() {
-                guard let id = Int(registration["player"]),
-                      let player = try user(withID: id) else {
-                    throw log(BSONError.missingField(name: "player"))
-                }
-                document["topic"]["registrations"][index]["player"] = player.document
-            }
-            return try Conversation(document)
-        }.first
+        return try Conversation(results.next())
     }
     
     /**
-     Returns all active conversations involving the given user.
+     Returns all conversations involving the given user.
      
-     A conversation is active if it regards an activity that is less than 24 hours in the past.
      Results are sorted by the timestamp of the most recent message in a conversation, in descending order.
      */
     func conversations(for user: User) throws -> [Conversation] {
@@ -96,17 +70,6 @@ extension Persistence {
                     ["recipient": id]
                 ]
             ] as Query),
-            // Denormalize `topic`.
-            .lookup(from: activities, localField: "topic", foreignField: "_id", as: "topic"),
-            .unwind("$topic"),
-            // Filter only active conversations.
-            .match(["topic.date": ["$gt": Date().previous]] as Query),
-            // Denormalize `topic.host`.
-            .lookup(from: users, localField: "topic.host", foreignField: "_id", as: "topic.host"),
-            .unwind("$topic.host"),
-            // Denormalize `topic.game`.
-            .lookup(from: games, localField: "topic.game", foreignField: "_id", as: "topic.game"),
-            .unwind("$topic.game", preserveNullAndEmptyArrays: true),
             // Denormalize `sender`.
             .lookup(from: users, localField: "sender", foreignField: "_id", as: "sender"),
             .unwind("$sender"),
@@ -114,32 +77,14 @@ extension Persistence {
             .lookup(from: users, localField: "recipient", foreignField: "_id", as: "recipient"),
             .unwind("$recipient"),
             // Sort by the most recent message.
-            .sort(["messages.timestamp": .descending])
+            AggregationPipeline.Stage(["$addFields": ["latestMessage": ["$max": "$messages.timestamp"]]]),
+            .sort(["latestMessage": .descending])
         ])
-        return try results.compactMap {
-            // Here we denormalize `topic.registrations[i].player`.
-            // This is quite tricky to do in an aggregation pipeline,
-            // so we use additional queries instead.
-            var document = $0
-            guard let registrations = Array(document["topic"]["registrations"])?.compactMap(Document.init) else {
-                throw log(BSONError.missingField(name: "registrations"))
-            }
-            for (index, registration) in registrations.enumerated() {
-                guard let id = Int(registration["player"]),
-                      let player = try self.user(withID: id) else {
-                    throw log(BSONError.missingField(name: "player"))
-                }
-                document["topic"]["registrations"][index]["player"] = player.document
-            }
-            return try Conversation(document)
-        }
+        return try results.compactMap(Conversation.init)
     }
     
     /**
      Returns the number of unread messages for the given user.
-     
-     Only messages in active conversations are counted.
-     A conversation is active if it regards an activity that is less than 24 hours in the past.
      */
     func unreadMessageCount(for user: User) throws -> Int {
         guard let id = user.id else {
@@ -159,11 +104,6 @@ extension Persistence {
                     ]
                 ]
             ] as Query),
-            // Denormalize `topic`.
-            .lookup(from: activities, localField: "topic", foreignField: "_id", as: "topic"),
-            .unwind("$topic"),
-            // Filter only active conversations.
-            .match(["topic.date": ["$gt": Date().previous]] as Query),
             // Unwind `messages` and filter only unread messages.
             .unwind("$messages"),
             .match([
@@ -178,11 +118,13 @@ extension Persistence {
                         "messages.direction": "outgoing"
                     ]
                 ]
-            ] as Query)
+            ] as Query),
+            .count(insertedAtKey: "count")
         ])
-        var count = 0
-        while results.next() != nil {
-            count += 1
+        guard let result = results.next(),
+              let count = Int(result["count"]) else {
+            // the $count stage doesn't return a count when the pipeline has 0 documents.
+            return 0
         }
         return count
     }

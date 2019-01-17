@@ -10,7 +10,15 @@ enum Strings {
     private static let strings = ConfigurationManager().load(file: "Configuration/strings-\(Settings.locale).json", relativeFrom: .project)
     
     /**
-     Builds a localized message to inform a player that a host approved his registration for an activity.
+     Prefix to add to a message when a user contacts a host about an activity.
+     */
+    static func messagePrefix(for activity: Activity) -> String {
+        return (strings["activityMessagePrefix"] as! String)
+            .replacingOccurrences(of: "<activity>", with: activity.name)
+    }
+    
+    /**
+     Notification to inform a player that a host approved his registration for an activity.
      */
     static func hostApprovedRegistration(for activity: Activity) -> String {
         return (strings["hostApprovedRegistration"] as! String)
@@ -18,7 +26,7 @@ enum Strings {
     }
 
     /**
-     Builds a localized message to inform a player that a host cancelled an activity.
+     Notification to inform a player that a host cancelled an activity.
      */
     static func hostCancelled(_ activity: Activity) -> String {
         return (strings["hostCancelledActivity"] as! String)
@@ -26,7 +34,7 @@ enum Strings {
     }
 
     /**
-     Builds a localized message to inform a player that a host cancelled his registration for an activity.
+     Notification to inform a player that a host cancelled his registration for an activity.
      */
     static func hostCancelledRegistration(for activity: Activity) -> String {
         return (strings["hostCancelledRegistration"] as! String)
@@ -34,7 +42,7 @@ enum Strings {
     }
 
     /**
-     Builds a localized message to inform a player that a host changed the location of an activity.
+     Notification to inform a player that a host changed the location of an activity.
      */
     static func hostChangedAddress(of activity: Activity) -> String {
         return (strings["hostChangedAddress"] as! String)
@@ -43,7 +51,7 @@ enum Strings {
     }
 
     /**
-     Builds a localized message to inform a player that a host changed the date or time of an activity.
+     Notification to inform a player that a host changed the date or time of an activity.
      */
     static func hostChangedDate(of activity: Activity) -> String {
         return (strings["hostChangedDate"] as! String)
@@ -53,7 +61,7 @@ enum Strings {
     }
 
     /**
-     Builds a localized message to inform a host that a player cancelled his registration for an activity.
+     Notification to inform a host that a player cancelled his registration for an activity.
      */
     static func player(_ player: User, cancelledRegistrationFor activity: Activity) -> String {
         return (strings["playerCancelledRegistration"] as! String)
@@ -62,7 +70,7 @@ enum Strings {
     }
 
     /**
-     Builds a localized message to inform a host that a player's registration for an activity was automatically approved.
+     Notification to inform a host that a player's registration for an activity was automatically approved.
      */
     static func player(_ player: User, joined activity: Activity) -> String {
         return (strings["playerJoinedActivity"] as! String)
@@ -71,7 +79,7 @@ enum Strings {
     }
     
     /**
-     Builds a localized message to inform a host that a player submitted a registration for an activity.
+     Notification to inform a host that a player submitted a registration for an activity.
      */
     static func player(_ player: User, sentRegistrationFor activity: Activity) -> String {
         return (strings["playerSentRegistration"] as! String)
@@ -80,7 +88,7 @@ enum Strings {
     }
     
     /**
-     Builds a localized message to inform a player that his registration for an activity was automatically approved.
+     Notification to inform a player that his registration for an activity was automatically approved.
      */
     static func registrationWasAutoApproved(for activity: Activity) -> String {
         return (strings["registrationWasAutoApproved"] as! String)

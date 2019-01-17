@@ -10,8 +10,9 @@ extension Routes {
     func configureWebUserRoutes(using router: Router, credentials: Credentials) {
         router.all(middleware: credentials)
         router.get("activities", handler: activities)
-        router.get("messages", handler: conversations)
-        router.post("messages", handler: sendMessage)
+        router.get("conversations", handler: conversations)
+        router.get("conversations/:other", handler: conversation)
+        router.post("conversations", handler: sendMessage)
         router.get("settings", handler: settings)
         router.post("settings", handler: editSettings)
     }
@@ -49,7 +50,7 @@ extension Routes {
     }
     
     /**
-     Shows the user's active conversations.
+     Shows an overview of the user's conversations.
      */
     private func conversations(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
         guard let user = try authenticatedUser(for: request) else {
@@ -57,17 +58,38 @@ extension Routes {
         }
         let conversations = try persistence.conversations(for: user)
         let base = try baseViewModel(for: request)
-        try response.render("user-conversations", with: try ConversationsViewModel(base: base, conversations: conversations, for: user))
-        // Mark all messages for the current user as read.
-        for conversation in conversations {
-            for (index, message) in conversation.messages.enumerated() {
-                if user == conversation.sender && message.direction == .incoming ||
-                   user == conversation.recipient && message.direction == .outgoing {
-                    conversation.messages[index].isRead = true
-                }
-            }
-            try persistence.update(conversation)
+        try response.render("user-conversations", with: try ConversationsViewModel(base: base,
+                                                                                   conversations: conversations,
+                                                                                   for: user))
+        next()
+    }
+    
+    /**
+     Shows a conversation.
+     */
+    private func conversation(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+        guard let user = try authenticatedUser(for: request) else {
+            throw log(ServerError.missingMiddleware(type: Credentials.self))
         }
+        guard let otherIDString = request.parameters["other"],
+              let otherID = Int(otherIDString),
+              let other = try persistence.user(withID: otherID),
+              let conversation = try persistence.conversation(between: user, other) else {
+            response.status(.badRequest)
+            return next()
+        }
+        // Mark all messages for the current user in this conversation as read.
+        for i in 0..<conversation.messages.count {
+            if user == conversation.sender && conversation.messages[i].direction == .incoming
+            || user == conversation.recipient && conversation.messages[i].direction == .outgoing {
+                conversation.messages[i].isRead = true
+            }
+        }
+        try persistence.update(conversation)
+        let base = try baseViewModel(for: request)
+        try response.render("user-conversation", with: try ConversationViewModel(base: base,
+                                                                                 conversation: conversation,
+                                                                                 for: user))
         next()
     }
     
@@ -82,26 +104,28 @@ extension Routes {
         guard let form = try? request.read(as: MessageForm.self),
               let sender = try persistence.user(withID: form.sender),
               sender == user,
-              let recipient = try persistence.user(withID: form.recipient),
-              let topic = try persistence.activity(withID: form.topic, measuredFrom: .default) else {
+              let recipient = try persistence.user(withID: form.recipient) else {
             response.status(.badRequest)
             return next()
         }
-        if let conversation = try persistence.conversation(between: sender, recipient, regarding: topic) {
+        let message: String
+        if let id = form.topic, let topic = try persistence.activity(withID: id, measuredFrom: .default) {
+            // If the user sent a message via the contact form on an activiy page,
+            // add a prefix to the message to provide some context.
+            message = Strings.messagePrefix(for: topic) + form.text
+        } else {
+            message = form.text
+        }
+        if let conversation = try persistence.conversation(between: sender, recipient) {
             let direction = sender == conversation.sender ? Conversation.Message.Direction.outgoing : .incoming
-            conversation.messages.append(Conversation.Message(direction: direction, text: form.text))
+            conversation.messages.append(Conversation.Message(direction: direction, text: message))
             try persistence.update(conversation)
         } else {
-            // A message is sent from a visitor/player to an activity's host.
-            guard recipient == topic.host else {
-                response.status(.badRequest)
-                return next()
-            }
-            let conversation = Conversation(topic: topic, sender: sender, recipient: recipient)
-            conversation.messages.append(Conversation.Message(direction: .outgoing, text: form.text))
+            let conversation = Conversation(sender: sender, recipient: recipient)
+            conversation.messages.append(Conversation.Message(direction: .outgoing, text: message))
             try persistence.add(conversation)
         }
-        try response.redirect("/web/user/messages")
+        try response.redirect("/web/user/conversations/\(form.recipient)")
     }
     
     /**

@@ -1,4 +1,5 @@
 {
+    "activityMessagePrefix": "Bericht i.v.m. <activity>: ",
     "hostApprovedRegistration": "Je aanvraag om deel te nemen aan <activity> is goedgekeurd.",
     "hostCancelledActivity": "<activity> is geannuleerd.",
     "hostCancelledRegistration": "Je aanvraag om deel te nemen aan <activity> is geannuleerd.",

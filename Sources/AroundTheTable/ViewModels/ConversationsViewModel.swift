@@ -7,11 +7,6 @@ struct ConversationsViewModel: Codable {
     
     struct ConversationViewModel: Codable {
         
-        let activity: Int
-        let title: String
-        let picture: String
-        let userIsSender: Bool
-        
         struct UserViewModel: Codable {
             
             let id: Int
@@ -29,45 +24,21 @@ struct ConversationsViewModel: Codable {
         }
         
         let other: UserViewModel
-        
-        struct MessageViewModel: Codable {
-            
-            let direction: String
-            let longDate: String
-            let shortDate: String
-            let time: String
-            let text: String
-            let isRead: Bool
-            
-            init(_ message: Conversation.Message) {
-                self.direction = message.direction.rawValue
-                self.longDate = message.timestamp.formatted(format: "EEEE d MMMM")
-                self.shortDate = message.timestamp.formatted(format: "E d MMMM") // abbreviated weekday
-                self.time = message.timestamp.formatted(timeStyle: .short)
-                self.text = message.text
-                self.isRead = message.isRead
-            }
-        }
-        
-        let messages: [MessageViewModel]
+        let latestMessage: String
+        let hasUnreadMessages: Bool
         
         init(_ conversation: Conversation, for user: User) throws {
-            guard let id = conversation.topic.id else {
-                throw log(ServerError.unpersistedEntity)
-            }
-            activity = id
-            title = conversation.topic.name
-            picture = conversation.topic.picture?.absoluteString ?? Settings.defaultGamePicture
             if user == conversation.sender {
-                userIsSender = true
                 other = try UserViewModel(conversation.recipient)
-            } else if user == conversation.recipient {
-                userIsSender = false
-                other = try UserViewModel(conversation.sender)
+                hasUnreadMessages = conversation.messages.contains { $0.direction == .incoming && !$0.isRead }
             } else {
+                other = try UserViewModel(conversation.sender)
+                hasUnreadMessages = conversation.messages.contains { $0.direction == .outgoing && !$0.isRead }
+            }
+            guard !conversation.messages.isEmpty else {
                 throw log(ServerError.invalidState)
             }
-            messages = conversation.messages.map(MessageViewModel.init)
+            latestMessage = conversation.messages.last!.text
         }
     }
 

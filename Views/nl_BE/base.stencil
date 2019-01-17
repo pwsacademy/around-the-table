@@ -49,7 +49,7 @@
             color: white;
         }
         /* Headers */
-        h2, h3 {
+        h2, h3, h4 {
             margin-bottom: 1rem;
         }
         /* Avatars */
@@ -57,7 +57,7 @@
             width: 40px;
             height: 40px;
         }        
-        /* List items (activities, messages, sponsors, ...) */
+        /* List items (activities, notifications, messages, sponsors, ...) */
         .item {
             display: flex;
             margin-bottom: 1rem;
@@ -141,7 +141,7 @@
             <ul class="navbar-nav ml-auto mr-3">
                 {% if base.unreadMessageCount > 0 %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/web/user/messages">
+                        <a class="nav-link" href="/web/user/conversations">
                             <i class="fa fa-envelope"></i>
                         </a>
                     </li>
@@ -163,7 +163,7 @@
                             <a class="nav-link" href="/web/user/activities">Mijn spellen</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/web/user/messages">
+                            <a class="nav-link" href="/web/user/conversations">
                                 Berichten
                                 {% if base.unreadMessageCount > 0 %}
                                     ({{ base.unreadMessageCount }})
@@ -200,7 +200,7 @@
                 {% if base.user %}
                     {% if base.unreadMessageCount > 0 %}
                         <li class="nav-item">
-                            <a class="nav-link" href="/web/user/messages">
+                            <a class="nav-link" href="/web/user/conversations">
                                 <i class="fa fa-envelope"></i>
                             </a>
                         </li>
@@ -211,7 +211,7 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="/web/user/activities">Mijn spellen</a>
-                            <a class="dropdown-item" href="/web/user/messages">
+                            <a class="dropdown-item" href="/web/user/conversations">
                                 Berichten
                                 {% if base.unreadMessageCount > 0 %}
                                     ({{ base.unreadMessageCount }})
