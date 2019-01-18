@@ -36,11 +36,9 @@ struct HostActivityViewModel: Codable {
         nameOptions = game.names
         playerCountOptions = Array(game.playerCount)
         prereservedSeatsOptions = Array(0..<game.playerCount.upperBound)
-        
-        let calendar = Calendar(identifier: .gregorian)
         // Set the default date to tomorrow at 19:00.
-        let tomorrow = calendar.date(byAdding: .day, value: 1, to: Date())!
-        var components = calendar.dateComponents(in: Settings.timeZone, from: tomorrow)
+        let tomorrow = Settings.calendar.date(byAdding: .day, value: 1, to: Date())!
+        var components = Settings.calendar.dateComponents(in: Settings.timeZone, from: tomorrow)
         components.hour = 19
         components.minute = 0
         date = DateViewModel(components)

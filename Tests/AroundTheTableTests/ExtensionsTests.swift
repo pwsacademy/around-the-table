@@ -5,7 +5,6 @@ import XCTest
 class ExtensionsTests: XCTestCase {
     
     /*
-     testLastDayInWindowWithJumpToSmallerMonth is commented out due to https://bugs.swift.org/browse/SR-9668.
      testFormattedDateAndTime is commented out due to https://bugs.swift.org/browse/SR-1325.
      */
     static var allTests: [(String, (ExtensionsTests) -> () throws -> Void)] {
@@ -17,45 +16,17 @@ class ExtensionsTests: XCTestCase {
             ("testPreviousDayWithFirstOfMonth", testPreviousDayWithFirstOfMonth),
             ("testLastDayInWindowWithFirstOfMonth", testLastDayInWindowWithFirstOfMonth),
             ("testLastDayInWindowWithRegularDate", testLastDayInWindowWithRegularDate),
-//            ("testLastDayInWindowWithJumpToSmallerMonth", testLastDayInWindowWithJumpToSmallerMonth),
+            ("testLastDayInWindowWithJumpToSmallerMonth", testLastDayInWindowWithJumpToSmallerMonth),
 //            ("testFormattedDateAndTime", testFormattedDateAndTime),
             ("testFormattedDateAndTimeWithFormat", testFormattedDateAndTimeWithFormat)
         ]
     }
     
     /* Date */
-    
-    private let calendar = Calendar(identifier: .gregorian)
-    
-    private var firstOfMonth: Date {
-        var dateComponents = DateComponents()
-        dateComponents.calendar = calendar
-        dateComponents.day = 1
-        dateComponents.month = 1
-        dateComponents.year = 2019
-        dateComponents.timeZone = Settings.timeZone
-        return calendar.date(from: dateComponents)!
-    }
-    
-    private var regularDate: Date {
-        var dateComponents = DateComponents()
-        dateComponents.calendar = calendar
-        dateComponents.day = 2
-        dateComponents.month = 1
-        dateComponents.year = 2019
-        dateComponents.timeZone = Settings.timeZone
-        return calendar.date(from: dateComponents)!
-    }
-    
-    private var lastOfMonth: Date {
-        var dateComponents = DateComponents()
-        dateComponents.calendar = calendar
-        dateComponents.day = 31
-        dateComponents.month = 1
-        dateComponents.year = 2019
-        dateComponents.timeZone = Settings.timeZone
-        return calendar.date(from: dateComponents)!
-    }
+        
+    private var firstOfMonth = dateFromComponents(day: 1, month: 1, year: 2019)
+    private var regularDate = dateFromComponents(day: 2, month: 1, year: 2019)
+    private var lastOfMonth = dateFromComponents(day: 31, month: 1, year: 2019)
     
     func testDay() {
         XCTAssert(firstOfMonth.day == 1)
@@ -100,8 +71,12 @@ class ExtensionsTests: XCTestCase {
     
     private let locale = Locale(identifier: "nl_BE")
     private let timeZone = TimeZone(identifier: "Europe/Brussels")!
-    
+
     private var localDate: Date {
+        // Don't use Settings.calendar and Settings.timeZone here to ensure that
+        // the result of the test does not depend on the configured time zone.
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
         var dateComponents = DateComponents()
         dateComponents.calendar = calendar
         dateComponents.day = 22
@@ -126,7 +101,6 @@ class ExtensionsTests: XCTestCase {
         let result = localDate.formatted(format: "EEEE d MMMM HH:mm",
                                          locale: locale,
                                          timeZone: timeZone)
-        print(result)
         XCTAssert(result == "dinsdag 22 november 18:00")
     }
 }

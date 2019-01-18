@@ -1,6 +1,5 @@
 import Foundation
 
-private let calendar = Calendar(identifier: .gregorian)
 private let formatter = DateFormatter()
 
 extension Date {
@@ -11,7 +10,7 @@ extension Date {
      Uses `Settings.timeZone` to determine the correct value.
      */
     var day: Int {
-        return calendar.dateComponents(in: Settings.timeZone, from: self).day!
+        return Settings.calendar.dateComponents(in: Settings.timeZone, from: self).day!
     }
     
     /**
@@ -20,7 +19,7 @@ extension Date {
      Uses `Settings.timeZone` to determine the correct value.
      */
     var month: Int {
-        return calendar.dateComponents(in: Settings.timeZone, from: self).month!
+        return Settings.calendar.dateComponents(in: Settings.timeZone, from: self).month!
     }
     
     /**
@@ -29,14 +28,14 @@ extension Date {
      Uses `Settings.timeZone` to determine the correct value.
      */
     var year: Int {
-        return calendar.dateComponents(in: Settings.timeZone, from: self).year!
+        return Settings.calendar.dateComponents(in: Settings.timeZone, from: self).year!
     }
     
     /**
      Returns the previous day.
      */
     var previous: Date {
-        return calendar.date(byAdding: .day, value: -1, to: self)!
+        return Settings.calendar.date(byAdding: .day, value: -1, to: self)!
     }
     
     /**
@@ -55,12 +54,12 @@ extension Date {
      Jan. 31 -> Feb. 28
      */
     var lastDayInWindow: Date {
-        let nextMonth = calendar.date(byAdding: .month, value: 1, to: self)!
+        let nextMonth = Settings.calendar.date(byAdding: .month, value: 1, to: self)!
         if nextMonth.day < day {
             // Don't subtract a day if the next month has less days than the current one.
             return nextMonth
         }
-        return calendar.date(byAdding: .day, value: -1, to: nextMonth)!
+        return Settings.calendar.date(byAdding: .day, value: -1, to: nextMonth)!
     }
     
     /**

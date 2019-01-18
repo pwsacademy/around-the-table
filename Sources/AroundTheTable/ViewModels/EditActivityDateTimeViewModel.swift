@@ -33,7 +33,7 @@ struct EditActivityDateTimeViewModel: Codable {
         }
         self.base = base
         self.id = id
-        let components = Calendar(identifier: .gregorian).dateComponents(in: Settings.timeZone, from: activity.date)
+        let components = Settings.calendar.dateComponents(in: Settings.timeZone, from: activity.date)
         self.date = DateViewModel(components)
     }
 }

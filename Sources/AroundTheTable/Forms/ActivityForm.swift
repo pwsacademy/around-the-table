@@ -21,7 +21,7 @@ struct ActivityForm: Codable {
     /// Returns `nil` if the form's fields do not represent a valid date.
     var date: Date? {
         var components = DateComponents()
-        components.calendar = Calendar(identifier: .gregorian)
+        components.calendar = Settings.calendar
         components.day = day
         components.month = month
         components.year = year
@@ -43,16 +43,15 @@ struct ActivityForm: Codable {
         guard let date = date else {
             return nil
         }
-        let calendar = Calendar(identifier: .gregorian)
         switch deadlineType {
         case "one hour":
-            return calendar.date(byAdding: .hour, value: -1, to: date)!
+            return Settings.calendar.date(byAdding: .hour, value: -1, to: date)!
         case "one day":
-            return calendar.date(byAdding: .day, value: -1, to: date)!
+            return Settings.calendar.date(byAdding: .day, value: -1, to: date)!
         case "two days":
-            return calendar.date(byAdding: .day, value: -2, to: date)!
+            return Settings.calendar.date(byAdding: .day, value: -2, to: date)!
         case "one week":
-            return calendar.date(byAdding: .weekOfYear, value: -1, to: date)!
+            return Settings.calendar.date(byAdding: .weekOfYear, value: -1, to: date)!
         default:
             return nil
         }

@@ -254,16 +254,15 @@ extension Routes {
             response.status(.badRequest)
             return next()
         }
-        let calendar = Calendar(identifier: .gregorian)
         switch form.deadlineType {
         case "one hour":
-            activity.deadline = calendar.date(byAdding: .hour, value: -1, to: activity.date)!
+            activity.deadline = Settings.calendar.date(byAdding: .hour, value: -1, to: activity.date)!
         case "one day":
-            activity.deadline = calendar.date(byAdding: .day, value: -1, to: activity.date)!
+            activity.deadline = Settings.calendar.date(byAdding: .day, value: -1, to: activity.date)!
         case "two days":
-            activity.deadline = calendar.date(byAdding: .day, value: -2, to: activity.date)!
+            activity.deadline = Settings.calendar.date(byAdding: .day, value: -2, to: activity.date)!
         case "one week":
-            activity.deadline = calendar.date(byAdding: .weekOfYear, value: -1, to: activity.date)!
+            activity.deadline = Settings.calendar.date(byAdding: .weekOfYear, value: -1, to: activity.date)!
         default:
             throw log(ServerError.invalidState) // This should be prevented by form.isValid.
         }

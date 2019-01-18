@@ -27,7 +27,15 @@ class ActivityRepositoryTests: XCTestCase {
     }
     
     private let persistence = try! Persistence()
-    private let calendar = Calendar(identifier: .gregorian)
+    
+    // Don't use Settings.calendar and Settings.timeZone here to ensure that
+    // the result of the test does not depend on the configured time zone.
+    private let timeZone = TimeZone(identifier: "Europe/London")!
+    private let calendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Europe/London")!
+        return calendar
+    }()
     
     /*
      The one-month window for the test database starts on Feb. 1 2100.
@@ -40,7 +48,7 @@ class ActivityRepositoryTests: XCTestCase {
         dateComponents.year = 2100
         dateComponents.hour = 8
         dateComponents.minute = 0
-        dateComponents.timeZone = Settings.timeZone
+        dateComponents.timeZone = timeZone
         return calendar.date(from: dateComponents)!
     }
     

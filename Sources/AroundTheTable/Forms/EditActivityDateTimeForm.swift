@@ -16,7 +16,7 @@ struct EditActivityDateTimeForm: Codable {
     /// or if the date is not in the future.
     var date: Date? {
         var components = DateComponents()
-        components.calendar = Calendar(identifier: .gregorian)
+        components.calendar = Settings.calendar
         components.day = day
         components.month = month
         components.year = year

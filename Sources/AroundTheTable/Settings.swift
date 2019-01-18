@@ -129,4 +129,12 @@ enum Settings {
     
     /// The time zone used to display dates.
     static let timeZone = TimeZone(identifier: settings["ATT:TIME_ZONE"] as! String) ?? TimeZone.current
+    
+    /// The calendar object to use.
+    /// This has the correct time zone configured so all date calculations use this time zone.
+    static let calendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        return calendar
+    }()
 }
