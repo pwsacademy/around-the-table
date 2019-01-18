@@ -12,7 +12,7 @@
     "DEFAULT_GAME_THUMBNAIL": "/public/img/game-placeholder-t.png",
     "DEFAULT_PROFILE_PICTURE": "/public/img/user-placeholder.png",
     "FACEBOOK": {
-        "APP": "1154313148030114",
+        "APP": "1198093190338136",
         "SECRET": "invalid-placeholder"
     },
     "GOOGLE": {
