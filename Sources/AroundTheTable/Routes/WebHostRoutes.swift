@@ -139,7 +139,7 @@ extension Routes {
               CloudObjectStorage.isConfigured else {
             return
         }
-        let pictureObject = "activity/\(id)\(picture.pathExtension)"
+        let pictureObject = "activity/\(id).\(picture.pathExtension)"
         let cos = CloudObjectStorage()
         cos.storeImage(at: picture, as: pictureObject) {
             activity.picture = URL(string: "\(Settings.cloudObjectStorage.bucketURL!)/\(pictureObject)")
