@@ -101,14 +101,18 @@ struct ActivityViewModel: Codable {
     let userIsHost: Bool
     let userIsPlayer: Bool
     let userIsPending: Bool
+    let userHasAutoApprove: Bool
     
-    init(base: BaseViewModel, user: User?, activity: Activity) throws {
+    init(base: BaseViewModel, activity: Activity, user: User?, hostsUserHasJoined: [User]) throws {
         self.base = base
         self.activity = try ActivityViewModel(activity)
-        self.approvedRegistrations = try activity.approvedRegistrations.map { try RegistrationViewModel($0, for: activity) }
-        self.pendingRegistrations = try activity.pendingRegistrations.map { try RegistrationViewModel($0, for: activity) }
-        self.userIsHost = activity.host == user
-        self.userIsPlayer = activity.approvedRegistrations.contains { $0.player == user }
-        self.userIsPending = activity.pendingRegistrations.contains { $0.player == user }
+        approvedRegistrations = try activity.approvedRegistrations.map { try RegistrationViewModel($0, for: activity) }
+        pendingRegistrations = try activity.pendingRegistrations.map { try RegistrationViewModel($0, for: activity) }
+        userIsHost = activity.host == user
+        userIsPlayer = activity.approvedRegistrations.contains { $0.player == user }
+        userIsPending = activity.pendingRegistrations.contains { $0.player == user }
+        userHasAutoApprove = !hostsUserHasJoined.contains(activity.host)
+        // TODO: https://bugs.swift.org/browse/SR-944
+        // && !userIsHost && !userIsPending
     }
 }

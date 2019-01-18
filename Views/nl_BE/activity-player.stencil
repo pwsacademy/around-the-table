@@ -45,6 +45,16 @@
             <div class="alert alert-warning">
                 <strong>Opgelet:</strong> Dit spel is reeds volzet. Je kan nog plaatsen aanvragen en bent dan beschikbaar als reservespeler.
             </div>
+        {% elif userHasAutoApprove %}
+            <p>
+                Omdat dit je eerste inschrijving is bij deze organisator voor de komende maand, kan je meteen inschrijven
+                (op voorwaarde dat er nog voldoende plaats is).
+            </p>
+        {% else %}
+            <p>
+                Omdat je al een inschrijving hebt bij deze organisator voor de komende maand, zal je inschrijving eerst
+                moeten goedgekeurd worden door de organisator.
+            </p>
         {% endif %}
     {% endif %}
     <!-- Contact the host -->

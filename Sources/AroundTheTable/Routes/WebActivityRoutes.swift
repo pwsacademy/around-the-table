@@ -54,18 +54,19 @@ extension Routes {
             return next()
         }
         let base = try baseViewModel(for: request)
-        if activity.isCancelled || activity.date.compare(Date()) == .orderedAscending {
-            try response.render("activity-closed", with: ActivityViewModel(base: base,
-                                                                           user: user,
-                                                                           activity: activity))
-        } else if user == activity.host {
-            try response.render("activity-host", with: ActivityViewModel(base: base,
-                                                                         user: user,
-                                                                         activity: activity))
+        let hosts: [User]
+        if let user = user {
+            hosts = try persistence.hostsJoined(by: user)
         } else {
-            try response.render("activity-player", with: ActivityViewModel(base: base,
-                                                                           user: user,
-                                                                           activity: activity))
+            hosts = []
+        }
+        let viewModel = try ActivityViewModel(base: base, activity: activity, user: user, hostsUserHasJoined: hosts)
+        if activity.isCancelled || activity.date.compare(Date()) == .orderedAscending {
+            try response.render("activity-closed", with: viewModel)
+        } else if user == activity.host {
+            try response.render("activity-host", with: viewModel)
+        } else {
+            try response.render("activity-player", with: viewModel)
         }
         next()
     }
