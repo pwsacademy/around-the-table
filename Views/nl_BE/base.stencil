@@ -24,7 +24,7 @@
         .navbar, .btn-primary, footer {
             background-color: #2185D0;
         }
-        .page-link {
+        .page-link, .page-link:focus, .page-link:hover {
             color: #2185D0;
         }
         .page-item.active .page-link {
@@ -63,9 +63,15 @@
         }
         .badged-image .badge {
             position: absolute;
-            top: 10px;
-            left: 10px;
-        }   
+            top: 5px;
+            left: 5px;
+        }
+        @media(min-width: 576px) {
+            .badged-image .badge {
+                top: 10px;
+                left: 10px;
+            }
+        }
         /* List items (activities, notifications, messages, sponsors, ...) */
         .item {
             display: flex;
@@ -79,7 +85,7 @@
         .item .body p:last-child {
             margin-bottom: 0;
         }
-        @media(min-width:768px) {
+        @media(min-width: 768px) {
             .item.autoborder {
                 border: 1px solid rgba(0, 0, 0, 0.125);
             }
