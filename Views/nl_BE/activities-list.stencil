@@ -1,12 +1,13 @@
 {% extends "base.stencil" %}
 
 {% block title %}
+    {{ block.super }} -
     {% if sort == "new" %}
-        {{ block.super }} - Nieuwste spellen
+         Nieuwste spellen
     {% elif sort == "upcoming" %}
-        {{ block.super }} - Binnenkort op de agenda
+        Binnenkort op de agenda
     {% elif sort == "near-me" %}
-        {{ block.super }} - In mijn buurt
+        In mijn buurt
     {% endif %}
 {% endblock %}
 
