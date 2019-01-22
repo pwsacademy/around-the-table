@@ -1,3 +1,5 @@
+import HTMLEntities
+
 /**
  View model for **user-notifications.stencil**.
  */
@@ -18,7 +20,7 @@ struct NotificationsViewModel: Codable {
             longDate = notification.timestamp.formatted(format: "EEEE d MMMM")
             shortDate = notification.timestamp.formatted(format: "E d MMMM") // abbreviated weekday
             time = notification.timestamp.formatted(timeStyle: .short)
-            message = notification.message
+            message = notification.message.htmlEscape()
             link = notification.link
             isRead = notification.isRead
         }

@@ -1,3 +1,5 @@
+import HTMLEntities
+
 /**
  View model for **user-conversation.stencil**.
  */
@@ -16,7 +18,7 @@ struct ConversationViewModel: Codable {
                 throw log(ServerError.unpersistedEntity)
             }
             self.id = id
-            self.name = user.name
+            self.name = user.name.htmlEscape()
             self.picture = user.picture?.absoluteString ?? Settings.defaultProfilePicture
         }
     }
@@ -42,7 +44,7 @@ struct ConversationViewModel: Codable {
             self.longDate = message.timestamp.formatted(format: "EEEE d MMMM")
             self.shortDate = message.timestamp.formatted(format: "E d MMMM") // abbreviated weekday
             self.time = message.timestamp.formatted(timeStyle: .short)
-            self.text = message.text
+            self.text = message.text.htmlEscape()
         }
     }
     

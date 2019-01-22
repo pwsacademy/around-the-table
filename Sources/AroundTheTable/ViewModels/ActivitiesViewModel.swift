@@ -1,4 +1,5 @@
 import Foundation
+import HTMLEntities
 
 /**
  View model for **activities-grid.stencil** and **activities-list.stencil**.
@@ -14,7 +15,7 @@ struct ActivitiesViewModel: Codable {
         let name: String
         
         init(_ user: User) {
-            self.name = user.name
+            self.name = user.name.htmlEscape()
         }
     }
     

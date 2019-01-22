@@ -1,4 +1,5 @@
 import Foundation
+import HTMLEntities
 
 /**
  View model for **activity-closed.stencil**, **activity-host.stencil** and **activity-player.stencil**.
@@ -18,7 +19,7 @@ struct ActivityViewModel: Codable {
                 throw log(ServerError.unpersistedEntity)
             }
             self.id = id
-            self.name = user.name
+            self.name = user.name.htmlEscape()
             self.picture = user.picture?.absoluteString ?? Settings.defaultProfilePicture
         }
     }
@@ -75,7 +76,7 @@ struct ActivityViewModel: Codable {
             self.deadlineHasPassed = activity.deadline.compare(Date()) == .orderedAscending
             self.location = activity.location
             self.distance = Int(ceil(distance / 1000))
-            self.info = activity.info
+            self.info = activity.info.htmlEscape()
             self.isCancelled = activity.isCancelled
         }
     }

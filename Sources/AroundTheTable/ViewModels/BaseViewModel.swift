@@ -1,3 +1,5 @@
+import HTMLEntities
+
 /**
  View model for **base.stencil**.
  */
@@ -15,7 +17,7 @@ struct BaseViewModel: Codable {
                 throw log(ServerError.unpersistedEntity)
             }
             self.id = id
-            self.name = user.name
+            self.name = user.name.htmlEscape()
             self.picture = user.picture?.absoluteString ?? Settings.defaultProfilePicture
             self.location = user.location
         }

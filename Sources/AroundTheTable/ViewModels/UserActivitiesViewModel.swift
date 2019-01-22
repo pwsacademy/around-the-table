@@ -1,4 +1,5 @@
 import Foundation
+import HTMLEntities
 
 /**
  View model for **user-activities.stencil**.
@@ -13,7 +14,7 @@ struct UserActivitiesViewModel: Codable {
         let picture: String
         
         init(_ user: User) {
-            self.name = user.name
+            self.name = user.name.htmlEscape()
             self.picture = user.picture?.absoluteString ?? Settings.defaultProfilePicture
         }
     }

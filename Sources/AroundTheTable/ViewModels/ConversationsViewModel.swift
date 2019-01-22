@@ -1,3 +1,5 @@
+import HTMLEntities
+
 /**
  View model for **user-conversations.stencil**.
  */
@@ -18,7 +20,7 @@ struct ConversationsViewModel: Codable {
                     throw log(ServerError.unpersistedEntity)
                 }
                 self.id = id
-                self.name = user.name
+                self.name = user.name.htmlEscape()
                 self.picture = user.picture?.absoluteString ?? Settings.defaultProfilePicture
             }
         }
@@ -38,7 +40,7 @@ struct ConversationsViewModel: Codable {
             guard !conversation.messages.isEmpty else {
                 throw log(ServerError.invalidState)
             }
-            latestMessage = conversation.messages.last!.text
+            latestMessage = conversation.messages.last!.text.htmlEscape()
         }
     }
 

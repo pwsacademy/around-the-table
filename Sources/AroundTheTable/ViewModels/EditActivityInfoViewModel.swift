@@ -1,3 +1,5 @@
+import HTMLEntities
+
 /**
  View model for **edit-activity-info.stencil**.
  */
@@ -13,6 +15,6 @@ struct EditActivityInfoViewModel: Codable {
         }
         self.base = base
         self.id = id
-        self.info = activity.info
+        self.info = activity.info.htmlEscape()
     }
 }

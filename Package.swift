@@ -6,6 +6,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/IBM-Swift/Health.git", .upToNextMinor(from: "1.0.0")),
         .package(url: "https://github.com/IBM-Swift/HeliumLogger.git", .upToNextMinor(from: "1.8.0")),
+        .package(url: "https://github.com/IBM-Swift/swift-html-entities", .upToNextMinor(from: "3.0.0")),
         .package(url: "https://github.com/IBM-Swift/Kitura.git", .upToNextMinor(from: "2.6.0")),
         .package(url: "https://github.com/IBM-Swift/Kitura-CredentialsFacebook.git", .upToNextMinor(from: "2.2.0")),
         .package(url: "https://github.com/IBM-Swift/Kitura-Session.git", .upToNextMinor(from: "3.3.0")),
@@ -21,6 +22,7 @@ let package = Package(
         .target(name: "AroundTheTable", dependencies: [
             "Health",
             "HeliumLogger",
+            "HTMLEntities",
             "Kitura",
             "CredentialsFacebook",
             "KituraSession",
