@@ -57,8 +57,8 @@
             width: 40px;
             height: 40px;
         }
-        /* Badged images */
-        .badged-image {
+        /* Badged images and icons */
+        .badged-image, .badged-icon {
             position: relative;
         }
         .badged-image .badge {
@@ -71,6 +71,16 @@
                 top: 10px;
                 left: 10px;
             }
+        }
+        .badged-icon i {
+            color: white;
+        }
+        .badged-icon .badge {
+            position: absolute;
+            right: -5px;
+            top: -5px;
+            background-color: #fa3e3e;
+            color: white;
         }
         /* List items (activities, notifications, messages, sponsors, ...) */
         .item {
@@ -153,22 +163,36 @@
         <!-- Collapsed navbar -->
         <nav class="d-md-none navbar navbar-dark">
             <a class="navbar-brand" href="/web/home">Rond De Tafel</a>
-            <ul class="navbar-nav ml-auto mr-3">
-                {% if base.unreadNotificationCount > 0 %}
+            {% if base.user %}
+                <ul class="navbar-nav ml-auto mr-3">
                     <li class="nav-item">
                         <a class="nav-link" href="/web/user/notifications">
-                            <i class="fa fa-bell"></i>
+                            {% if base.unreadNotificationCount > 0 %}
+                                <div class="badged-icon">
+                                    <i class="fa fa-bell"></i>
+                                    <span class="badge">{{ base.unreadNotificationCount }}</span>
+                                </div>
+                            {% else %}
+                                <i class="fa fa-bell"></i>
+                            {% endif %}
                         </a>
                     </li>
-                {% endif %}
-                {% if base.unreadMessageCount > 0 %}
+                </ul>
+                <ul class="navbar-nav mr-3">
                     <li class="nav-item">
                         <a class="nav-link" href="/web/user/conversations">
-                            <i class="fa fa-envelope"></i>
+                            {% if base.unreadMessageCount > 0 %}
+                                <div class="badged-icon">
+                                    <i class="fa fa-envelope"></i>
+                                    <span class="badge">{{ base.unreadMessageCount }}</span>
+                                </div>
+                            {% else %}
+                                <i class="fa fa-envelope"></i>
+                            {% endif %}
                         </a>
                     </li>
-                {% endif %}
-            </ul>
+                </ul>
+            {% endif %}
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -183,22 +207,6 @@
                     {% if base.user %}
                         <li class="nav-item">
                             <a class="nav-link" href="/web/user/activities">Mijn spellen</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/web/user/notifications">
-                                Meldingen
-                                {% if base.unreadNotificationCount > 0 %}
-                                    ({{ base.unreadNotificationCount }})
-                                {% endif %}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/web/user/conversations">
-                                Berichten
-                                {% if base.unreadMessageCount > 0 %}
-                                    ({{ base.unreadMessageCount }})
-                                {% endif %}
-                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/web/user/settings">Instellingen</a>
@@ -228,38 +236,36 @@
             </ul>
             <ul class="navbar-nav">
                 {% if base.user %}
-                    {% if base.unreadNotificationCount > 0 %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="/web/user/notifications">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/web/user/notifications">
+                            {% if base.unreadNotificationCount > 0 %}
+                                <div class="badged-icon">
+                                    <i class="fa fa-bell"></i>
+                                    <span class="badge">{{ base.unreadNotificationCount }}</span>
+                                </div>
+                            {% else %}
                                 <i class="fa fa-bell"></i>
-                            </a>
-                        </li>
-                    {% endif %}
-                    {% if base.unreadMessageCount > 0 %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="/web/user/conversations">
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/web/user/conversations">
+                            {% if base.unreadMessageCount > 0 %}
+                                <div class="badged-icon">
+                                    <i class="fa fa-envelope"></i>
+                                    <span class="badge">{{ base.unreadMessageCount }}</span>
+                                </div>
+                            {% else %}
                                 <i class="fa fa-envelope"></i>
-                            </a>
-                        </li>
-                    {% endif %}
+                            {% endif %}
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
                             {{ base.user.name }}
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <a class="dropdown-item" href="/web/user/activities">Mijn spellen</a>
-                            <a class="dropdown-item" href="/web/user/notifications">
-                                Meldingen
-                                {% if base.unreadNotificationCount > 0 %}
-                                    ({{ base.unreadNotificationCount }})
-                                {% endif %}
-                            </a>
-                            <a class="dropdown-item" href="/web/user/conversations">
-                                Berichten
-                                {% if base.unreadMessageCount > 0 %}
-                                    ({{ base.unreadMessageCount }})
-                                {% endif %}
-                            </a>
                             <a class="dropdown-item" href="/web/user/settings">Instellingen</a>
                             <a class="dropdown-item" href="/authentication/signout">Afmelden</a>
                         </div>
