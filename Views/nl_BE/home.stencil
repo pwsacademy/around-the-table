@@ -3,31 +3,97 @@
 {% block title %}{{ block.super }}{% endblock %}
 
 {% block content %}
-<h2>Welkom</h2>
+<h2>Welkom bij Board Game Nights</h2>
+<p><strong>Wat is Board Game Nights?</strong><p>
 <p>
-    Welkom bij Rond De Tafel. Deze site heeft als doel mensen samen te brengen rond de speltafel.
-    Zoek je medespelers voor een spel dat maar niet op tafel raakt? Wens je een bepaald spel uit te proberen?
-    Of wil je gewoon wat nieuwe spellen en mensen leren kennen? Hier vind je zeker wat je zoekt!
-</p>
-<h3>Spellen</h3>
-<p>
-    Op deze pagina vind je de spellen die aangeboden worden.
-    Deze spellen zijn privé-initiatieven en gaan door bij de organisator thuis, in een spellenclub of in een spellencafé.
-    De organisator voorziet speluitleg. Je hoeft het spel dus niet te kennen om deel te nemen.
+    Board Game Nights werd in oktober 2012 opgericht in Gent.
+    De bedoeling van ons initiatief is om zoveel mogelijk nieuwe mensen bij elkaar te brengen
+    om samen de wondere wereld van bord- en kaartspellen te ontdekken.
 </p>
 <p>
-    Op de pagina van elk spel kan je één of meerdere stoeltjes aanvragen.
-    Wanneer je aanvraag is goedgekeurd, ontvang je een bericht op de <a href="/web/user/messages">berichten-pagina</a>.
-    Het adres wordt dan ook zichtbaar op de pagina van het spel, zodat je weet waar je verwacht wordt.
+    We verschillen van een traditionele spellenclub in die zin dat de spelavonden meestal plaatsvinden
+    bij een van de organisatoren thuis. Zo kun je op een laagdrempelige en gezellige manier met elkaar kennismaken!
 </p>
-<h3>Organiseer</h3>
+<p><strong>Super! Ik wil deelnemen aan een spelavond! Hoe werkt het?</strong></p>
 <p>
-    Niet gevonden wat je zoekt? Organiseer dan gewoon zelf een spel!
+    Inschrijven op een van onze spelavonden is erg eenvoudig:
+</p>
+<ol>
+    {% if not base.user %}
+        <li>
+            <a href="/authentication/welcome?redirect=%2Fweb%2Fhome">Meld je aan</a>.
+            Dat kan heel eenvoudig via Facebook of met je e-mailadres.
+        </li>
+    {% endif %}
+    <li>
+        Neem een kijkje in het <a href="/web/activities">spelaanbod</a>.
+        Daar vind je in een wip terug welke spelavonden er bij jou in de buurt georganiseerd worden.
+    </li>
+    <li>
+        Kies een spel uit het aanbod.
+        Je hoeft het spel helemaal niet te kennen om deel te nemen; de organisator voorziet speluitleg.
+    </li>
+    <li>
+        Selecteer het aantal spelers waarmee je je wil inschrijven, en doe een aanvraag!
+    </li>
+</ol>
+<p>
+    <em>Let op</em>: er zijn een aantal <a href="/web/rules">spelregels</a> verbonden aan je deelname!
+    Gelieve deze te lezen voordat je je inschrijft op een spelavond!
+</p>   
+<p><strong>Super! Ik wil een spelavond organiseren! Hoe werkt het?</strong></p>
+<p>
+    Via dit platform kun ook jij makkelijk een Board Game Night bij je thuis organiseren:
+</p>
+<ol>
+    {% if not base.user %}
+        <li>
+            <a href="/authentication/welcome?redirect=%2Fweb%2Fhome">Meld je aan</a>.
+            Dat kan heel eenvoudig via Facebook of met je e-mailadres.
+        </li>
+    {% endif %}
+    <li>
+        Vul je adresgegevens in bij je <a href="/web/user/settings">instellingen</a>.
+        Geen zorgen: je adres wordt enkel zichtbaar gemaakt voor de personen die zich inschrijven op je spelavond,
+        en wordt ook niet met derde partijen gedeeld. Personen die niet ingeschreven zijn,
+        zien enkel een benadering van je exacte adres.
+    </li>
+    <li>
+        Ga naar <a href="/web/host">Organiseer</a> en kies naar het spel dat je graag op tafel zou leggen.
+    </li>
+    <li>
+        Vul de gevraagde informatie in en maak je spelavond aan.
+    </li>
+</ol>
+<p>
+    Nu kun je achterover leunen en wachten tot er zich spelers inschrijven!
+    Je wordt hiervan op de hoogte gebracht via een <a href="/web/user/notifications">melding</a>.
+    Makkelijk, toch?
 </p>
 <p>
-    Het duurt maar een minuutje om een spel aan te maken.
-    Je kiest gewoon het spel dat je wil spelen en geeft op waar en wanneer het door gaat.
-    Van zodra je spel is aangemaakt, verschijnt het in het overzicht.
+    Via het interne berichtensysteem kunnen spelers contact met je opnemen.
+    Hou dus zeker je ook je <a href="/web/user/conversations">berichten</a> in het oog!
+</p>
+<p><strong>Wil je meehelpen?</strong></p>
+<ul>
+    <li>
+        Ben je programmeur of webdesigner?
+    </li>
+    <li>
+        Ben je een geboren organisator en wil je zelf graag verantwoordelijk zijn voor de uitbouw van
+        een netwerk van gezellige spelavonden met mensen in jouw stad of provincie?
+    </li>
+    <li>
+        Baat je zelf een spellenclub uit en ben je benieuwd naar manieren om samen te werken?
+    </li>
+    <li>
+        Heb je een ander origineel idee om onze community te doen groeien?
+    </li>
+</ul>
+<p>
+    Dan zijn we op zoek naar jou!
+    Als je net als wij enthousiast bent over dit initiatief en je graag wil ontdekken hoe je je steentje eraan kan bijdragen,
+    neem dan contact op via onze <a href="https://www.facebook.com/groups/356605444429627/">Facebook-groep</a>.
 </p>
 <p>
     Veel spelplezier!

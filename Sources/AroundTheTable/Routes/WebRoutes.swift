@@ -14,7 +14,7 @@ extension Routes {
         router.get("about", handler: about)
         router.get("sponsors", handler: sponsors)
         router.get("faq", handler: faq)
-        router.get("terms-of-use", handler: termsOfUse)
+        router.get("rules", handler: rules)
         router.get("activities", handler: activities)
         
         // Delegate the host, activity and user categories to subrouters.
@@ -61,11 +61,11 @@ extension Routes {
     }
     
     /**
-     Shows the terms of use.
+     Shows the site rules.
      */
-    private func termsOfUse(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
+    private func rules(request: RouterRequest, response: RouterResponse, next: @escaping () -> Void) throws -> Void {
         let base = try baseViewModel(for: request)
-        try response.render("terms-of-use", with: base, forKey: "base")
+        try response.render("rules", with: base, forKey: "base")
         next()
     }
     

@@ -8,8 +8,10 @@
     <img class="avatar rounded-circle mr-2" src="{{ picture }}">
     {{ name }}
 </p>
-<h3>Gebruiksvoorwaarden</h3>
-{% include "snippets/terms-of-use.stencil" %}
+<h3>Spelregels</h3>
+{% include "snippets/rules.stencil" %}
+<h3>Privacyverklaring</h3>
+{% include "snippets/privacy.stencil" %}
 <form method="post" action="/authentication/facebook/signup">
     <div class="form-group">
         <div class="form-check">
@@ -23,7 +25,7 @@
 
 {% block additional-body %}
 <script>
-// Enable the submit button only when the user agrees to the terms of use.
+// Enable the submit button only when the user agrees to the site rules.
 $("#agree").on("change", function() {
     if (this.checked) {
         $("#submit").removeAttr("disabled");

@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <title>{% block title %}Rond De Tafel{% endblock %}</title>
+    <title>{% block title %}Board Game Nights{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Steven Van Impe">
-    <meta name="description" content="Rond De Tafel brengt mensen en spellen samen. Vind spellen, zoek medespelers en maak nieuwe vrienden.">
-    <meta property="og:site_name" content="Rond De Tafel">
+    <meta name="description" content="Speel de leukste gezelschapsspellen, bij jou in de buurt!">
+    <meta property="og:site_name" content="Board Game Nights">
     <meta property="og:type" content="website">
     <meta property="fb:app_id" content="{{ base.facebook.app }}">
-    <meta property="og:description" content="Rond De Tafel brengt mensen en spellen samen. Vind spellen, zoek medespelers en maak nieuwe vrienden.">
+    <meta property="og:description" content="Speel de leukste gezelschapsspellen, bij jou in de buurt!">
     <meta property="og:url" content="{{ base.opengraph.url }}">
+    <!-- TODO: Update images -->
     {% block opengraph %}
-        <meta property="og:title" content="Rond De tafel">   
-        <meta property="og:image" content="{{ base.opengraph.image }}">
+        <meta property="og:title" content="Board Game Nights">   
+        <!-- <meta property="og:image" content="{{ base.opengraph.image }}"> -->
     {% endblock %}
-    <link href="/public/img/favicon.png" rel="icon" type="image/png">
+    <!-- <link href="/public/img/favicon.png" rel="icon" type="image/png"> -->
     <link href="/public/css/bootstrap.min.css" rel="stylesheet">
     <link href="/public/css/font-awesome.min.css" rel="stylesheet">
     <link href="/public/css/pikaday.min.css" rel="stylesheet">
@@ -162,7 +163,8 @@
     <div class="wrapper">
         <!-- Collapsed navbar -->
         <nav class="d-md-none navbar navbar-dark">
-            <a class="navbar-brand" href="/web/home">Rond De Tafel</a>
+            <a class="d-sm-none navbar-brand" href="/web/home">BGN</a>
+            <a class="d-none d-sm-flex navbar-brand" href="/web/home">Board Game Nights</a>
             {% if base.user %}
                 <ul class="navbar-nav ml-auto mr-3">
                     <li class="nav-item">
@@ -199,14 +201,14 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/web/activities">Spellen</a>
+                        <a class="nav-link" href="/web/activities">Speel mee</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/web/host">Organiseer</a>
                     </li>
                     {% if base.user %}
                         <li class="nav-item">
-                            <a class="nav-link" href="/web/user/activities">Mijn spellen</a>
+                            <a class="nav-link" href="/web/user/activities">Mijn agenda</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/web/user/settings">Instellingen</a>
@@ -225,10 +227,10 @@
         </nav>
         <!-- Full navbar -->
         <nav class="d-none d-md-flex navbar navbar-expand navbar-dark">
-            <a class="navbar-brand" href="/web/home">Rond De Tafel</a>
+            <a class="navbar-brand" href="/web/home">Board Game Nights</a>
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/web/activities">Spellen</a>
+                    <a class="nav-link" href="/web/activities">Speel mee</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/web/host">Organiseer</a>
@@ -265,7 +267,7 @@
                             {{ base.user.name }}
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="/web/user/activities">Mijn spellen</a>
+                            <a class="dropdown-item" href="/web/user/activities">Mijn agenda</a>
                             <a class="dropdown-item" href="/web/user/settings">Instellingen</a>
                             <a class="dropdown-item" href="/authentication/signout">Afmelden</a>
                         </div>
@@ -308,6 +310,14 @@
                 {% endif %}
             </div>
         </footer> -->
+        <!-- Temporary simpler footer -->
+        <div class="container py-3 text-center">
+            © 2019 - Board Game Nights<br>
+            <a href="/web/faq">Veelgestelde vragen</a> -
+            <a href="/web/rules">Spelregels</a><br>
+            <a href="https://github.com/svanimpe/around-the-table.git">Open Source</a> -
+            <a href="https://boardgamegeek.com">Speldata van BoardGameGeek
+        </div>
     </div>
     <!-- Scripts -->
     <script src="/public/js/popper.min.js"></script>

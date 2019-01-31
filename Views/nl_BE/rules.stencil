@@ -1,0 +1,8 @@
+{% extends "base.stencil" %}
+
+{% block title %}{{ block.super }} - Spelregels{% endblock %}
+
+{% block content %}
+<h2>Spelregels</h2>
+{% include "snippets/rules.stencil" %}
+{% endblock %}

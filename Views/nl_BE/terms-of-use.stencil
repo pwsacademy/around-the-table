@@ -1,8 +1,0 @@
-{% extends "base.stencil" %}
-
-{% block title %}{{ block.super }} - Gebruiksvoorwaarden{% endblock %}
-
-{% block content %}
-<h2>Gebruiksvoorwaarden</h2>
-{% include "snippets/terms-of-use.stencil" %}
-{% endblock %}

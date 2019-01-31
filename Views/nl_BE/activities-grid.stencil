@@ -77,13 +77,6 @@
 {% elif sort == "near-me" %}
     <h2>In mijn buurt</h2>
 {% endif %}
-<!-- Link to user activities -->
-{% if base.user %}
-    <div class="alert alert-info">
-        Spellen die je zelf organiseert worden niet getoond op deze pagina.
-        Deze spellen zijn te vinden in je persoonlijk menu, onder <a class="alert-link" href="/web/user/activities">Mijn spellen</a>.
-    </div>
-{% endif %}
 <!-- Check if a location is set when showing activities near the user -->
 {% if sort == "near-me" and not base.user.location %}
     <div class="alert alert-warning">
@@ -133,4 +126,8 @@
 {% else %}
     <p>Geen spellen gepland.</p>
 {% endif %}
+<p>
+    Dit overzicht toont enkel de spellen die de komende maand op de agenda staan.
+    Spellen die later ingepland zijn, verschijnen automatisch één maand op voorhand.
+</p>
 {% endblock %}

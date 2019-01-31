@@ -1,5 +1,5 @@
 applications:
-- name: AroundTheTable
+- name: BoardGameNights
   memory: 256M
   command: Main
   buildpack: swift_buildpack

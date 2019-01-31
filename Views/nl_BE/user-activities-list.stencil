@@ -1,6 +1,6 @@
 {% extends "base.stencil" %}
 
-{% block title %}{{ block.super }} - Mijn spellen{% endblock %}
+{% block title %}{{ block.super }} - Mijn agenda{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-center">
