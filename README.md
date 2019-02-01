@@ -34,22 +34,20 @@ We value our privacy and respect yours. We do not store any more information tha
 
 ### Not-for-profit
 
-Around The Table is a not-for-profit project. We rely on donations from sponsors and users to fund our work. This lets us keep the platform free of charge and free of ads.
+Around The Table is a not-for-profit project. Our platform is free of charge and free of ads.
 
 <p align="center">
     <img src="Documentation/README/screenshot.png" alt="A screenshot from our Flemish/Dutch site">
 </p>
 
-## Show your support
+## Help out
 
 There's many more [features](https://github.com/svanimpe/around-the-table/labels/Feature) we'd like to implement. If you're a developer, we invite you to help out. Visit our [wiki](https://github.com/svanimpe/around-the-table/wiki) to get started.
-
-If you're not a developer and want to show your support, we welcome your donations through our developer's [Patreon](https://www.patreon.com/svanimpe) page.
 
 ## Communities
 
 Around The Table is used by the following communities:
 
-* [Rond De Tafel](https://www.rond-de-tafel.be)<br>Dutch-speaking community in Belgium and The Netherlands.
+* [Board Game Nights](https://boardgamenights.eu-gb.mybluemix.net)<br>Gaming community in Belgium.
 
 If you're interested in using Around The Table for your gaming community, please read our [license information](https://github.com/svanimpe/around-the-table/wiki/License-information) first.
