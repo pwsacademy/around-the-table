@@ -25,8 +25,7 @@ struct EditActivityDateTimeForm: Codable {
         components.timeZone = Settings.timeZone
         guard components.isValidDate,
               let date = components.date,
-              // The date must be in the future.
-              date.compare(Date()) == .orderedDescending else {
+              date > Date() else {
             return nil
         }
         return date

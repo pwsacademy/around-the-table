@@ -61,7 +61,7 @@ extension Routes {
             hosts = []
         }
         let viewModel = try ActivityViewModel(base: base, activity: activity, user: user, hostsUserHasJoined: hosts)
-        if activity.isCancelled || activity.date.compare(Date()) == .orderedAscending {
+        if activity.isCancelled || activity.date < Date() {
             try response.render("activity-closed", with: viewModel)
         } else if user == activity.host {
             try response.render("activity-host", with: viewModel)
@@ -83,7 +83,7 @@ extension Routes {
               let activity = try persistence.activity(withID: id, measuredFrom: .default),
               !activity.isCancelled,
               // Past activities cannot be cancelled.
-              activity.date.compare(Date()) == .orderedDescending,
+              activity.date > Date(),
               // Only the host can cancel an activity.
               activity.host == user else {
             response.status(.badRequest)
@@ -109,7 +109,7 @@ extension Routes {
               let id = Int(idString),
               let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
-              activity.date.compare(Date()) == .orderedDescending,
+              activity.date > Date(),
               !activity.isCancelled,
               // Only the host can edit an activity.
               activity.host == user else {
@@ -132,7 +132,7 @@ extension Routes {
               let id = Int(idString),
               let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
-              activity.date.compare(Date()) == .orderedDescending,
+              activity.date > Date(),
               !activity.isCancelled,
               // Only the host can edit an activity.
               activity.host == user else {
@@ -161,7 +161,7 @@ extension Routes {
               let id = Int(idString),
               let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
-              activity.date.compare(Date()) == .orderedDescending,
+              activity.date > Date(),
               !activity.isCancelled,
               // Only the host can edit an activity.
               activity.host == user else {
@@ -184,7 +184,7 @@ extension Routes {
               let id = Int(idString),
               let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
-              activity.date.compare(Date()) == .orderedDescending,
+              activity.date > Date(),
               !activity.isCancelled,
               // Only the host can edit an activity.
               activity.host == user else {
@@ -219,7 +219,7 @@ extension Routes {
               let id = Int(idString),
               let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
-              activity.date.compare(Date()) == .orderedDescending,
+              activity.date > Date(),
               !activity.isCancelled,
               // Only the host can edit an activity.
               activity.host == user else {
@@ -242,7 +242,7 @@ extension Routes {
               let id = Int(idString),
               let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
-              activity.date.compare(Date()) == .orderedDescending,
+              activity.date > Date(),
               !activity.isCancelled,
               // Only the host can edit an activity.
               activity.host == user else {
@@ -281,7 +281,7 @@ extension Routes {
               let id = Int(idString),
               let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
-              activity.date.compare(Date()) == .orderedDescending,
+              activity.date > Date(),
               !activity.isCancelled,
               // Only the host can edit an activity.
               activity.host == user else {
@@ -304,7 +304,7 @@ extension Routes {
               let id = Int(idString),
               let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
-              activity.date.compare(Date()) == .orderedDescending,
+              activity.date > Date(),
               !activity.isCancelled,
               // Only the host can edit an activity.
               activity.host == user else {
@@ -336,7 +336,7 @@ extension Routes {
               let id = Int(idString),
               let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
-              activity.date.compare(Date()) == .orderedDescending,
+              activity.date > Date(),
               !activity.isCancelled,
               // Only the host can edit an activity.
               activity.host == user else {
@@ -359,7 +359,7 @@ extension Routes {
               let id = Int(idString),
               let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // Past or cancelled activities cannot be editing.
-              activity.date.compare(Date()) == .orderedDescending,
+              activity.date > Date(),
               !activity.isCancelled,
               // Only the host can edit an activity.
               activity.host == user else {
@@ -386,7 +386,7 @@ extension Routes {
               let id = Int(idString),
               let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // You can't register for past or cancelled activities.
-              activity.date.compare(Date()) == .orderedDescending,
+              activity.date > Date(),
               !activity.isCancelled,
               // A host can't register for his own activities.
               user != activity.host else {
@@ -430,7 +430,7 @@ extension Routes {
               let id = Int(idString),
               let activity = try persistence.activity(withID: id, measuredFrom: .default),
               // You can't edit registrations for past or cancelled activities.
-              activity.date.compare(Date()) == .orderedDescending,
+              activity.date > Date(),
               !activity.isCancelled else {
             response.status(.badRequest)
             return next()

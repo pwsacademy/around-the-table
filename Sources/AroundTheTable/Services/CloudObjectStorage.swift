@@ -45,7 +45,7 @@ class CloudObjectStorage {
             return false
         }
         let adjustedExpirationDate = Date(timeIntervalSince1970: Double(token.expiration - 60))
-        return adjustedExpirationDate.compare(Date()) == .orderedDescending
+        return adjustedExpirationDate > Date()
     }
     
     /**
