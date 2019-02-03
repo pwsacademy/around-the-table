@@ -1,6 +1,6 @@
 <!--
     Snippet that includes general registration information about an activity.
-    This information is included in every version of the activity page if the activity is not closed.
+    This information is included in activity-player.stencil and activity-host.stencil.
 -->
 <!-- Minimum player count -->
 {% if not activity.requiredPlayerCountReached %}
@@ -17,14 +17,4 @@
     <p>Er is nog 1 plaats vrij.</p>
 {% else %}
     <p>Er zijn nog {{ activity.availableSeats }} plaatsen vrij.</p>
-{% endif %}
-<!-- Deadline -->
-{% if activity.deadlineHasPassed %}
-    <p>Inschrijven voor dit spel is niet meer mogelijk.</p>
-{% elif base.user %}
-    <p>Inschrijven is mogelijk tot {{ activity.deadlineDate }} om {{ activity.deadlineTime }}.</p>
-{% else %} 
-    <div class="alert alert-warning">
-        Om in te schrijven moet je eerst <a class="alert-link" href="/authentication/welcome?redirect=%2Fweb%2Factivity%2F{{ activity.id }}">aanmelden</a>.
-    </div>
 {% endif %}

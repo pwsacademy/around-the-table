@@ -102,6 +102,7 @@ struct ActivityViewModel: Codable {
     let userIsHost: Bool
     let userIsPlayer: Bool
     let userIsPending: Bool
+    let registrationHasOpened: Bool
     let userHasAutoApprove: Bool
     
     init(base: BaseViewModel, activity: Activity, user: User?, hostsUserHasJoined: [User]) throws {
@@ -112,6 +113,7 @@ struct ActivityViewModel: Codable {
         userIsHost = activity.host == user
         userIsPlayer = activity.approvedRegistrations.contains { $0.player == user }
         userIsPending = activity.pendingRegistrations.contains { $0.player == user }
+        registrationHasOpened = activity.date.subtracting30Days < Date()
         userHasAutoApprove = !hostsUserHasJoined.contains(activity.host)
         // TODO: https://bugs.swift.org/browse/SR-944
         // && !userIsHost && !userIsPending

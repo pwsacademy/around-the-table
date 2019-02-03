@@ -38,7 +38,7 @@
     {% include "snippets/deadline-options.stencil" %}
     <!-- Address -->
     <h3>Adres</h3>
-    <p>Deze adresgegevens worden getoond aan de spelers wiens aanvraag jij hebt goedkeurd.</p>
+    <p>Deze adresgegevens worden getoond aan de spelers die ingeschreven zijn voor het spel.</p>
     <script>
         var addressPickerEnablesSubmit = true;
         var addressPickerIncludesPrefillCheckbox = true;

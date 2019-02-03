@@ -11,65 +11,79 @@
 <!-- General information -->
 {% include "snippets/activity-general.stencil" %}
 <!-- Registrations -->
-<h3>Aanvragen</h3>
+<h3>Inschrijvingen</h3>
 <!-- General information -->
 {% include "snippets/activity-general-registration.stencil" %}
-<!-- Approved -->
-<h4 class="mb-3">Goedgekeurd</h4>
-{% if approvedRegistrations %}
-    {% for registration in approvedRegistrations %}
-        <form method="post" action="/web/activity/{{ activity.id }}/registrations/{{ registration.player.id }}" style="float: right">
-            <input name="cancelled" type="hidden" value="true">
-            <button class="btn btn-danger responsive" type="submit">
-                <i class="fa fa-times"></i><span class="d-none d-md-inline"> Annuleren</span>
-            </button>
-        </form>
-        <p>
-            <img class="avatar rounded-circle mr-2" src="{{ registration.player.picture }}">
-            {{ registration.player.name }}
-            {% if registration.seats == 2 %}
-                en 1 extra speler
-            {% elif registration.seats > 2 %}
-                en {{ registration.seats|previous }} extra spelers
-            {% endif %}
-        </p>
-    {% endfor %}
+<!-- Additional registration information -->
+{% if activity.deadlineHasPassed %}
+    <p>Inschrijven voor dit spel is niet meer mogelijk.</p>
 {% else %}
-    <p>Je hebt nog geen aanvragen goedgekeurd.</p>
+    <p>De deadline voor inschrijvingen is {{ activity.deadlineDate }} om {{ activity.deadlineTime }}.</p>
 {% endif %}
-<!-- Pending -->
-<h4 class="mb-3">Ontvangen</h4>
-{% if pendingRegistrations %}
-    {% for registration in pendingRegistrations %}
-        <form method="post" action="/web/activity/{{ activity.id }}/registrations/{{ registration.player.id }}" style="float: right">
-            <input name="approved" type="hidden" value="true">
-            {% if registration.willCauseOverbooking %}
-                <button class="btn btn-warning" type="submit">
-                    <i class="fa fa-check"></i><span class="d-none d-md-inline"> Goedkeuren</span>
-                </button>
-            {% else %}
-                <button class="btn btn-success" type="submit">
-                    <i class="fa fa-check"></i><span class="d-none d-md-inline"> Goedkeuren</span>
-                </button>
-            {% endif %}
-        </form>
-        <p>
-            <img class="avatar rounded-circle mr-2" src="{{ registration.player.picture }}">
-            {{ registration.player.name }}
-            {% if registration.seats == 2 %}
-                en 1 extra speler
-            {% elif registration.seats > 2 %}
-                en {{ registration.seats|previous }} extra spelers
-            {% endif %}
-        </p>
-        {% if registration.willCauseOverbooking %}
-            <div class="alert alert-warning">
-                <strong>Opgelet:</strong> Deze aanvraag goedkeuren leidt tot overboeking!
-            </div>
-        {% endif %}
-    {% endfor %}
+{% if not registrationHasOpened %}
+    <div class="alert alert-info">
+        <strong>Opgelet:</strong>
+        Dit spel zal pas verschijnen in het overzicht wanneer de inschrijvingen openen,
+        30 dagen op voorhand.
+    </div>
 {% else %}
-    <p>Je hebt geen openstaande aanvragen.</p>
+    <!-- Approved registrations -->
+    <h4 class="mb-3">Goedgekeurd</h4>
+    {% if approvedRegistrations %}
+        {% for registration in approvedRegistrations %}
+            <form method="post" action="/web/activity/{{ activity.id }}/registrations/{{ registration.player.id }}" style="float: right">
+                <input name="cancelled" type="hidden" value="true">
+                <button class="btn btn-danger responsive" type="submit">
+                    <i class="fa fa-times"></i><span class="d-none d-md-inline"> Annuleren</span>
+                </button>
+            </form>
+            <p>
+                <img class="avatar rounded-circle mr-2" src="{{ registration.player.picture }}">
+                {{ registration.player.name }}
+                {% if registration.seats == 2 %}
+                    en 1 extra speler
+                {% elif registration.seats > 2 %}
+                    en {{ registration.seats|previous }} extra spelers
+                {% endif %}
+            </p>
+        {% endfor %}
+    {% else %}
+        <p>Je hebt nog geen aanvragen goedgekeurd.</p>
+    {% endif %}
+    <!-- Pending registrations -->
+    <h4 class="mb-3">Ontvangen</h4>
+    {% if pendingRegistrations %}
+        {% for registration in pendingRegistrations %}
+            <form method="post" action="/web/activity/{{ activity.id }}/registrations/{{ registration.player.id }}" style="float: right">
+                <input name="approved" type="hidden" value="true">
+                {% if registration.willCauseOverbooking %}
+                    <button class="btn btn-warning" type="submit">
+                        <i class="fa fa-check"></i><span class="d-none d-md-inline"> Goedkeuren</span>
+                    </button>
+                {% else %}
+                    <button class="btn btn-success" type="submit">
+                        <i class="fa fa-check"></i><span class="d-none d-md-inline"> Goedkeuren</span>
+                    </button>
+                {% endif %}
+            </form>
+            <p>
+                <img class="avatar rounded-circle mr-2" src="{{ registration.player.picture }}">
+                {{ registration.player.name }}
+                {% if registration.seats == 2 %}
+                    en 1 extra speler
+                {% elif registration.seats > 2 %}
+                    en {{ registration.seats|previous }} extra spelers
+                {% endif %}
+            </p>
+            {% if registration.willCauseOverbooking %}
+                <div class="alert alert-warning">
+                    <strong>Opgelet:</strong> Deze aanvraag goedkeuren leidt tot overboeking!
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p>Je hebt geen openstaande aanvragen.</p>
+    {% endif %}
 {% endif %}
 <!-- Game management -->
 <h3>Beheer</h3>

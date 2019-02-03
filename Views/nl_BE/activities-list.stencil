@@ -134,7 +134,7 @@
     {% endfor %}
 {% endif %}
 <p>
-    Dit overzicht toont enkel de spellen die de komende maand op de agenda staan.
-    Spellen die later ingepland zijn, verschijnen automatisch één maand op voorhand.
+    Dit overzicht toont enkel de spellen die de komende 30 dagen op de agenda staan.
+    Spellen die later ingepland zijn, verschijnen automatisch 30 dagen op voorhand.
 </p>
 {% endblock %}

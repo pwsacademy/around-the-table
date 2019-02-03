@@ -14,9 +14,8 @@ class ExtensionsTests: XCTestCase {
             ("testYear", testYear),
             ("testPreviousDay", testPreviousDay),
             ("testPreviousDayWithFirstOfMonth", testPreviousDayWithFirstOfMonth),
-            ("testLastDayInWindowWithFirstOfMonth", testLastDayInWindowWithFirstOfMonth),
-            ("testLastDayInWindowWithRegularDate", testLastDayInWindowWithRegularDate),
-            ("testLastDayInWindowWithJumpToSmallerMonth", testLastDayInWindowWithJumpToSmallerMonth),
+            ("testAdding30Days", testAdding30Days),
+            ("testSubtracting30Days", testSubtracting30Days),
 //            ("testFormattedDateAndTime", testFormattedDateAndTime),
             ("testFormattedDateAndTimeWithFormat", testFormattedDateAndTimeWithFormat)
         ]
@@ -48,25 +47,18 @@ class ExtensionsTests: XCTestCase {
         XCTAssert(firstOfMonth.previous.day == 31)
     }
     
-    func testLastDayInWindowWithFirstOfMonth() {
-        let result = firstOfMonth.lastDayInWindow
-        XCTAssert(result.day == 31)
-        XCTAssert(result.month == 1)
-        XCTAssert(result.year == 2019)
-    }
-    
-    func testLastDayInWindowWithRegularDate() {
-        let result = regularDate.lastDayInWindow
+    func testAdding30Days() {
+        let result = regularDate.adding30Days
         XCTAssert(result.day == 1)
         XCTAssert(result.month == 2)
         XCTAssert(result.year == 2019)
     }
     
-    func testLastDayInWindowWithJumpToSmallerMonth() {
-        let result = lastOfMonth.lastDayInWindow
-        XCTAssert(result.day == 28)
-        XCTAssert(result.month == 2)
-        XCTAssert(result.year == 2019)
+    func testSubtracting30Days() {
+        let result = regularDate.subtracting30Days
+        XCTAssert(result.day == 3)
+        XCTAssert(result.month == 12)
+        XCTAssert(result.year == 2018)
     }
     
     private let locale = Locale(identifier: "nl_BE")

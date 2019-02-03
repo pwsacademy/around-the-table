@@ -38,7 +38,7 @@ class ActivityRepositoryTests: XCTestCase {
     }()
     
     /*
-     The one-month window for the test database starts on Feb. 1 2100.
+     The 30-day window for the test database starts on Feb. 1 2100.
      */
     private var today: Date {
         var dateComponents = DateComponents()
@@ -91,7 +91,7 @@ class ActivityRepositoryTests: XCTestCase {
     
     func testNewestActivities() throws {
         let result = try persistence.newestActivities(inWindowFrom: today, measuredFrom: .default)
-        XCTAssert(result.map { $0.id } == [1, 4, 2])
+        XCTAssert(result.map { $0.id } == [4, 2, 1])
     }
     
     func testUpcomingActivities() throws {

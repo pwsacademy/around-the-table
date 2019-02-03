@@ -388,6 +388,8 @@ extension Routes {
               // You can't register for past or cancelled activities.
               activity.date > Date(),
               !activity.isCancelled,
+              // You can't register more than 30 days in advance.
+              activity.date.subtracting30Days < Date(),
               // A host can't register for his own activities.
               user != activity.host else {
             response.status(.badRequest)
@@ -399,7 +401,7 @@ extension Routes {
             return next()
         }
         var registration = Activity.Registration(player: user, seats: form.seats)
-        // Automatically approve the registration if it's the player's first registration with this host in the one-month window
+        // Automatically approve the registration if it's the player's first registration with this host in the 30-day window
         // and there are enough available seats to approve it.
         let autoApprove = try !persistence.hostsJoined(by: user).contains(activity.host) && activity.availableSeats >= form.seats
         if autoApprove {

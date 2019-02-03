@@ -86,31 +86,43 @@ extension Persistence {
     /**
      Returns the number of visible activities.
      
-     An activity is visible if its date is within the one-month window and it isn't cancelled.
+     An activity is visible if its date is within the 30-day window and it isn't cancelled.
      
      - Parameter from: The start of the window. Default: the current date and time.
      */
     func numberOfActivities(inWindowFrom date: Date = Date()) throws -> Int {
-        return try activities.count(["date": ["$gt": date, "$lt": date.lastDayInWindow],
+        return try activities.count(["date": ["$gt": date, "$lt": date.adding30Days],
                                      "isCancelled": false])
     }
     
     /**
-     Returns all visible activities, sorted by creation date in descending order.
+     Returns all visible activities, sorted by the date on which they appeared, in descending order.
+     
+     This date is usually the creation date, but for activities that were created before they became visible,
+     it is the date on which they became visible.
      */
     func newestActivities(inWindowFrom date: Date = Date(), measuredFrom coordinates: Coordinates) throws -> [Activity] {
-        return try activities(matching: ["date": ["$gt": date, "$lt": date.lastDayInWindow],
-                                         "isCancelled": false],
-                              measuredFrom: coordinates,
-                              sortedBy: ["creationDate": .descending],
-                              skipping: 0, limitedTo: .max)
+        func visibilityDate(for activity: Activity) -> Date {
+            if activity.creationDate < activity.date.subtracting30Days {
+                return activity.date.subtracting30Days
+            } else {
+                return activity.creationDate
+            }
+        }
+        
+        let results = try activities(matching: ["date": ["$gt": date, "$lt": date.adding30Days],
+                                                "isCancelled": false],
+                                     measuredFrom: coordinates,
+                                     sortedBy: ["creationDate": .descending],
+                                     skipping: 0, limitedTo: .max)
+        return results.sorted { visibilityDate(for: $0) > visibilityDate(for: $1) }
     }
     
     /**
      Returns all visible activities, sorted by date in ascending order.
      */
     func upcomingActivities(inWindowFrom date: Date = Date(), measuredFrom coordinates: Coordinates) throws -> [Activity] {
-        return try activities(matching: ["date": ["$gt": date, "$lt": date.lastDayInWindow],
+        return try activities(matching: ["date": ["$gt": date, "$lt": date.adding30Days],
                                          "isCancelled": false],
                               measuredFrom: coordinates,
                               sortedBy: ["date": .ascending, "distance": .ascending],
@@ -124,7 +136,7 @@ extension Persistence {
         guard let coordinates = user.location?.coordinates else {
             throw log(ServerError.invalidState)
         }
-        return try activities(matching: ["date": ["$gt": date, "$lt": date.lastDayInWindow],
+        return try activities(matching: ["date": ["$gt": date, "$lt": date.adding30Days],
                                          "isCancelled": false],
                               measuredFrom: coordinates,
                               sortedBy: ["distance": .ascending, "date": .ascending],
@@ -132,7 +144,7 @@ extension Persistence {
     }
     
     /**
-     Returns the hosts of whom the given player has joined an activity in the one-month window.
+     Returns the hosts of whom the given player has joined an activity in the 30-day window.
      
      This list can contain duplicates if the player has joined multiple activities of the same host.
      It is used to determine whether a player's registration should be automatically approved.
@@ -144,7 +156,7 @@ extension Persistence {
         let results = try activities(matching: ["registrations": ["$elemMatch": ["player": id,
                                                                                  "isApproved": true,
                                                                                  "isCancelled": false]],
-                                                "date": ["$gt": date, "$lt": date.lastDayInWindow],
+                                                "date": ["$gt": date, "$lt": date.adding30Days],
                                                 "isCancelled": false],
                                      measuredFrom: player.location?.coordinates ?? .default,
                                      sortedBy: ["date": .ascending],

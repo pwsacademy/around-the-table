@@ -15,49 +15,63 @@
 {% include "snippets/activity-players.stencil" %}
 <!-- General registration information -->
 {% include "snippets/activity-general-registration.stencil" %}
-{% if base.user %}
-    <!-- User has a pending registration -->
-    {% if userIsPending %}
-        <p><i class="fa fa-hourglass-o fa-lg"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
-        <!-- Cancel the pending registration -->
-        <form method="post" class="mb-3" action="/web/activity/{{ activity.id }}/registrations/{{ base.user.id }}">
-            <input type="hidden" name="cancelled" value="true">
-            <button class="btn btn-danger" type="submit">
-                <i class="fa fa-times"></i> Aanvraag annuleren
-            </button>
-        </form>
-    <!-- Request seats -->
-    {% elif not activity.deadlineHasPassed and not userIsPlayer %}
-        <form class="form-inline mb-3" method="post" action="/web/activity/{{ activity.id }}/registrations">
-            <select id="seats" class="custom-select mr-3" name="seats" style="width: auto">
-                {% for seat in activity.seatOptions %}
-                    <option value="{{ seat }}">{{ seat }}</option>
-                {% endfor %}
-            </select>
-            <span id="seatsText" class="mr-3">plaats</span>
+<!-- Additional registration information -->
+{% if activity.deadlineHasPassed %}
+    <p>Inschrijven voor dit spel is niet meer mogelijk.</p>
+{% elif not registrationHasOpened %}
+    <p>De inschrijvingen voor dit spel zijn nog niet geopend.</p>
+{% else %}
+    <p>Inschrijven is mogelijk tot {{ activity.deadlineDate }} om {{ activity.deadlineTime }}.</p>
+    {% if not base.user %}
+        <div class="alert alert-warning">
+            Om in te schrijven moet je eerst <a class="alert-link" href="/authentication/welcome?redirect=%2Fweb%2Factivity%2F{{ activity.id }}">aanmelden</a>.
+        </div>
+    {% else %}
+        <!-- User has a pending registration -->
+        {% if userIsPending %}
+            <p><i class="fa fa-hourglass-o fa-lg"></i> Uw aanvraag is verzonden en wacht op goedkeuring.</p>
+            <!-- Cancel the pending registration -->
+            <form method="post" class="mb-3" action="/web/activity/{{ activity.id }}/registrations/{{ base.user.id }}">
+                <input type="hidden" name="cancelled" value="true">
+                <button class="btn btn-danger" type="submit">
+                    <i class="fa fa-times"></i> Aanvraag annuleren
+                </button>
+            </form>
+        <!-- Request seats -->
+        {% elif not activity.deadlineHasPassed and not userIsPlayer %}
+            <form class="form-inline mb-3" method="post" action="/web/activity/{{ activity.id }}/registrations">
+                <select id="seats" class="custom-select mr-3" name="seats" style="width: auto">
+                    {% for seat in activity.seatOptions %}
+                        <option value="{{ seat }}">{{ seat }}</option>
+                    {% endfor %}
+                </select>
+                <span id="seatsText" class="mr-3">plaats</span>
+                {% if activity.availableSeats == 0 %}
+                    <button class="btn btn-warning" type="submit">aanvragen</button>
+                {% else %}
+                    <button class="btn btn-primary" type="submit">aanvragen</button>
+                {% endif %}
+            </form>
             {% if activity.availableSeats == 0 %}
-                <button class="btn btn-warning" type="submit">aanvragen</button>
+                <div class="alert alert-warning">
+                    <strong>Opgelet:</strong> Dit spel is reeds volzet. Je kan nog plaatsen aanvragen en bent dan beschikbaar als reservespeler.
+                </div>
+            {% elif userHasAutoApprove %}
+                <p>
+                    Omdat dit je eerste inschrijving is bij deze organisator voor de komende 30 dagen, kan je meteen inschrijven
+                    (op voorwaarde dat er nog voldoende plaats is).
+                </p>
             {% else %}
-                <button class="btn btn-primary" type="submit">aanvragen</button>
+                <p>
+                    Omdat je al een inschrijving hebt bij deze organisator voor de komende 30 dagen, zal je inschrijving eerst
+                    moeten goedgekeurd worden door de organisator.
+                </p>
             {% endif %}
-        </form>
-        {% if activity.availableSeats == 0 %}
-            <div class="alert alert-warning">
-                <strong>Opgelet:</strong> Dit spel is reeds volzet. Je kan nog plaatsen aanvragen en bent dan beschikbaar als reservespeler.
-            </div>
-        {% elif userHasAutoApprove %}
-            <p>
-                Omdat dit je eerste inschrijving is bij deze organisator voor de komende maand, kan je meteen inschrijven
-                (op voorwaarde dat er nog voldoende plaats is).
-            </p>
-        {% else %}
-            <p>
-                Omdat je al een inschrijving hebt bij deze organisator voor de komende maand, zal je inschrijving eerst
-                moeten goedgekeurd worden door de organisator.
-            </p>
         {% endif %}
     {% endif %}
-    <!-- Contact the host -->
+{% endif %}
+<!-- Contact the host -->
+{% if base.user %}
     <h3>Stel een vraag</h3>
     <p>
         Voor meer informatie over dit spel kan je contact opnemen met de organisator.

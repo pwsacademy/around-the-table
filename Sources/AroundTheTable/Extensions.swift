@@ -39,27 +39,17 @@ extension Date {
     }
     
     /**
-     Returns the last day of a one-month window starting on the current date.
-     
-     Uses `Settings.timeZone` to determine the correct value.
-     
-     Some examples:
-     Jan. 1 -> Jan. 31
-     Jan. 2 -> Feb. 1
-     Jan. 3 -> Feb. 2
-     ...
-     Jan. 28 -> Feb. 27
-     Jan. 29 -> Feb. 28
-     Jan. 30 -> Feb. 28
-     Jan. 31 -> Feb. 28
+     Returns the date 30 days after this one.
      */
-    var lastDayInWindow: Date {
-        let nextMonth = Settings.calendar.date(byAdding: .month, value: 1, to: self)!
-        if nextMonth.day < day {
-            // Don't subtract a day if the next month has less days than the current one.
-            return nextMonth
-        }
-        return Settings.calendar.date(byAdding: .day, value: -1, to: nextMonth)!
+    var adding30Days: Date {
+        return Settings.calendar.date(byAdding: .day, value: 30, to: self)!
+    }
+    
+    /**
+     Returns the date 30 days before this one.
+     */
+    var subtracting30Days: Date {
+        return Settings.calendar.date(byAdding: .day, value: -30, to: self)!
     }
     
     /**
