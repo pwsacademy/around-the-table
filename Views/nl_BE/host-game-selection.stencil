@@ -12,15 +12,15 @@
             <h5>{{ game.name }}</h5>
             <p>
                 <span class="text-muted">{{ game.yearPublished }}</span><br>
-                {% if game.playerCount.lowerBound == game.playerCount.upperBound %}
-                    <i class="fa fa-users"></i> {{ game.playerCount.lowerBound }}<br>
+                {% if game.playerCount[0] == game.playerCount[1] %}
+                    <i class="fa fa-users"></i> {{ game.playerCount[0] }}<br>
                 {% else %}
-                    <i class="fa fa-users"></i> {{ game.playerCount.lowerBound }} - {{ game.playerCount.upperBound }}<br>
+                    <i class="fa fa-users"></i> {{ game.playerCount[0] }} - {{ game.playerCount[1] }}<br>
                 {% endif %}
-                {% if game.playingTime.lowerBound == game.playingTime.upperBound %}
-                    <i class="fa fa-clock-o"></i> {{ game.playingTime.lowerBound }}
+                {% if game.playingTime[0] == game.playingTime[1] %}
+                    <i class="fa fa-clock-o"></i> {{ game.playingTime[0] }}
                 {% else %}
-                    <i class="fa fa-clock-o"></i> {{ game.playingTime.lowerBound }} - {{ game.playingTime.upperBound }}
+                    <i class="fa fa-clock-o"></i> {{ game.playingTime[0] }} - {{ game.playingTime[1] }}
                 {% endif %}
             </p>
         </div>

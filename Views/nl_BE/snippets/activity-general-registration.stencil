@@ -4,10 +4,10 @@
 -->
 <!-- Minimum player count -->
 {% if not activity.requiredPlayerCountReached %}
-    {% if activity.playerCount.lowerBound == 1 %}
+    {% if activity.playerCount[0] == 1 %}
         <p>Dit spel gaat door vanaf 1 speler.</p>
     {% else %}
-        <p>Dit spel gaat door vanaf {{ activity.playerCount.lowerBound }} spelers.</p>
+        <p>Dit spel gaat door vanaf {{ activity.playerCount[0] }} spelers.</p>
     {% endif %}
 {% endif %}
 <!-- Available seats -->

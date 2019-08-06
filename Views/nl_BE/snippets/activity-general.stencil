@@ -18,11 +18,11 @@
     <!-- Info -->
     <div>
         <h2>{{ activity.name }}</h2>
-        <p><i class="fa fa-users"></i> {{ activity.playerCount.upperBound }}</p>
-        {% if activity.playingTime.lowerBound == activity.playingTime.upperBound %}
-            <p><i class="fa fa-clock-o"></i> {{ activity.playingTime.lowerBound }}</p>
+        <p><i class="fa fa-users"></i> {{ activity.playerCount[1] }}</p>
+        {% if activity.playingTime[0] == activity.playingTime[1] %}
+            <p><i class="fa fa-clock-o"></i> {{ activity.playingTime[0] }}</p>
         {% else %}
-            <p><i class="fa fa-clock-o"></i> {{ activity.playingTime.lowerBound }} - {{ activity.playingTime.upperBound }}</p>
+            <p><i class="fa fa-clock-o"></i> {{ activity.playingTime[0] }} - {{ activity.playingTime[1] }}</p>
         {% endif %}
         <p><i class="fa fa-calendar"></i> {{ activity.date }} om {{ activity.time }}</p>
         <p>

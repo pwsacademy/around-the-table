@@ -8,7 +8,6 @@ XCTMain([
     testCase(ActivityTests.allTests),
     testCase(ActivityRegistrationTests.allTests),
     testCase(BSONExtensionsTests.allTests),
-    testCase(CodableExtensionsTests.allTests),
     testCase(ConversationTests.allTests),
     testCase(ConversationMessageTests.allTests),
     testCase(CoordinatesTests.allTests),
