@@ -2,6 +2,7 @@ applications:
 - name: BoardGameNights
   memory: 256M
   command: Main
-  buildpack: swift_buildpack
+  buildpacks:
+    - swift_buildpack
   health-check-type: http
   health-check-http-endpoint: /health
