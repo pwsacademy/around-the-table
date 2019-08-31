@@ -12,7 +12,7 @@ let package = Package(
         .package(url: "https://github.com/IBM-Swift/Kitura-Session.git", from: "3.3.0"),
         .package(url: "https://github.com/IBM-Swift/Kitura-StencilTemplateEngine.git", from: "1.11.0"),
         .package(url: "https://github.com/IBM-Swift/Swift-cfenv.git", from: "6.0.0"),
-        .package(url: "https://github.com/OpenKitten/MongoKitten.git", .branch("master/4.1")),
+        .package(url: "https://github.com/OpenKitten/MongoKitten.git", from: "4.1.4-swift5"),
         .package(url: "https://github.com/IBM-Swift/SwiftyRequest.git", from: "2.1.0"),
     ],
     targets: [
