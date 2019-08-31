@@ -1,6 +1,7 @@
 applications:
 - name: BoardGameNights
-  memory: 256M
+  stack: cflinuxfs3
+  memory: 2G
   command: Main
   buildpacks:
     - swift_buildpack
