@@ -42,12 +42,4 @@ Around The Table is a not-for-profit project. Our platform is free of charge and
 
 ## Help out
 
-There's many more [features](https://github.com/svanimpe/around-the-table/labels/Feature) we'd like to implement. If you're a developer, we invite you to help out. Visit our [wiki](https://github.com/svanimpe/around-the-table/wiki) to get started.
-
-## Communities
-
-Around The Table is used by the following communities:
-
-* [Board Game Nights](https://boardgamenights.eu-gb.mybluemix.net)<br>Gaming community in Belgium.
-
-If you're interested in using Around The Table for your gaming community, please read our [license information](https://github.com/svanimpe/around-the-table/wiki/License-information) first.
+There's many more [features](https://github.com/pwsacademy/around-the-table/labels/Feature) we'd like to implement. If you're a developer, we invite you to help out. Visit our [wiki](https://github.com/pwsacademy/around-the-table/wiki) to get started.
